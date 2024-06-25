@@ -1,0 +1,22 @@
+# Blender 3.5.1 MTL File: 'lowpoly city.blend'
+# www.blender.org
+
+newmtl 1
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/1.jpg
+map_Ks C:/2.jpg
+map_Ns C:/3.jpg
+
+newmtl ground
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+illum 1
+map_Kd C:/微信截图_20231011172700.png
+map_d C:/微信截图_20231011172700.png
