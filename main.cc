@@ -67,7 +67,7 @@ void finalscene(char* fname, float intensity) {
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 400;
+    cam.image_width       = 500;
     cam.samples_per_pixel = 50; // 500;
     cam.max_depth         = 20; // 50;
     cam.background        = color(0.70, 0.80, 1.00);
@@ -79,6 +79,8 @@ void finalscene(char* fname, float intensity) {
 
     cam.defocus_angle = 0.6;
     cam.focus_dist    = 10.0;
+
+    std::cout << "help" << std::endl;
 
     cam.render(world, fname);
 }
@@ -182,8 +184,13 @@ void simple_light2(char* fname, float intensity) {
     cam.render(world, fname);
 }
 
-void cornell_box(char* fname, float intensity) {
+void room(char* fname, float intensity){
     hittable_list world;
+    // shared_ptr<diffuse_light> light = make_shared<diffuse_light>(color(4, 4, 4));
+
+    // scene.add(make_shared<quad>(point3(30, 0, 100), vec3(0, 30, 0), vec3(0, 0, 30), make_shared<lambertian>(color(.82, .53, .77))));
+    // scene.add(make_shared<sphere>(point3(0, 10, 100), 3, make_shared<diffuse_light>(color(10, 10, 10))));
+    // scene.add(make_shared<quad>(point3(0,0,555), vec3(555,0,0), vec3(0,555,0), make_shared<lambertian>(color(.9, .4, .5))));
 
     auto red   = make_shared<lambertian>(color(.65, .05, .05));
     auto white = make_shared<lambertian>(color(.73, .73, .73));
@@ -200,12 +207,68 @@ void cornell_box(char* fname, float intensity) {
     world.add(qbox(point3(130, 0, 65), point3(295, 165, 230), white));
     world.add(qbox(point3(265, 0, 295), point3(430, 330, 460), white));
 
+    // for(int i = 0; i < 20; i ++){
+
+    // }
+
+    camera cam;
+    cam.aspect_ratio = 1.0;
+    cam.image_width = 200;
+    cam.samples_per_pixel = 100;
+    cam.max_depth = 40;
+    cam.background = color(0, 0.0, 0.0);
+    cam.vfov = -20;
+    cam.lookfrom = point3(0, 1, -40);
+    cam.lookat = point3(0, 0, 3);
+    cam.vup = vec3(0,1,0);
+    cam.defocus_angle = 0;
+
+    cam.render(world, fname);
+
+}
+
+void cornell_box(char* fname, float intensity) {
+    hittable_list world;
+
+    auto red   = make_shared<lambertian>(color(.65, .05, .05));
+    auto blue = make_shared<lambertian>(color(.1, .1, .8));
+    auto white = make_shared<lambertian>(color(.73, .73, .73));
+    auto green = make_shared<lambertian>(color(.12, .45, .15));
+    auto light = make_shared<diffuse_light>(color(15, 15, 15));
+
+
+    //1 left wall
+    world.add(make_shared<quad>(point3(555,0,0), vec3(0,555,0), vec3(0,0,555), white));
+    //2 right wall
+    world.add(make_shared<quad>(point3(0,0,0), vec3(0,555,0), vec3(0,0,555), white));
+    //3 top light quad
+    world.add(make_shared<quad>(point3(343, 554, 332), vec3(-130,0,0), vec3(0,0,-105), light));
+    //4 floor
+    world.add(make_shared<quad>(point3(0,0,0), vec3(555,0,0), vec3(0,0,555), white));
+    //5 ceiling
+    world.add(make_shared<quad>(point3(555,555,555), vec3(-555,0,0), vec3(0,0,-555), white));
+    // back wall
+    world.add(make_shared<quad>(point3(0,0,555), vec3(555,0,0), vec3(0,555,0), white));
+
+    int radius = 10;
+    int n = 500; 
+    for(int i = 0; i < n; i ++){
+        auto color = blue;
+        if (i % 2){ color = red;}
+        world.add(make_shared<sphere>(point3(random_double(-554 + radius, 555 - radius), 
+                                            random_double(1 + radius, 555 - radius), 
+                                            random_double(1 + radius, 555 - radius)), radius, color));
+    }
+
+    // world.add(qbox(point3(130, 0, 65), point3(295, 165, 230), white));
+    // world.add(qbox(point3(265, 0, 295), point3(430, 330, 460), white));
+
     camera cam;
 
     cam.aspect_ratio      = 1.0;
-    cam.image_width       = 600;
-    cam.samples_per_pixel = 200;
-    cam.max_depth         = 50;
+    cam.image_width       = 200;
+    cam.samples_per_pixel = 300;
+    cam.max_depth         = 30;
     cam.background        = color(0,0,0);
 
     cam.vfov     = 40;
@@ -519,14 +582,15 @@ int main(int argc, char** argv) {
     if ((intensity < 0) || (intensity > 1)) {
         std::cerr << "Intensity must be a floating point value between 0 and 1." << std::endl;
     }
-    switch (8) {
+    switch (4) {
         case 1:  finalscene(argv[1], intensity); break;
         case 2:  simple_light2(argv[1], intensity); break;
         case 3:  quads(argv[1], intensity); break;
         case 4:  cornell_box(argv[1], intensity); break;
-        case 5:  bunny(argv[1], intensity); break;
+        // case 5:  bunny(argv[1], intensity); break;
         case 6:  camp(argv[1], intensity); break;
         case 7:  simple_camp(argv[1], intensity); break;
         case 8:  beach(argv[1], intensity); break;
+        case 9:  room(argv[1], intensity); break;
     }
 }

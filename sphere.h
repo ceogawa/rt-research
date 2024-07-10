@@ -4,7 +4,7 @@
 #include "rtweekend.h"
 #include "hittable.h"
 
-class sphere : public hittable {
+class  sphere : public hittable {
   public:
 
     // stationary
@@ -56,6 +56,10 @@ class sphere : public hittable {
 
   aabb bounding_box() const override { return bbox; }
 
+  point3 get_center() {
+    return center1;
+  }
+
   private:
     point3 center1;
     double radius;
@@ -69,6 +73,7 @@ class sphere : public hittable {
       // center1, and t=1 yields center2.
       return center1 + time*center_vec;
     }
+  
 
 };
 

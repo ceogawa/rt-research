@@ -156,12 +156,12 @@ class hittable_list : public hittable {
                                 currBbox.z.max-(currBbox.z.max-currBbox.z.min)/6);
                 lights.push_back(pt);
 
-                // std::cout << "size: " << currMax[1]-currMin[1] << std::endl;
-                // std::cout << "Max: " << "(" << currMax[0] << ", " << currMax[1] << ", " << currMax[2] << ")" << std::endl; // COMMENT
-                // std::cout << "Min: " << "(" << currMin[0] << ", " << currMin[1] << ", " << currMin[2] << ")" << std::endl; // COMMENT
-                // std::cout << "Cen: " << "(" << currCenter[0] << ", " << currCenter[1] << ", " << currCenter[2] << ")" << std::endl; // COMMENT
-                // std::cout << "Out: " << "(" << pt[0] << ", " << pt[1] << ", " << pt[2] << ")" << std::endl; // COMMENT
-                // std::cout << "-" << std::endl;
+                std::cout << "size: " << currMax[1]-currMin[1] << std::endl;
+                std::cout << "Max: " << "(" << currMax[0] << ", " << currMax[1] << ", " << currMax[2] << ")" << std::endl; // COMMENT
+                std::cout << "Min: " << "(" << currMin[0] << ", " << currMin[1] << ", " << currMin[2] << ")" << std::endl; // COMMENT
+                std::cout << "Cen: " << "(" << currCenter[0] << ", " << currCenter[1] << ", " << currCenter[2] << ")" << std::endl; // COMMENT
+                std::cout << "Out: " << "(" << pt[0] << ", " << pt[1] << ", " << pt[2] << ")" << std::endl; // COMMENT
+                std::cout << "-" << std::endl;
             } 
             currDist = std::max(abs(currBbox.axis(a).min-lookFrom[a]), 
                                 abs(currBbox.axis(a).max-lookFrom[a]));
