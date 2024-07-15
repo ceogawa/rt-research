@@ -214,7 +214,7 @@ class hittable_list : public hittable {
                 float ctr = abs(tri->get_center()[a]-lookFrom[a]);
                 float close = infinity;
                 for (size_t c=0; c<clusters.size(); c++) {
-                    float dist = abs(clusters[c]->center-ctr);
+                    float dist = abs(clusters[c]->center - ctr);
                     if(dist < close) {
                         close = dist;
                         tri->set_closest(c);

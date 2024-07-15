@@ -47,7 +47,7 @@ public:
         cmass[2] = tot[2]/triangles.size();
         return cmass;
     }
-
+    
 public:
     vec3 cmass;
     float center;
