@@ -67,9 +67,9 @@ void finalscene(char* fname, float intensity) {
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 400;
-    cam.samples_per_pixel = 50; // 500;
-    cam.max_depth         = 20; // 50;
+    cam.image_width       = 500;
+    cam.samples_per_pixel = 500; // 500;
+    cam.max_depth         = 50; // 50;
     cam.background        = color(0.70, 0.80, 1.00);
 
     cam.vfov     = 20;
@@ -167,9 +167,9 @@ void simple_light2(char* fname, float intensity) {
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 400;
-    cam.samples_per_pixel = 100;
-    cam.max_depth         = 50;
+    cam.image_width       = 100;
+    cam.samples_per_pixel = 40;
+    cam.max_depth         = 20;
     cam.background        = color(0,0,0);
 
     cam.vfov     = 20;
@@ -203,7 +203,7 @@ void cornell_box(char* fname, float intensity) {
     camera cam;
 
     cam.aspect_ratio      = 1.0;
-    cam.image_width       = 600;
+    cam.image_width       = 100; //600
     cam.samples_per_pixel = 200;
     cam.max_depth         = 50;
     cam.background        = color(0,0,0);
@@ -217,6 +217,45 @@ void cornell_box(char* fname, float intensity) {
 
     cam.render(world, fname);
 }
+
+void teapot(char* fname, float intensity) {
+    hittable_list world;
+
+    auto red   = make_shared<lambertian>(color(.65, .05, .05));
+    auto white = make_shared<lambertian>(color(.73, .73, .73));
+    auto green = make_shared<lambertian>(color(.12, .45, .15));
+    auto light = make_shared<diffuse_light>(color(15, 15, 15));
+
+    world.add(make_shared<quad>(point3(555,0,0), vec3(0,555,0), vec3(0,0,555), green));
+    world.add(make_shared<quad>(point3(0,0,0), vec3(0,555,0), vec3(0,0,555), red));
+    world.add(make_shared<quad>(point3(343, 554, 332), vec3(-130,0,0), vec3(0,0,-105), light));
+    world.add(make_shared<quad>(point3(0,0,0), vec3(555,0,0), vec3(0,0,555), white));
+    world.add(make_shared<quad>(point3(555,555,555), vec3(-555,0,0), vec3(0,0,-555), white));
+    world.add(make_shared<quad>(point3(0,0,555), vec3(555,0,0), vec3(0,555,0), white));
+
+    // world.add(qbox(point3(130, 0, 65), point3(295, 165, 230), white));
+    world.add(qbox(point3(265, 0, 295), point3(430, 330, 460), white));
+
+    world.add(make_shared<sphere>(point3(100,70,150), 100, make_shared<lambertian>(color(0.1, 0.2, 0.5))));
+
+    camera cam;
+
+    cam.aspect_ratio      = 1.0;
+    cam.image_width       = 200; //600
+    cam.samples_per_pixel = 200;
+    cam.max_depth         = 30;
+    cam.background        = color(0,0,0);
+
+    cam.vfov     = 40;
+    cam.lookfrom = point3(278, 278, -800);
+    cam.lookat   = point3(278, 278, 0);
+    cam.vup      = vec3(0,1,0);
+
+    cam.defocus_angle = 0;
+
+    cam.render(world, fname);
+}
+
 
 /* REAL SCENES */
 
@@ -494,9 +533,9 @@ void beach(char* fname, float intensity) {
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 600; // 400
-    cam.samples_per_pixel = 100; // 100
-    cam.max_depth         = 50;
+    cam.image_width       = 200; // 600
+    cam.samples_per_pixel = 50; // 100
+    cam.max_depth         = 20;
     cam.background        = color(0,0,0);
     // cam.background        = color(0.70, 0.80, 1.00);
 
@@ -519,14 +558,15 @@ int main(int argc, char** argv) {
     if ((intensity < 0) || (intensity > 1)) {
         std::cerr << "Intensity must be a floating point value between 0 and 1." << std::endl;
     }
-    switch (8) {
+    switch (6) {
         case 1:  finalscene(argv[1], intensity); break;
         case 2:  simple_light2(argv[1], intensity); break;
         case 3:  quads(argv[1], intensity); break;
         case 4:  cornell_box(argv[1], intensity); break;
-        case 5:  bunny(argv[1], intensity); break;
+        // case 5:  bunny(argv[1], intensity); break;
         case 6:  camp(argv[1], intensity); break;
         case 7:  simple_camp(argv[1], intensity); break;
         case 8:  beach(argv[1], intensity); break;
+        case 9: teapot(argv[1], intensity); break;
     }
 }
