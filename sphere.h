@@ -4,7 +4,7 @@
 #include "rtweekend.h"
 #include "hittable.h"
 
-class sphere : public hittable {
+class  sphere : public hittable {
   public:
 
     // stationary
@@ -56,6 +56,17 @@ class sphere : public hittable {
 
   aabb bounding_box() const override { return bbox; }
 
+  point3 get_center() {
+    return center1;
+  }
+
+  void set_material(shared_ptr<material> material){
+    mat = material;
+  }
+
+  virtual void set_closest(int c) { closest = c; }
+  int get_closest() { return closest; }
+
   private:
     point3 center1;
     double radius;
@@ -63,12 +74,14 @@ class sphere : public hittable {
     aabb bbox;
     bool is_moving;
     vec3 center_vec;
+    int closest;
 
     point3 sphere_center(double time) const {
       // Linearly interpolate from center1 to center2 according to time, where t=0 yields
       // center1, and t=1 yields center2.
       return center1 + time*center_vec;
     }
+  
 
 };
 
