@@ -5,6 +5,8 @@
 #include "tiny_obj_loader.h"
 
 // https://github.com/anandhotwani/obj_raytracer/blob/master/src/trianglemesh.cpp
+using namespace std;
+
 
 class mesh : public hittable {
   public:
@@ -18,8 +20,9 @@ class mesh : public hittable {
         mat = m;
 
         std::string inputfile = path;
-        unsigned long pos = inputfile.find_last_of("/");
+        unsigned long pos = inputfile.find_last_of("\\");
         std::string mtlbasepath = inputfile.substr(0, pos + 1);  
+        std::string objname = inputfile.substr(pos+1, inputfile.length());
 
         tinyobj::attrib_t attributes;
         std::vector<tinyobj::shape_t> shapes;
@@ -27,10 +30,19 @@ class mesh : public hittable {
         std::string warnings;
         std::string errors;
 
-        bool ret = tinyobj::LoadObj(&attributes, &shapes, &materials, &warnings, &errors, inputfile.c_str(), mtlbasepath.c_str());
+        cout << "inputFile: " << inputfile << endl;
+        cout << "mtlbasepath: " << mtlbasepath << endl;
+        cout << "objname: " << objname << endl;
+
+        // after changing "file path" it loaded
+        bool ret = tinyobj::LoadObj(&attributes, &shapes, &materials, &warnings, &errors, objname.c_str(), mtlbasepath.c_str());
+        cout << "after load obj" << endl;
         if (!warnings.empty()) { std::cout << "Warning: " << warnings << std::endl; }
         if (!errors.empty()) { std::cerr << "Error: " << errors << std::endl; }
-        if (!ret) { exit(1); }
+        if (!ret) { 
+            cout << "!ret" << endl;
+            exit(1); 
+        }
 
         // std::vector<Vertex> vertices;
         std::vector<point3> pts;
@@ -40,6 +52,9 @@ class mesh : public hittable {
         point3 max_point(-std::numeric_limits<float>::max(), -std::numeric_limits<float>::max(), -std::numeric_limits<float>::max());
 
         // Loop over shapes
+
+        cout << "shapes.size(): " << shapes.size() << endl;
+
         for (size_t s=0; s<shapes.size(); s++) {
             // Loop over faces(triangles)
             size_t index_offset = 0;
@@ -88,6 +103,8 @@ class mesh : public hittable {
             max_point[2] = fmax(max_point[2], pts[p][2]);
         }
         
+        cout << "num_verts: " << pts.size() << endl;
+        cout << endl;
         bbox = aabb(min_point, max_point);
 
         // Loops points
