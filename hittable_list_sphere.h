@@ -182,7 +182,7 @@ class hittable_list_sphere : public hittable {
             }
             for(std::shared_ptr<sphere> sph : sphs) {
                 // Assign triangle to closest cluster
-                float ctr = (sph->get_center()[a]-lookFrom[a]);
+                // float ctr = (sph->get_center()[a]-lookFrom[a]);
                 float close = infinity;
                 for (size_t c=0; c<clusters.size(); c++) {
                     // float dist = abs(clusters[c]->center - ctr);
