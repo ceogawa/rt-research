@@ -156,6 +156,7 @@ class hittable_list_sphere : public hittable {
         }
 
         auto red   = make_shared<lambertian>(color(.65, .05, .05));
+        auto purple   = make_shared<lambertian>(color(.65, .05, .65));
         auto blue = make_shared<lambertian>(color(.1, .1, .8));
         auto white = make_shared<lambertian>(color(.73, .73, .73));
         auto green = make_shared<lambertian>(color(.12, .45, .15));
@@ -181,26 +182,31 @@ class hittable_list_sphere : public hittable {
             }
             for(std::shared_ptr<sphere> sph : sphs) {
                 // Assign triangle to closest cluster
-                float ctr = (sph->get_center()[a]-lookFrom[a]);
+                // float ctr = (sph->get_center()[a]-lookFrom[a]);
                 float close = infinity;
                 for (size_t c=0; c<clusters.size(); c++) {
                     // float dist = abs(clusters[c]->center - ctr);
                     float dist = abs(clusters[c]->center - sph->get_center()[a]);
                     if(dist < close) {
-                        cout << "dist < closest pt    NEW CLUSTER: " << c << endl;
+                        // cout << "dist < closest pt    NEW CLUSTER: " << c << endl;
                         close = dist;
                         sph->set_closest(c);
                         if(c == 0){
                             sph->set_material(red);
+                            sph->set_radius(8);
                         }
                         else if(c == 1){
-                            sph->set_material(white);
+                            sph->set_material(purple);
+                            sph->set_radius(12);
                         }
-                        else if(c == 3){
+                        else if(c == 2){
                             sph->set_material(blue);
+                            sph->set_radius(17);
+
                         }
                         else{
-                            sph->set_material(green);    
+                            sph->set_material(green);
+                            sph->set_radius(21);    
                         }
                        
                     }

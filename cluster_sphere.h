@@ -32,7 +32,7 @@ public:
         }
         prev = center;
         center = tot/spheres.size();
-        return center;
+        return center; 
     }
 
     vec3 com_sphere(){

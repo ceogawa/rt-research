@@ -64,6 +64,10 @@ class  sphere : public hittable {
     mat = material;
   }
 
+  void set_radius(double r){
+    radius = r;
+  }
+
   virtual void set_closest(int c) { closest = c; }
   int get_closest() { return closest; }
 

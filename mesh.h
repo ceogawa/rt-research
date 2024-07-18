@@ -5,6 +5,8 @@
 #include "tiny_obj_loader.h"
 
 // https://github.com/anandhotwani/obj_raytracer/blob/master/src/trianglemesh.cpp
+using namespace std;
+
 
 class mesh : public hittable {
   public:
@@ -16,10 +18,13 @@ class mesh : public hittable {
     {
         addLight = add;
         mat = m;
-
+        // models//skeleton.obj
         std::string inputfile = path;
-        unsigned long pos = inputfile.find_last_of("/");
-        std::string mtlbasepath = inputfile.substr(0, pos + 1);  
+        unsigned long pos = inputfile.find_last_of("\\");
+        std::string mtlbasepath = inputfile.substr(0, pos);  
+        std::string objname = inputfile.substr(pos+1, inputfile.length());
+
+        normals.clear();
 
         tinyobj::attrib_t attributes;
         std::vector<tinyobj::shape_t> shapes;
@@ -27,25 +32,39 @@ class mesh : public hittable {
         std::string warnings;
         std::string errors;
 
-        bool ret = tinyobj::LoadObj(&attributes, &shapes, &materials, &warnings, &errors, inputfile.c_str(), mtlbasepath.c_str());
+        // cout << "inputFile: " << inputfile << endl;
+        // cout << "mtlbasepath: " << mtlbasepath << endl;
+        // cout << "objname: " << objname << endl;
+
+        // after changing "file path" it loaded
+        bool ret = tinyobj::LoadObj(&attributes, &shapes, &materials, &warnings, &errors, inputfile.c_str(), "");
+        cout << "after load obj" << endl;
         if (!warnings.empty()) { std::cout << "Warning: " << warnings << std::endl; }
         if (!errors.empty()) { std::cerr << "Error: " << errors << std::endl; }
-        if (!ret) { exit(1); }
+        if (!ret) { 
+            cout << "!ret" << endl;
+            exit(1); 
+        }
 
         // std::vector<Vertex> vertices;
         std::vector<point3> pts;
+        vector<vec3> ns;
 
         // Min and max coordinates for bbox
         point3 min_point(std::numeric_limits<float>::max(), std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
         point3 max_point(-std::numeric_limits<float>::max(), -std::numeric_limits<float>::max(), -std::numeric_limits<float>::max());
 
         // Loop over shapes
+
+        cout << "shapes.size(): " << shapes.size() << endl;
+
         for (size_t s=0; s<shapes.size(); s++) {
             // Loop over faces(triangles)
             size_t index_offset = 0;
             for (size_t f=0; f<shapes[s].mesh.num_face_vertices.size(); f++) {
                 uint8_t fv = shapes[s].mesh.num_face_vertices[f];
-
+                //TODO calculate normals
+            
                 // Loop over vertices in the face.
                 for (size_t v = 0; v < fv; v++) {
                     // access to vertex
@@ -57,6 +76,10 @@ class mesh : public hittable {
                     point3 pt = point3(vx*scale, vy*scale, vz*scale);
                     pts.push_back(pt);
 
+                    if(v < 3){
+                        ns.push_back(pt);
+                    }
+
                     // Update min and max coordinates
                     min_point[0] = fmin(min_point[0], pt[0]);
                     min_point[1] = fmin(min_point[1], pt[1]);
@@ -66,6 +89,12 @@ class mesh : public hittable {
                     max_point[1] = fmax(max_point[1], pt[1]);
                     max_point[2] = fmax(max_point[2], pt[2]);
                 }
+
+                vec3 v1 = ns[1] - ns[0];
+                vec3 v2 = ns[2] - ns[0];
+                vec3 n = unit_vector(cross(v1, v2));
+                normals.push_back(n);
+
                 index_offset += fv;
             }
         }
@@ -88,6 +117,8 @@ class mesh : public hittable {
             max_point[2] = fmax(max_point[2], pts[p][2]);
         }
         
+        cout << "num_verts: " << pts.size() << endl;
+        cout << endl;
         bbox = aabb(min_point, max_point);
 
         // Loops points
@@ -135,6 +166,7 @@ class mesh : public hittable {
 
     public:
         aabb bbox;
+        vector<vec3> normals;
         bool addLight;
 
 };
