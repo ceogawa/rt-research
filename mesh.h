@@ -3,6 +3,7 @@
 #include "triangle.h"
 #include "tri.h"
 #include "tiny_obj_loader.h"
+#include <algorithm>
 
 // https://github.com/anandhotwani/obj_raytracer/blob/master/src/trianglemesh.cpp
 using namespace std;
@@ -25,6 +26,7 @@ class mesh : public hittable {
         std::string objname = inputfile.substr(pos+1, inputfile.length());
 
         normals.clear();
+        normals_origin.clear();
 
         tinyobj::attrib_t attributes;
         std::vector<tinyobj::shape_t> shapes;
@@ -38,7 +40,8 @@ class mesh : public hittable {
 
         // after changing "file path" it loaded
         bool ret = tinyobj::LoadObj(&attributes, &shapes, &materials, &warnings, &errors, inputfile.c_str(), "");
-        cout << "after load obj" << endl;
+        // cout << "after load obj" << endl;
+        cout << inputfile.c_str() << endl;
         if (!warnings.empty()) { std::cout << "Warning: " << warnings << std::endl; }
         if (!errors.empty()) { std::cerr << "Error: " << errors << std::endl; }
         if (!ret) { 
@@ -63,8 +66,9 @@ class mesh : public hittable {
             size_t index_offset = 0;
             for (size_t f=0; f<shapes[s].mesh.num_face_vertices.size(); f++) {
                 uint8_t fv = shapes[s].mesh.num_face_vertices[f];
+                // cout << "face vertices: " << fv << endl;
                 //TODO calculate normals
-            
+                ns.clear();
                 // Loop over vertices in the face.
                 for (size_t v = 0; v < fv; v++) {
                     // access to vertex
@@ -93,8 +97,12 @@ class mesh : public hittable {
                 vec3 v1 = ns[1] - ns[0];
                 vec3 v2 = ns[2] - ns[0];
                 vec3 n = unit_vector(cross(v1, v2));
-                normals.push_back(n);
+                // cout << "normal: <" << n[0] << ", " << n[1] << ", " << n[2] << ">" << endl;
 
+                if(!(find(normals.begin(), normals.end(), n) != normals.end())){
+                    normals.push_back(n);
+                    normals_origin.push_back(ns[0]);
+                }
                 index_offset += fv;
             }
         }
@@ -167,6 +175,7 @@ class mesh : public hittable {
     public:
         aabb bbox;
         vector<vec3> normals;
+        vector<point3> normals_origin;
         bool addLight;
 
 };
