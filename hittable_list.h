@@ -150,12 +150,10 @@ class hittable_list : public hittable {
 
                 // cout << endl;
                 point3 c = currBbox.get_center();
-                cout << " dot " << d << endl;
-
                 // if(d == 0.0){    
                 //     lights.push_back(meshObjects[o]->normals_origin[i]);
                 // }
-                if(d <= -.90 && d >= -1.0){
+                if((d <= -.97 && d >= -1.0) && (meshObjects[o]->normals_origin[i][2] >= c[2])){
                     lights.push_back(meshObjects[o]->normals_origin[i]);
                 }
 
