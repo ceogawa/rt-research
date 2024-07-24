@@ -605,24 +605,25 @@ void test_scene(char* fname, float intensity){
     auto white       = make_shared<lambertian>(color(0.8, 0.8, 0.8));
          
     // load meshes             
-    auto lamp = make_shared<mesh>("lamp2.obj", yellow, vec3(0, 5, 1), 1.0, false);
+    auto lamp = make_shared<mesh>("lamp2.obj", yellow, vec3(0, 5.2, 1), 1.0, false);
     auto cube = make_shared<mesh>("cube5.obj", green, vec3(0, 3, 0), 3.0, false);
  
 
-    world.add(make_shared<sphere>(point3(0, 30, -10), 2.5, firelight));
-    world.add(make_shared<quad>(point3(0,0,0), vec3(10,0,0), vec3(0,0,6), white));
+    world.add(make_shared<sphere>(point3(0, 70, -20), 40, firelight));
+    world.add(make_shared<quad>(point3(-6,0,-10), vec3(12,0,0), vec3(0,0,25), white));
+    world.add(make_shared<quad>(point3(-6,0,16), vec3(12,0,0), vec3(0,12,0), white));
 
     // for(size_t i = 0; i < lamp->normals_origin.size(); i++){
     //     if(i%2){
-    //         world.add(make_shared<sp here>(lamp->normals_origin[i], .5, yellow));
+    //         world.add(make_shared<sphere>(lamp->normals_origin[i], .2, yellow));
     //     }  
     // }    
           
     world.add(lamp);    
-    world.add(cube);          
+    // world.add(cube);          
      
-    point3 lookFrom = point3(0,8,-50); 
-    point3 lookAt   = point3(0,3,0);
+    point3 lookFrom = point3(0,24,-65); 
+    point3 lookAt   = point3(0,5,0);
    
     cms = world.layer(lookFrom, lookAt, 3, 0); 
   
@@ -644,14 +645,14 @@ void test_scene(char* fname, float intensity){
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 100; // 400
-    cam.samples_per_pixel = 100; // 100
+    cam.image_width       = 200; // 400
+    cam.samples_per_pixel = 200; // 100
     cam.max_depth         = 20;
     cam.background        = color(0,0,0);
     // cam.background        = color(0.70, 0.80, 1.00);
 
     cam.vfov     = 20; 
-    cam.lookfrom = lookFrom;
+    cam.lookfrom = lookFrom; 
     cam.lookat   = lookAt;
     cam.vup      = vec3(0,1,0);
 
@@ -759,7 +760,7 @@ int main(int argc, char** argv) {
 
     srand(time(NULL));
  
-    switch (10) {
+    switch (11) {
         case 1:  finalscene(argv[1], intensity); break;
         case 2:  simple_light2(argv[1], intensity); break;
         case 3:  quads(argv[1], intensity); break;
