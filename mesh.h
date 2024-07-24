@@ -78,10 +78,7 @@ class mesh : public hittable {
 
                     point3 pt = point3(vx*scale, vy*scale, vz*scale);
                     pts.push_back(pt);
-
-                    // if(v < 3){
-                        ns.push_back(pt);
-                    // }
+                    ns.push_back(pt);
 
                     // Update min and max coordinates
                     min_point[0] = fmin(min_point[0], pt[0]);
@@ -93,10 +90,18 @@ class mesh : public hittable {
                     max_point[2] = fmax(max_point[2], pt[2]);
                 }
 
+                
+                vec3 center_ns = (min_point + max_point) / 2;
+                for(int i = 0; i < 3; i++){
+                    ns[i][0] = ns[i][0] - center_ns[0] + translate[0];
+                    ns[i][1] = ns[i][1] - center_ns[1] + translate[1];
+                    ns[i][2] = ns[i][2] - center_ns[2] + translate[2];
+                }
+               
                 vec3 v1 = ns[1] - ns[0];
                 vec3 v2 = ns[2] - ns[0];
                 vec3 n = unit_vector(cross(v1, v2));
-                // cout << "normal: <" << n[0] << ", " << n[1] << ", " << n[2] << ">" << endl;
+
 
                 // if(!(find(normals.begin(), normals.end(), n) != normals.end()) && (n[1] < 0.001 && n[1] > -0.001)){
                 //     normals.push_back(n);
@@ -111,6 +116,7 @@ class mesh : public hittable {
                 n_center[2] = (ns[0][2] + ns[1][2] + ns[2][2])/3.0;// + translate[2];
                 
                 normals_origin.push_back(n_center);
+                // cout << "normal: <" << n_center[0] << ", " << n_center[1] << ", " << n_center[2] << ">" << endl;
                 // }
 
                 index_offset += fv;

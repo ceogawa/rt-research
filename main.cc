@@ -615,10 +615,15 @@ void indoor_scene(char* fname, float intensity) {
         world.add(make_shared<sphere>(cube->normals_origin[i], 1, yellow));
     }
      
-     
-    // world.add(table);  
+    // for(size_t i = 0; i < lamp->n ormals_origin.size(); i++){
+    //     if(i%2){
+    //         world.add(make_shared<sp here>(lamp->normals_origin[i], .5, yellow));
+    //     }  
+    // }    
+          
+    // world.add(table);   
     // world.add(lamp);              
-    // world.add(sofa);      
+    // world.add(sofa);       
     // world.add(vase);            
     world.add(cube);      
          
