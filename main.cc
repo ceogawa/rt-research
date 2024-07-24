@@ -604,31 +604,38 @@ void indoor_scene(char* fname, float intensity) {
     auto yellow      = make_shared<lambertian>(color(0.8, 0.6, 0.6));
     auto white       = make_shared<lambertian>(color(0.8, 0.8, 0.8));
          
-    // load meshes            
-    auto table = make_shared<mesh>("coffeetable2.obj", brown, vec3(0, 3, 1), 0.3, true);
-    auto lamp = make_shared<mesh>("desk_lamp1.obj", firelight, vec3(2, 6, 3), 2.0, false);
-    // auto couch = make_shared<mesh>("couch.obj", green, vec3(5, 3, 5), 0.4, true);
-    auto vase = make_shared<mesh>("vase.obj", purple, vec3(-1, 3, -1), 1.0, true);
+    // load meshes             
+    auto table = make_shared<mesh>("coffeetable3.obj", brown, vec3(0, 3, -10), 1.0, false);
+    auto lamp = make_shared<mesh>("lamp2.obj", yellow, vec3(2, 2, 0), 1.0, false);
+    auto sofa = make_shared<mesh>("simple_sofa3.obj", green, vec3(5, 3, 0), 1.0, false);
+    auto vase = make_shared<mesh>("vase.obj", purple, vec3(-6, 3, -2), 1.0, false);
+    auto cube = make_shared<mesh>("cube4.obj", orange, vec3(0, 3, 0), 1.0, false);
  
-  
-    // world.add(make_shared<sphere>(point3(0,-1000,0), 1000, brown));
-    world.add(table);
-    world.add(lamp);
-    // world.add(couch); 
-    world.add(vase);
-   
+    for(size_t i = 0; i < cube->normals_origin.size(); i++){
+        world.add(make_shared<sphere>(cube->normals_origin[i], 1, yellow));
+    }
+     
+     
+    // world.add(table);  
+    // world.add(lamp);              
+    // world.add(sofa);      
+    // world.add(vase);            
+    world.add(cube);      
+         
     world.add(make_shared<sphere>(point3(-15,8,-3), 1.0, difflight));
- 
-    point3 lookFrom = point3(5,6,-50);
+     
+     
+    point3 lookFrom = point3(0,13,-70); 
     point3 lookAt   = point3(0,3,0);
-
-    cms = world.layer(lookFrom, lookAt, 3, 0);
-
+   
+    cms = world.layer(lookFrom, lookAt, 3, 0); 
+  
     std::cout << "len: " << cms.size() << std::endl;
-
+   
     // world.clear();
     world.add(make_shared<sphere>(point3(0,-1000,0), 1000, brown));
-    
+    // world.add(make_shared<quad>(point3(-30,0,7), vec3(60,0,0), vec3(0,20,0), white));
+     
     // std::vector<std::shared_ptr<sphere>> extraLights;
     std::vector<std::shared_ptr<point>> extraLights;
     for(vec3 cm : cms) {
@@ -639,25 +646,25 @@ void indoor_scene(char* fname, float intensity) {
     // for(std::shared_ptr<sphere> light : extraLights) {
     for(std::shared_ptr<point> light : extraLights) {
         world.add(light);
-    }   
-   
+    }     
+         
     world = hittable_list(make_shared<bvh_node>(world));
 
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
     cam.image_width       = 200; // 400
-    cam.samples_per_pixel = 100; // 100
+    cam.samples_per_pixel = 200; // 100
     cam.max_depth         = 20;
     cam.background        = color(0,0,0);
     // cam.background        = color(0.70, 0.80, 1.00);
 
-    cam.vfov     = 20;
+    cam.vfov     = 20; 
     cam.lookfrom = lookFrom;
     cam.lookat   = lookAt;
     cam.vup      = vec3(0,1,0);
 
-    cam.defocus_angle = 0;
+    cam.defocus_angle = 0; 
 
     cam.render(world, fname);
 }

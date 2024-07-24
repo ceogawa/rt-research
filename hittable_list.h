@@ -142,24 +142,45 @@ class hittable_list : public hittable {
             for(size_t i=0; i < meshObjects[o]->normals.size(); i++){
 
                 vec3 n = unit_vector(meshObjects[o]->normals[i]);
-                vec3 c = unit_vector(lookAt - lookFrom);
+                vec3 cam = unit_vector(lookAt - lookFrom);
 
-                double d = dot(n, c);
+                double d = dot(n, cam);
                 double theta = acos(d); 
                 
-                cout << "theta: " << theta << endl;
-                cout << endl;
 
-                if(theta <= 1.57 && theta >= 1.36) {
-                    lights.push_back(meshObjects[o]->normals_origin[i]);
-                }
-               
+                // cout << endl;
+                point3 c = currBbox.get_center();
+                cout << " dot " << d << endl;
+
+                lights.push_back(meshObjects[o]->normals_origin[i]);
+                // if(d < 0.0){
+                //     lights.push_back(meshObjects[o]->normals_origin[i]);
+
+                // }
+
+                // if((d > .96 && d < 1) || d == .989949){
+                //     lights.push_back(meshObjects[o]->normals_origin[i]);
+                //     lights.push_back(meshObjects[o]->normals_origin[i]);
+                //     lights.push_back(meshObjects[o]->normals_origin[i]);
+                // }
+
+                // if((theta <= 1.62 && theta >= 1.57) && (d < 0)) {
+                //     lights.push_back(meshObjects[o]->normals_origin[i]);
+                // }
+                // point3 c = currBbox.get_center();
+                //  if((theta <= 1.57 && theta >= 0.5) && (d >= 0) && (meshObjects[o]->normals_origin[i][2] >= c[2])) {
+                //     lights.push_back(meshObjects[o]->normals_origin[i]);
+
+
+                // }
                 // double theta = acos(d/(n.length() * (lookAt-lookFrom).length()));
                 // cout << "theta: " << theta << endl;
                 // if(theta <= 6.28 && theta >= 0){
                 //     // lights.push_back(meshObjects[o]->normals_origin[i]);
                 // }
             }
+
+            cout << "lights.size()" << lights.size() << endl;
             
             /* ADD LIGHTS BEHIND EACH OBJECT */
 

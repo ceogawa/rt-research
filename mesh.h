@@ -66,7 +66,6 @@ class mesh : public hittable {
             size_t index_offset = 0;
             for (size_t f=0; f<shapes[s].mesh.num_face_vertices.size(); f++) {
                 uint8_t fv = shapes[s].mesh.num_face_vertices[f];
-                // cout << "face vertices: " << fv << endl;
                 //TODO calculate normals
                 ns.clear();
                 // Loop over vertices in the face.
@@ -80,9 +79,9 @@ class mesh : public hittable {
                     point3 pt = point3(vx*scale, vy*scale, vz*scale);
                     pts.push_back(pt);
 
-                    if(v < 3){
+                    // if(v < 3){
                         ns.push_back(pt);
-                    }
+                    // }
 
                     // Update min and max coordinates
                     min_point[0] = fmin(min_point[0], pt[0]);
@@ -99,10 +98,21 @@ class mesh : public hittable {
                 vec3 n = unit_vector(cross(v1, v2));
                 // cout << "normal: <" << n[0] << ", " << n[1] << ", " << n[2] << ">" << endl;
 
-                if(!(find(normals.begin(), normals.end(), n) != normals.end())){
-                    normals.push_back(n);
-                    normals_origin.push_back(ns[0]);
-                }
+                // if(!(find(normals.begin(), normals.end(), n) != normals.end()) && (n[1] < 0.001 && n[1] > -0.001)){
+                //     normals.push_back(n);
+                //     normals_origin.push_back(ns[0]);
+                // }
+                vec3 n_center;
+                // if(!(find(normals.begin(), normals.end(), n) != normals.end())){
+                normals.push_back(n);
+
+                n_center[0] = (ns[0][0] + ns[1][0] + ns[2][0])/3.0;// + translate[0];
+                n_center[1] = (ns[0][1] + ns[1][1] + ns[2][1])/3.0;// + translate[1];
+                n_center[2] = (ns[0][2] + ns[1][2] + ns[2][2])/3.0;// + translate[2];
+                
+                normals_origin.push_back(n_center);
+                // }
+
                 index_offset += fv;
             }
         }
