@@ -152,13 +152,12 @@ class hittable_list : public hittable {
                 point3 c = currBbox.get_center();
                 cout << " dot " << d << endl;
 
-                if(d == 0.0){    
+                // if(d == 0.0){    
+                //     lights.push_back(meshObjects[o]->normals_origin[i]);
+                // }
+                if(d <= -.90 && d >= -1.0){
                     lights.push_back(meshObjects[o]->normals_origin[i]);
                 }
-                // if(d <= 1.0 && d >= .9){
-                //     lights.push_back(meshObjects[o]->normals_origin[i]);
-
-                // }
 
                 // if((d > .96 && d < 1) || d == .989949){
                 //     lights.push_back(meshObjects[o]->normals_origin[i]);
@@ -280,7 +279,7 @@ class hittable_list : public hittable {
         for (std::shared_ptr<cluster> c : clusters) {
             std::cout << "final " << c->center << std::endl; // COMMENT
             vec3 com = c->cmass;
-            lights.push_back(com);
+            // lights.push_back(com);
             std::cout << "(" << com[0] << ", " << com[1] << ", " << com[2] << ")" << std::endl; // COMMENT
         }
 

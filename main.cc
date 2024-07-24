@@ -611,10 +611,13 @@ void indoor_scene(char* fname, float intensity) {
     auto vase = make_shared<mesh>("vase.obj", purple, vec3(-6, 3, -2), 1.0, false);
     auto cube = make_shared<mesh>("cube4.obj", orange, vec3(0, 3, 0), 1.0, false);
  
-    for(size_t i = 0; i < cube->normals_origin.size(); i++){
-        world.add(make_shared<sphere>(cube->normals_origin[i], 1, yellow));
-    }
-     
+    // for(size_t i = 0; i < cube->normals_origin.size(); i++){
+        world.add(make_shared<sphere>(cube->normals_origin[2], 2, firelight));
+        world.add(make_shared<sphere>(cube->normals_origin[3], 2, firelight));
+
+    world.add(make_shared<sphere>(point3(0, 30, 0), 4, firelight));
+    // } 
+
     // for(size_t i = 0; i < lamp->n ormals_origin.size(); i++){
     //     if(i%2){
     //         world.add(make_shared<sp here>(lamp->normals_origin[i], .5, yellow));
@@ -626,9 +629,6 @@ void indoor_scene(char* fname, float intensity) {
     // world.add(sofa);       
     // world.add(vase);            
     world.add(cube);      
-         
-    world.add(make_shared<sphere>(point3(-15,8,-3), 1.0, difflight));
-     
      
     point3 lookFrom = point3(0,13,-70); 
     point3 lookAt   = point3(0,3,0);
@@ -636,7 +636,7 @@ void indoor_scene(char* fname, float intensity) {
     cms = world.layer(lookFrom, lookAt, 3, 0); 
   
     std::cout << "len: " << cms.size() << std::endl;
-   
+    
     // world.clear();
     world.add(make_shared<sphere>(point3(0,-1000,0), 1000, brown));
     // world.add(make_shared<quad>(point3(-30,0,7), vec3(60,0,0), vec3(0,20,0), white));
@@ -649,9 +649,9 @@ void indoor_scene(char* fname, float intensity) {
         extraLights.push_back(make_shared<point>(cm, intensity, difflight, lookFrom)); 
     }
     // for(std::shared_ptr<sphere> light : extraLights) {
-    for(std::shared_ptr<point> light : extraLights) {
+    for(std::shared_ptr<point> light : extraLights) { 
         world.add(light);
-    }     
+    }      
          
     world = hittable_list(make_shared<bvh_node>(world));
 
