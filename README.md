@@ -1,1 +1,1 @@
-Base code credits to Briana Kuo's ray tracing master's thesis. (initial commit)
+Initial commit from Briana Kuo's master thesis on ray tracing and light placement for dark scenes.

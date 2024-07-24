@@ -136,6 +136,50 @@ class hittable_list : public hittable {
             point3 currCenter = currBbox.get_center();
             point3 currMax = currBbox.get_max();
             point3 currMin = currBbox.get_min();
+
+            cout << "num normals for mesh: " << meshObjects[o]->normals.size() << endl;
+            cout << "num normal points of origin for mesh: " << meshObjects[o]->normals_origin.size() << endl;
+            for(size_t i=0; i < meshObjects[o]->normals.size(); i++){
+
+                vec3 n = unit_vector(meshObjects[o]->normals[i]);
+                vec3 cam = unit_vector(lookAt - lookFrom);
+
+                double d = dot(n, cam);
+                double theta = acos(d); 
+                
+
+                // cout << endl;
+                point3 c = currBbox.get_center();
+                // if(d == 0.0){    
+                //     lights.push_back(meshObjects[o]->normals_origin[i]);
+                // }
+                if((d <= -.97 && d >= -1.0) && (meshObjects[o]->normals_origin[i][2] >= c[2])){
+                    lights.push_back(meshObjects[o]->normals_origin[i]);
+                }
+
+                // if((d > .96 && d < 1) || d == .989949){
+                //     lights.push_back(meshObjects[o]->normals_origin[i]);
+                //     lights.push_back(meshObjects[o]->normals_origin[i]);
+                //     lights.push_back(meshObjects[o]->normals_origin[i]);
+                // }
+
+                // if((theta <= 1.62 && theta >= 1.57) && (d < 0)) {
+                //     lights.push_back(meshObjects[o]->normals_origin[i]);
+                // }
+                // point3 c = currBbox.get_center();
+                //  if((theta <= 1.57 && theta >= 0.5) && (d >= 0) && (meshObjects[o]->normals_origin[i][2] >= c[2])) {
+                //     lights.push_back(meshObjects[o]->normals_origin[i]);
+
+
+                // }
+                // double theta = acos(d/(n.length() * (lookAt-lookFrom).length()));
+                // cout << "theta: " << theta << endl;
+                // if(theta <= 6.28 && theta >= 0){
+                //     // lights.push_back(meshObjects[o]->normals_origin[i]);
+                // }
+            }
+
+            cout << "lights.size()" << lights.size() << endl;
             
             /* ADD LIGHTS BEHIND EACH OBJECT */
 
@@ -233,9 +277,11 @@ class hittable_list : public hittable {
         for (std::shared_ptr<cluster> c : clusters) {
             std::cout << "final " << c->center << std::endl; // COMMENT
             vec3 com = c->cmass;
-            lights.push_back(com);
+            // lights.push_back(com);
             std::cout << "(" << com[0] << ", " << com[1] << ", " << com[2] << ")" << std::endl; // COMMENT
         }
+
+        cout << "NUM LIGHTS: " << lights.size() << endl;
         return lights;
     }
 
