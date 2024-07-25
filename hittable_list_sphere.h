@@ -187,7 +187,7 @@ class hittable_list_sphere : public hittable {
                     // float dist = abs(clusters[c]->center - ctr);
                     float dist = abs(clusters[c]->center - sph->get_center()[a]);
                     if(dist < close) {
-                        cout << "dist < closest pt    NEW CLUSTER: " << c << endl;
+                        // cout << "dist < closest pt    NEW CLUSTER: " << c << endl;
                         close = dist;
                         sph->set_closest(c);
                         if(c == 0){

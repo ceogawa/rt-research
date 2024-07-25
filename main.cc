@@ -215,8 +215,8 @@ void room(char* fname, float intensity){
     camera cam;
     cam.aspect_ratio = 1.0;
     cam.image_width = 200;
-    cam.samples_per_pixel = 100;
-    cam.max_depth = 40;
+    cam.samples_per_pixel = 50;
+    cam.max_depth = 20;
     cam.background = color(0, 0.0, 0.0);
     cam.vfov = -20;
     cam.lookfrom = point3(0, 1, -40);
@@ -633,7 +633,7 @@ int main(int argc, char** argv) {
 
     srand(time(NULL));
 
-    switch (4) {
+    switch (9) {
         case 1:  finalscene(argv[1], intensity); break;
         case 2:  simple_light2(argv[1], intensity); break;
         case 3:  quads(argv[1], intensity); break;
