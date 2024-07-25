@@ -241,7 +241,7 @@ void cornell_box(char* fname, float intensity) {
     //1 left wall  
     world.add(make_shared<quad>(point3(555,0,0), vec3(0,555,0), vec3(0,0,555), white));
     //2 right wall
-    world.add(make_shared<quad>(point3(0,0,0), vec3(0,555,0), vec3(0,0,555), white));
+    // world.add(make_shared<quad>(point3(0,0,0), vec3(0,555,0), vec3(0,0,555), white));
     //3 top light quad
     world.add(make_shared<quad>(point3(343, 554, 332), vec3(-130,0,0), vec3(0,0,-105), light));
     //4 floor
@@ -251,8 +251,8 @@ void cornell_box(char* fname, float intensity) {
     // back wall
     world.add(make_shared<quad>(point3(0,0,555), vec3(555,0,0), vec3(0,555,0), white));
 
-    int radius = 5;
-    int n = 500;    
+    int radius = 7;
+    int n = 200;    
     for(int i = 0; i < n; i ++){ 
         auto color = white;
         // if (i % 2){ color = red;}
@@ -264,21 +264,23 @@ void cornell_box(char* fname, float intensity) {
     // world.add(qbox(point3(130, 0, 65), point3(295, 165, 230), white));
     // world.add(qbox(point3(265, 0, 295), point3(430, 330, 460), white));
  
-    point3 lookFrom = point3(278, 278, -800);
+    point3 lookFrom = point3(278, 278, -750);
     point3 lookAt = point3(278, 278, 0);
+    // point3 lookFrom = point3(-600, 278, 100);
+    // point3 lookAt = point3(278, 278, 100);
    
     // k num of clusters
     int k = 4; 
-    cms = world.layer(lookFrom, lookAt, k, 0); 
+    cms = world.layer(lookFrom, lookAt, k, 2); 
 
     //  world = hittable_list(make_shared<bvh_node>(world));
   
     camera cam;
   
     cam.aspect_ratio      = 1.0;
-    cam.image_width       = 300;
-    cam.samples_per_pixel = 300;
-    cam.max_depth         = 30;
+    cam.image_width       = 200;
+    cam.samples_per_pixel = 100;
+    cam.max_depth         = 20;
     cam.background        = color(0,0,0);
 
     cam.vfov     = 40;
@@ -329,12 +331,12 @@ void teapot(char* fname, float intensity) {
     cam.render(world, fname);
 }
 
-/* REAL SCENES */
+/* REAL SCENES */   
 
 void camp(char* fname, float intensity) {
     hittable_list world;
     std::vector<vec3> cms;
-
+    
     // colors
     auto difflight   = make_shared<diffuse_light>(color(4, 4, 4));
     auto firelight   = make_shared<diffuse_light>(color(15, 10, 8));
@@ -345,58 +347,62 @@ void camp(char* fname, float intensity) {
     auto purple      = make_shared<lambertian>(color(0.5, 0.3, 0.6));
     auto yellow      = make_shared<lambertian>(color(0.8, 0.6, 0.6));
     auto white       = make_shared<lambertian>(color(0.8, 0.8, 0.8));
+       
+    // load meshes           
+    auto skeleton  = make_shared<mesh>("skeleton.obj", white, vec3(4,1,-2), 0.5, true);
+    auto campfire  = make_shared<mesh>("campfire.obj", firelight, vec3(4,0.6,0), 1.0, false); 
+    auto table = make_shared<mesh>("coffeetable1.obj", firelight, vec3(26, 3, 1), 3.0, true);
+    auto lamp = make_shared<mesh>("desk_lamp.obj", yellow, vec3(24, 0, 3), 3.0, false);
 
-    // load meshes
-    auto skeleton  = make_shared<mesh>("models/nskeleton.obj", white, vec3(4,1,-2), 0.5, true);
-    auto campfire  = make_shared<mesh>("models/campfire.obj", firelight, vec3(4,0.6,0), 1.0, false);
+    // auto tree1     = make_shared<mesh>("models/btree1.obj", green, vec3(0,4*0.8,0), 0.8, true); //C
+    // auto tree2     = make_shared<mesh>("models/btree1.obj", green, vec3(-1,4,2), 1, true); //B
+    // auto tree3     = make_shared<mesh>("models/btree1.obj", green, vec3(-1,4*0.6,4), 0.6, true); //A
+    // auto tree4     = make_shared<mesh>("models/btree1.obj", green, vec3(1,4*0.6,-5), 0.6, true); 
+    // auto tree5     = make_shared<mesh>("models/btree1.obj", green, vec3(1,4*0.9,-4), 0.9, true); 
+    // auto tree6     = make_shared<mesh>("models/btree1.obj", green, vec3(3,4*0.5,-2), 0.5, true);
+    // auto tree7     = make_shared<mesh>("models/btree1.obj", green, vec3(5,4,-6), 1.0, true);
+    // auto tree8     = make_shared<mesh>("models/btree1.obj", green, vec3(6,4,5), 1.0, true);
 
-    auto tree1     = make_shared<mesh>("models/btree1.obj", green, vec3(0,4*0.8,0), 0.8, true); //C
-    auto tree2     = make_shared<mesh>("models/btree1.obj", green, vec3(-1,4,2), 1, true); //B
-    auto tree3     = make_shared<mesh>("models/btree1.obj", green, vec3(-1,4*0.6,4), 0.6, true); //A
-    auto tree4     = make_shared<mesh>("models/btree1.obj", green, vec3(1,4*0.6,-5), 0.6, true); 
-    auto tree5     = make_shared<mesh>("models/btree1.obj", green, vec3(1,4*0.9,-4), 0.9, true); 
-    auto tree6     = make_shared<mesh>("models/btree1.obj", green, vec3(3,4*0.5,-2), 0.5, true);
-    auto tree7     = make_shared<mesh>("models/btree1.obj", green, vec3(5,4,-6), 1.0, true);
-    auto tree8     = make_shared<mesh>("models/btree1.obj", green, vec3(6,4,5), 1.0, true);
-
-    auto rock1     = make_shared<mesh>("models/rock.obj", grey, vec3(-4,0.5,-1), 0.5, true);
-    auto rock2     = make_shared<mesh>("models/rock.obj", grey, vec3(3,0.5,4.5), 0.5, true);
-    auto rock3     = make_shared<mesh>("models/rock.obj", grey, vec3(4,0.5,-4), 0.5, true);
+    // auto rock1     = make_shared<mesh>("models/rock.obj", grey, vec3(-4,0.5,-1), 0.5, true);
+    // auto rock2     = make_shared<mesh>("models/rock.obj", grey, vec3(3,0.5,4.5), 0.5, true);
+    // auto rock3     = make_shared<mesh>("models/rock.obj", grey, vec3(4,0.5,-4), 0.5, true);
     
-    /* not added */
-    auto hya1      = make_shared<mesh>("models/hyacinth.obj", purple, vec3(4,0.5,-1), 2.0, false);
-    auto daff1     = make_shared<mesh>("models/daffodil.obj", yellow, vec3(5,0.5,1), 2.0, false);
-    auto grass1    = make_shared<mesh>("models/grass.obj", green, vec3(6,0.25,-3), 1.0, false);
-    auto grass2    = make_shared<mesh>("models/grass.obj", green, vec3(3,0.25,-2), 1.0, false);
-    auto grass3    = make_shared<mesh>("models/grass.obj", green, vec3(5,0.25,2), 1.0, false);
-    auto grass4    = make_shared<mesh>("models/grass.obj", green, vec3(7,0.25,4), 1.0, false);
-
+    // /* not added */
+    // auto hya1      = make_shared<mesh>("models/hyacinth.obj", purple, vec3(4,0.5,-1), 2.0, false);
+    // auto daff1     = make_shared<mesh>("models/daffodil.obj", yellow, vec3(5,0.5,1), 2.0, false);
+    // auto grass1    = make_shared<mesh>("models/grass.obj", green, vec3(6,0.25,-3), 1.0, false);
+    // auto grass2    = make_shared<mesh>("models/grass.obj", green, vec3(3,0.25,-2), 1.0, false);
+    // auto grass3    = make_shared<mesh>("models/grass.obj", green, vec3(5,0.25,2), 1.0, false);
+    // auto grass4    = make_shared<mesh>("models/grass.obj", green, vec3(7,0.25,4), 1.0, false);
+ 
     world.add(make_shared<sphere>(point3(0,-1000,0), 1000, brown));
     world.add(campfire);
-    world.add(skeleton);
-
-    world.add(tree1);
-    world.add(tree2);
-    world.add(tree3);
-    world.add(tree4);
-    world.add(tree5);
-    world.add(tree6);
-    world.add(tree7);
-    world.add(tree8);
+    world.add(skeleton);  
+    world.add(table);
+    world.add(lamp);
+ 
+    // world.add(tree1);
+    // world.add(tree2);
+    // world.add(tree3);
+    // world.add(tree4);
+    // world.add(tree5);
+    // world.add(tree6);
+    // world.add(tree7);
+    // world.add(tree8);
     
-    world.add(rock1);
-    world.add(rock2);
-    world.add(rock3);
-    // world.add(hya1);
-    // world.add(daff1);
-    world.add(grass1);
-    world.add(grass2);
-    world.add(grass3);
-    world.add(grass4);
-
+    // world.add(rock1);
+    // world.add(rock2);
+    // world.add(rock3);
+    // // world.add(hya1);
+    // // world.add(daff1);
+    // world.add(grass1);
+    // world.add(grass2);
+    // world.add(grass3); 
+    // world.add(grass4);
+   
     world.add(make_shared<sphere>(point3(-15,8,-3), 1.0, difflight));
 
-    point3 lookFrom = point3(26,3,0);
+    point3 lookFrom = point3(26,3,-50);
     point3 lookAt   = point3(0,3,0);
 
     cms = world.layer(lookFrom, lookAt, 3, 0);
@@ -423,9 +429,9 @@ void camp(char* fname, float intensity) {
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 600; // 400
+    cam.image_width       = 200; // 400
     cam.samples_per_pixel = 100; // 100
-    cam.max_depth         = 50;
+    cam.max_depth         = 20;
     cam.background        = color(0,0,0);
     // cam.background        = color(0.70, 0.80, 1.00);
 
@@ -605,9 +611,9 @@ void beach(char* fname, float intensity) {
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 200; // 600
-    cam.samples_per_pixel = 50; // 100
-    cam.max_depth         = 20;
+    cam.image_width       = 600; // 400
+    cam.samples_per_pixel = 100; // 100
+    cam.max_depth         = 50;
     cam.background        = color(0,0,0);
     // cam.background        = color(0.70, 0.80, 1.00);
 
@@ -617,6 +623,164 @@ void beach(char* fname, float intensity) {
     cam.vup      = vec3(0,1,0);
 
     cam.defocus_angle = 0;
+
+    cam.render(world, fname);
+}
+
+void test_scene(char* fname, float intensity){
+    hittable_list world;
+    std::vector<vec3> cms;
+       
+    // colors 
+    auto difflight   = make_shared<diffuse_light>(color(4, 4, 4));
+    auto firelight   = make_shared<diffuse_light>(color(15, 10, 8));
+    auto grey        = make_shared<lambertian>(color(0.2, 0.2, 0.4));
+    auto brown       = make_shared<lambertian>(color(0.4, 0.2, 0.2));
+    auto green       = make_shared<lambertian>(color(0.5, 1.0, 0.5));
+    auto orange      = make_shared<lambertian>(color(0.7, 0.4, 0.3));
+    auto purple      = make_shared<lambertian>(color(0.5, 0.3, 0.6));
+    auto yellow      = make_shared<lambertian>(color(0.8, 0.6, 0.6));
+    auto white       = make_shared<lambertian>(color(0.8, 0.8, 0.8));
+         
+    // load meshes             
+    auto lamp = make_shared<mesh>("lamp2.obj", yellow, vec3(0, 5, 1), 1.0, false);
+    auto cube = make_shared<mesh>("cube5.obj", green, vec3(0, 3, 0), 3.0, false);
+ 
+
+    world.add(make_shared<sphere>(point3(0, 30, -10), 2.5, firelight));
+    world.add(make_shared<quad>(point3(0,0,0), vec3(10,0,0), vec3(0,0,6), white));
+
+    // for(size_t i = 0; i < lamp->normals_origin.size(); i++){
+    //     if(i%2){
+    //         world.add(make_shared<sp here>(lamp->normals_origin[i], .5, yellow));
+    //     }  
+    // }    
+          
+    world.add(lamp);    
+    world.add(cube);          
+     
+    point3 lookFrom = point3(0,8,-50); 
+    point3 lookAt   = point3(0,3,0);
+   
+    cms = world.layer(lookFrom, lookAt, 3, 0); 
+  
+    std::cout << "len: " << cms.size() << std::endl;
+    
+    std::vector<std::shared_ptr<point>> extraLights;
+    for(vec3 cm : cms) {
+        // extraLights.push_back(make_shared<sphere>(cm, intensity, difflight));
+        // std::cout << "light (" << cm[0] << ", " << cm[1] << ", " << cm[2] << ")" << std::endl;
+        extraLights.push_back(make_shared<point>(cm, intensity, difflight, lookFrom)); 
+    }
+    // for(std::shared_ptr<sphere> light : extraLights) {
+    for(std::shared_ptr<point> light : extraLights) { 
+        world.add(light);
+    }      
+         
+    world = hittable_list(make_shared<bvh_node>(world));
+
+    camera cam;
+
+    cam.aspect_ratio      = 16.0 / 9.0;
+    cam.image_width       = 100; // 400
+    cam.samples_per_pixel = 100; // 100
+    cam.max_depth         = 20;
+    cam.background        = color(0,0,0);
+    // cam.background        = color(0.70, 0.80, 1.00);
+
+    cam.vfov     = 20; 
+    cam.lookfrom = lookFrom;
+    cam.lookat   = lookAt;
+    cam.vup      = vec3(0,1,0);
+
+    cam.defocus_angle = 0; 
+
+    cam.render(world, fname);
+}
+
+void indoor_scene(char* fname, float intensity) {
+    hittable_list world;
+    std::vector<vec3> cms;
+       
+    // colors 
+    auto difflight   = make_shared<diffuse_light>(color(4, 4, 4));
+    auto firelight   = make_shared<diffuse_light>(color(15, 10, 8));
+    auto grey        = make_shared<lambertian>(color(0.2, 0.2, 0.4));
+    auto brown       = make_shared<lambertian>(color(0.4, 0.2, 0.2));
+    auto green       = make_shared<lambertian>(color(0.5, 1.0, 0.5));
+    auto orange      = make_shared<lambertian>(color(0.7, 0.4, 0.3));
+    auto purple      = make_shared<lambertian>(color(0.5, 0.3, 0.6));
+    auto yellow      = make_shared<lambertian>(color(0.8, 0.6, 0.6));
+    auto white       = make_shared<lambertian>(color(0.8, 0.8, 0.8));
+         
+    // load meshes             
+    auto table = make_shared<mesh>("coffeetable4.obj", brown, vec3(0, 2, -26), .9, false);
+    auto lamp = make_shared<mesh>("lamp2.obj", yellow, vec3(5, 4, -19), .3, false);
+    auto sofa = make_shared<mesh>("couch3.obj", green, vec3(0, 3, -2), 1.4, false);
+    auto vase = make_shared<mesh>("vase.obj", purple, vec3(12, 3, -5), 1.0, false);
+    auto cube = make_shared<mesh>("cube5.obj", purple, vec3(-10, 3, -23), 1.0, false);
+ 
+    // // for(size_t i = 0; i < cube->normals_origin.size(); i++){
+        world.add(make_shared<sphere>(cube->normals_origin[2], .3, firelight));
+        world.add(make_shared<sphere>(cube->normals_origin[3], .3, firelight));
+
+    world.add(make_shared<sphere>(point3(0, 30, -10), 2.5, firelight));
+    // } 
+
+    world.add(make_shared<quad>(point3(-12, 7, 6.99), vec3(5,0,0), vec3(0,6,0), firelight));
+
+    // for(size_t i = 0; i < lamp->normals_origin.size(); i++){
+    //     if(i%2){
+    //         world.add(make_shared<sp here>(lamp->normals_origin[i], .5, yellow));
+    //     }  
+    // }    
+          
+    world.add(table);   
+    world.add(lamp);              
+    world.add(sofa);       
+    world.add(vase);            
+    world.add(cube);      
+     
+    point3 lookFrom = point3(0,13,-70); 
+    point3 lookAt   = point3(0,3,0);
+   
+    cms = world.layer(lookFrom, lookAt, 3, 0); 
+  
+    std::cout << "len: " << cms.size() << std::endl;
+    
+    // world.clear();
+    world.add(make_shared<sphere>(point3(0,-1000,0), 1000, brown));
+    world.add(make_shared<quad>(point3(-30,0,7), vec3(60,0,0), vec3(0,20,0), white));
+     
+    // std::vector<std::shared_ptr<sphere>> extraLights;
+    std::vector<std::shared_ptr<point>> extraLights;
+    for(vec3 cm : cms) {
+        // extraLights.push_back(make_shared<sphere>(cm, intensity, difflight));
+        // std::cout << "light (" << cm[0] << ", " << cm[1] << ", " << cm[2] << ")" << std::endl;
+        extraLights.push_back(make_shared<point>(cm, intensity, difflight, lookFrom)); 
+    }
+    // for(std::shared_ptr<sphere> light : extraLights) {
+    for(std::shared_ptr<point> light : extraLights) { 
+        world.add(light);
+    }      
+         
+    world = hittable_list(make_shared<bvh_node>(world));
+
+    camera cam;
+
+    cam.aspect_ratio      = 16.0 / 9.0;
+    cam.image_width       = 200; // 400
+    cam.samples_per_pixel = 100; // 100
+    cam.max_depth         = 20;
+    cam.background        = color(0,0,0);
+    // cam.background        = color(0.70, 0.80, 1.00);
+
+    cam.vfov     = 20; 
+    cam.lookfrom = lookFrom;
+    cam.lookat   = lookAt;
+    cam.vup      = vec3(0,1,0);
+
+    cam.defocus_angle = 0; 
 
     cam.render(world, fname);
 }
@@ -632,8 +796,8 @@ int main(int argc, char** argv) {
     }
 
     srand(time(NULL));
-
-    switch (9) {
+ 
+    switch (10) {
         case 1:  finalscene(argv[1], intensity); break;
         case 2:  simple_light2(argv[1], intensity); break;
         case 3:  quads(argv[1], intensity); break;
@@ -643,6 +807,8 @@ int main(int argc, char** argv) {
         case 7:  simple_camp(argv[1], intensity); break;
         case 8:  beach(argv[1], intensity); break;
         case 9:  room(argv[1], intensity); break;
+        case 10: indoor_scene(argv[1], intensity); break;
+        case 11: test_scene(argv[1], intensity); break;
     }
 }
 

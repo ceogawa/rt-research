@@ -1,0 +1,12 @@
+# Blender3D MTL File: simple_sofa.blend
+# Material Count: 1
+newmtl LEATHER_shiny
+Ns 64.705882
+Ka 0.000000 0.000000 0.000000
+Kd 0.150000 0.150000 0.150000
+Ks 1.800000 1.800000 1.800000
+Ni 1.000000
+d 1.000000
+illum 2
+
+
