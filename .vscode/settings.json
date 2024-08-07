@@ -71,6 +71,7 @@
         "span": "cpp",
         "variant": "cpp",
         "list": "cpp",
-        "xhash": "cpp"
+        "xhash": "cpp",
+        "chrono": "cpp"
     }
 }
