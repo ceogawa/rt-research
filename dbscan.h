@@ -20,15 +20,16 @@ using namespace std;
 
 class DBSCAN {
 public:    
-    DBSCAN(unsigned int minPts, float eps, vector<point3> points, shared_ptr<mesh> msh){  
+    DBSCAN(unsigned int minPts, float eps, shared_ptr<mesh> msh){  
         m_minPoints = minPts;
         m_epsilon = eps;
+        m = msh;
     }
     ~DBSCAN(){}
 
     int run();
     vector<int> calculateCluster(point3 point);
-    int expandCluster(point3 point, int clusterID);
+    int expandCluster(point3 point, int clusterID, int i);
     inline double calculateDistance(point3* pointCore, point3* pointTarget);
 
     // int getTotalPointSize() {return m_pointSize;}
@@ -37,7 +38,7 @@ public:
     
 public:
     shared_ptr<mesh> m;
-    vector<point3> m_points;
+    // vector<point3> m_points;
     
     
 private:    
