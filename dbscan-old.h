@@ -1,5 +1,8 @@
-#ifndef DBSCAN_H
-#define DBSCAN_H
+// https://github.com/james-yoo/DBSCAN
+// LICENSED BY james-yoo
+
+#ifndef DBSCANC_H
+#define DBSCANC_H
 
 #include <vector>
 #include <cmath>

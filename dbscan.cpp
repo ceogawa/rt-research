@@ -1,9 +1,20 @@
+// https://github.com/james-yoo/DBSCAN
+// LICENSED BY james-yoo
+
+// modified by Claire Ogawa to accomodate this repos point class
+
 #include "dbscan.h"
+#include "mesh.h"
 
 int DBSCAN::run()
 {
     int clusterID = 1;
-    vector<Point>::iterator iter;
+
+    for(int i = 0; i < m_points.size(); i++){
+        if()
+    }
+
+    vector<point3>::iterator iter;
     for(iter = m_points.begin(); iter != m_points.end(); ++iter)
     {
         if ( iter->clusterID == UNCLASSIFIED )
@@ -18,7 +29,7 @@ int DBSCAN::run()
     return 0;
 }
 
-int DBSCAN::expandCluster(Point point, int clusterID)
+int DBSCAN::expandCluster(point3 point, int clusterID)
 {    
     vector<int> clusterSeeds = calculateCluster(point);
 
@@ -68,10 +79,10 @@ int DBSCAN::expandCluster(Point point, int clusterID)
     }
 }
 
-vector<int> DBSCAN::calculateCluster(Point point)
+vector<int> DBSCAN::calculateCluster(point3 point)
 {
     int index = 0;
-    vector<Point>::iterator iter;
+    vector<point3>::iterator iter;
     vector<int> clusterIndex;
     for( iter = m_points.begin(); iter != m_points.end(); ++iter)
     {
@@ -84,7 +95,7 @@ vector<int> DBSCAN::calculateCluster(Point point)
     return clusterIndex;
 }
 
-inline double DBSCAN::calculateDistance(const Point& pointCore, const Point& pointTarget )
+inline double DBSCAN::calculateDistance(const point3& pointCore, const point3& pointTarget )
 {
     return pow(pointCore.x - pointTarget.x,2)+pow(pointCore.y - pointTarget.y,2)+pow(pointCore.z - pointTarget.z,2);
 }
