@@ -1,8 +1,13 @@
+// https://github.com/james-yoo/DBSCAN
+// LICENSED BY james-yoo
+
 #ifndef DBSCAN_H
 #define DBSCAN_H
 
 #include <vector>
 #include <cmath>
+#include "vec3.h"
+#include "mesh.h"
 
 #define UNCLASSIFIED -1
 #define CORE_POINT 1
@@ -13,36 +18,31 @@
 
 using namespace std;
 
-typedef struct Point_
-{
-    float x, y, z;  // X, Y, Z position
-    int clusterID;  // clustered ID
-}Point;
-
 class DBSCAN {
 public:    
-    DBSCAN(unsigned int minPts, float eps, vector<Point> points){
+    DBSCAN(unsigned int minPts, float eps, shared_ptr<mesh> msh){  
         m_minPoints = minPts;
         m_epsilon = eps;
-        m_points = points;
-        m_pointSize = points.size();
+        m = msh;
     }
     ~DBSCAN(){}
 
     int run();
-    vector<int> calculateCluster(Point point);
-    int expandCluster(Point point, int clusterID);
-    inline double calculateDistance(const Point& pointCore, const Point& pointTarget);
+    vector<int> calculateCluster(point3 point);
+    int expandCluster(point3 point, int clusterID, int i);
+    inline double calculateDistance(point3* pointCore, point3* pointTarget);
 
-    int getTotalPointSize() {return m_pointSize;}
+    // int getTotalPointSize() {return m_pointSize;}
     int getMinimumClusterSize() {return m_minPoints;}
     int getEpsilonSize() {return m_epsilon;}
     
 public:
-    vector<Point> m_points;
+    shared_ptr<mesh> m;
+    // vector<point3> m_points;
+    
     
 private:    
-    unsigned int m_pointSize;
+    // unsigned int m_pointSize;
     unsigned int m_minPoints;
     float m_epsilon;
 };

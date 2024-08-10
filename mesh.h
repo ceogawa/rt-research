@@ -3,6 +3,7 @@
 #include "triangle.h"
 #include "tri.h"
 #include "tiny_obj_loader.h"
+#include "dbscan.h"
 #include <algorithm>
 
 // https://github.com/anandhotwani/obj_raytracer/blob/master/src/trianglemesh.cpp
@@ -116,6 +117,8 @@ class mesh : public hittable {
                 n_center[2] = (ns[0][2] + ns[1][2] + ns[2][2])/3.0;// + translate[2];
                 
                 normals_origin.push_back(n_center);
+                // initialize all face points to default cluster id 
+                face_cluster_id.push_back(UNCLASSIFIED);
                 // cout << "normal: <" << n_center[0] << ", " << n_center[1] << ", " << n_center[2] << ">" << endl;
                 // }
 
@@ -192,6 +195,7 @@ class mesh : public hittable {
         aabb bbox;
         vector<vec3> normals;
         vector<point3> normals_origin;
+        vector<int> face_cluster_id;
         bool addLight;
 
 };
