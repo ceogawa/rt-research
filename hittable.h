@@ -4,6 +4,13 @@
 #include "rtweekend.h"
 #include "aabb.h"
 
+#include <chrono>
+
+
+using namespace std;
+using namespace std::chrono;
+
+
 class material;
 
 class hit_record {
@@ -108,6 +115,9 @@ class rotate_y : public hittable {
 
     bool hit(const ray& r, interval ray_t, hit_record& rec) const override {
         // Change the ray from world space to object space
+
+          auto old = steady_clock::now();  
+        
         auto origin = r.origin();
         auto direction = r.direction();
 
@@ -118,6 +128,9 @@ class rotate_y : public hittable {
         direction[2] = sin_theta*r.direction()[0] + cos_theta*r.direction()[2];
 
         ray rotated_r(origin, direction, r.time());
+
+         auto dur = steady_clock::now() - old;
+        cout << "change ray to object space: " << duration_cast<microseconds>(dur).count() << endl;
 
         // Determine whether an intersection exists in object space (and if so, where)
         if (!object->hit(rotated_r, ray_t, rec))

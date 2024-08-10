@@ -15,6 +15,11 @@
 #include <math.h>
 #include <algorithm>
 #include <random>
+#include <chrono>
+
+
+using namespace std;
+using namespace std::chrono;
 
 
 class hittable_list : public hittable {
