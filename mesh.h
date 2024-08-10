@@ -109,7 +109,6 @@ class mesh : public hittable {
                 //     normals_origin.push_back(ns[0]);
                 // }
                 vec3 n_center;
-                // if(!(find(normals.begin(), normals.end(), n) != normals.end())){
                 normals.push_back(n);
 
                 n_center[0] = (ns[0][0] + ns[1][0] + ns[2][0])/3.0;// + translate[0];
@@ -118,11 +117,13 @@ class mesh : public hittable {
                 
                 normals_origin.push_back(n_center);
                 // initialize all face points to default cluster id 
-                face_cluster_id.push_back(UNCLASSIFIED);
-                // cout << "normal: <" << n_center[0] << ", " << n_center[1] << ", " << n_center[2] << ">" << endl;
-                // }
 
+                // unclassified
+                face_cluster_id.push_back(-1);
+
+                // cout << "normal: <" << n_center[0] << ", " << n_center[1] << ", " << n_center[2] << ">" << endl;
                 index_offset += fv;
+                
             }
         }
 
