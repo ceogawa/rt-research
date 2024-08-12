@@ -151,18 +151,59 @@ class mesh : public hittable {
         cout << endl;
         bbox = aabb(min_point, max_point);
 
-        DBSCAN ds = DBSCAN(50, .5, normals_origin, face_cluster_id);
+        DBSCAN ds = DBSCAN(22, .5, normals_origin, face_cluster_id);
         ds.run();
 
-        for(std::vector<vec3>::size_type m = 0; m < ds.cluster_ids.size(); m++){
-            // cout << "id: " << ds.cluster_ids[m] << endl;
+        // for(std::vector<vec3>::size_type m = 0; m < ds.cluster_ids.size(); m++){
+        //     cout << "id: " << ds.cluster_ids[m] << endl;
+        //     // switch(ds.cluster_ids[m]){
+        //     //     case(0){
+
+        //     //     }
+        //     // }
+        // }
+
+        for(std::vector<vec3>::size_type m = 0; m < face_cluster_id.size(); m++){
+            cout << "id: " << face_cluster_id[m] << endl;
         }
 
         // Loops points
-        for (size_t i=0; i<pts.size()/3; ++i) {
-            triangles.push_back(std::make_shared<triangle>(pts[i*3], pts[i*3+1], pts[i*3+2], m));
-            // triangles.push_back(std::make_shared<tri>(pts[i*3], pts[i*3+1], pts[i*3+2], m));
-        }        
+
+        auto brown       = make_shared<lambertian>(color(0.4, 0.2, 0.2));
+        auto green       = make_shared<lambertian>(color(0.5, 1.0, 0.5));
+        auto orange      = make_shared<lambertian>(color(0.7, 0.4, 0.3));
+        auto purple      = make_shared<lambertian>(color(0.5, 0.3, 0.6));
+        auto yellow      = make_shared<lambertian>(color(0.8, 0.6, 0.6));
+        auto white       = make_shared<lambertian>(color(0.8, 0.8, 0.8));
+
+
+        for(size_t j = 0; j < normals_origin.size(); j++){
+
+            // triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], make_shared<lambertian>(color((ds.cluster_ids[j]*2)/255, ))));
+            switch(ds.cluster_ids[j]){
+                case(0):
+                    triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], brown));
+                case(1):
+                    triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], green));
+                case(2):
+                    triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], orange));
+                case(3):
+                    triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], purple));
+                case(4):
+                    triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], yellow));
+                case(5):
+                    triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], white));
+                default:
+                    triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], white));
+            }
+   
+        }
+            
+        // for (size_t i=0; i<pts.size()/3; ++i) {
+            
+        //     triangles.push_back(std::make_shared<triangle>(pts[i*3], pts[i*3+1], pts[i*3+2], m));
+        //     // triangles.push_back(std::make_shared<tri>(pts[i*3], pts[i*3+1], pts[i*3+2], m));
+        // }        
         shapes.clear();
         materials.clear();
     }

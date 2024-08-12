@@ -48,8 +48,10 @@ public:
                     clusterID++;
                 }
             }
-            cout << "num cluster id: " << clusterID << endl;
+            
         }
+
+        cout << "num cluster id: " << clusterID << endl;
 
         return 0;
     }
