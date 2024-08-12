@@ -164,8 +164,8 @@ class hittable_list : public hittable {
                 }
 
                 // RUN DBSCAN
-                DBSCAN ds (4, .5, meshObjects[o]);
-                ds.run();
+               
+
 
                 // if((d > .96 && d < 1) || d == .989949){
                 //     lights.push_back(meshObjects[o]->normals_origin[i]);

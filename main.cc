@@ -1,6 +1,7 @@
 #include "rtweekend.h"
 #include "color.h"
 #include "camera.h"
+// #include "dbscan.h"
 #include "hittable_list.h"
 #include "hittable_list_sphere.h"
 #include "material.h"
@@ -31,16 +32,16 @@ void finalscene(char* fname, float intensity) {
 
             if ((center - point3(4, 0.2, 0)).length() > 0.9) {
                 shared_ptr<material> sphere_material;
-
+   
                 if (choose_mat < 0.8) {
                     // diffuse
                     auto albedo = color::random() * color::random();
                     sphere_material = make_shared<lambertian>(albedo);
-                    //world.add(make_shared<sphere>(center, 0.2, sphere_material));
+                     //world.add(make_shared<sphere>(center, 0.2, sphere_material));
                     auto center2 = center + vec3(0, random_double(0,.5), 0);
                     world.add(make_shared<sphere>(center, center2, 0.2, sphere_material));
                 } else if (choose_mat < 0.95) {
-                    // metal
+                    // metal 
                     auto albedo = color::random(0.5, 1);
                     auto fuzz = random_double(0, 0.5);
                     sphere_material = make_shared<metal>(albedo, fuzz);
@@ -65,7 +66,7 @@ void finalscene(char* fname, float intensity) {
 
     world = hittable_list(make_shared<bvh_node>(world));
 
-    camera cam;
+    camera cam; 
 
     cam.aspect_ratio      = 16.0 / 9.0;
     cam.image_width       = 500;
@@ -136,7 +137,7 @@ void simple_light(char* fname, float intensity) {
     world.add(make_shared<sphere>(point3(0,7,0), 2, difflight));
     world.add(make_shared<quad>(point3(3,1,-2), vec3(2,0,0), vec3(0,2,0), difflight));
 
-    camera cam;
+    camera cam; 
 
     cam.aspect_ratio      = 16.0 / 9.0;
     cam.image_width       = 400;

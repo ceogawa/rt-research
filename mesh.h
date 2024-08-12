@@ -1,9 +1,10 @@
-#pragma once
+// #pragma once
+#ifndef MESH_H
+#define MESH_H
 
 #include "triangle.h"
 #include "tri.h"
 #include "tiny_obj_loader.h"
-#include "dbscan.h"
 #include <algorithm>
 
 // https://github.com/anandhotwani/obj_raytracer/blob/master/src/trianglemesh.cpp
@@ -123,7 +124,7 @@ class mesh : public hittable {
 
                 // cout << "normal: <" << n_center[0] << ", " << n_center[1] << ", " << n_center[2] << ">" << endl;
                 index_offset += fv;
-                
+
             }
         }
 
@@ -148,6 +149,9 @@ class mesh : public hittable {
         cout << "num_verts: " << pts.size() << endl;
         cout << endl;
         bbox = aabb(min_point, max_point);
+
+        DBSCAN ds = DBSCAN(4, .5, normals_origin, face_cluster_id);
+        ds.run();
 
         // Loops points
         for (size_t i=0; i<pts.size()/3; ++i) {
@@ -201,3 +205,4 @@ class mesh : public hittable {
 
 };
 
+#endif

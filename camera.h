@@ -36,7 +36,7 @@ class camera {
         outFile << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
         for (int j = 0; j < image_height; ++j) {
-            // std::clog << "\rScanlines remaining: " << (image_height - j) << ' ' << std::flush;
+            std::clog << "\rScanlines remaining: " << (image_height - j) << ' ' << std::flush;
             for (int i = 0; i < image_width; ++i) {
                 color pixel_color(0,0,0);
                 for (int s_j = 0; s_j < sqrt_spp; s_j++) {
