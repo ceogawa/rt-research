@@ -33,7 +33,7 @@ public:
     ~DBSCAN(){}
 
     
-    int run()
+    vector<int> run()
     {
         int clusterID = 1;
 
@@ -48,12 +48,10 @@ public:
                     clusterID++;
                 }
             }
-            
+            // cout << "num cluster id: " << clusterID << endl;
         }
 
-        cout << "num cluster id: " << clusterID << endl;
-
-        return 0;
+        return cluster_ids;
     }
 
     vector<int> calculateCluster(point3 point){

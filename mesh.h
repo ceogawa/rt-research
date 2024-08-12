@@ -152,7 +152,7 @@ class mesh : public hittable {
         bbox = aabb(min_point, max_point);
 
         DBSCAN ds = DBSCAN(22, .5, normals_origin, face_cluster_id);
-        ds.run();
+        face_cluster_id = ds.run();
 
         // for(std::vector<vec3>::size_type m = 0; m < ds.cluster_ids.size(); m++){
         //     cout << "id: " << ds.cluster_ids[m] << endl;
@@ -164,7 +164,12 @@ class mesh : public hittable {
         // }
 
         for(std::vector<vec3>::size_type m = 0; m < face_cluster_id.size(); m++){
-            cout << "id: " << face_cluster_id[m] << endl;
+            // cout << "id: " << face_cluster_id[m] << endl;
+            // switch(ds.cluster_ids[m]){
+            //     case(0){
+
+            //     }
+            // }
         }
 
         // Loops points

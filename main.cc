@@ -641,7 +641,7 @@ void test_scene(char* fname, float intensity){
     auto orange      = make_shared<lambertian>(color(0.7, 0.4, 0.3));
     auto purple      = make_shared<lambertian>(color(0.5, 0.3, 0.6));
     auto yellow      = make_shared<lambertian>(color(0.8, 0.6, 0.6));
-    auto white       = make_shared<lambertian>(color(0.8, 0.8, 0.8)); 
+    auto white       = make_shared<lambertian>(color(0.8, 0.8, 0.8));  
           
     // load meshes               
     auto lamp = make_shared<mesh>("lamp2.obj", yellow, vec3(0, 5.2, 1), 1.0, false);
