@@ -73,6 +73,8 @@
         "list": "cpp",
         "xhash": "cpp",
         "chrono": "cpp",
-        "complex": "cpp"
+        "complex": "cpp",
+        "ratio": "cpp",
+        "iomanip": "cpp"
     }
 }

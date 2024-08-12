@@ -151,7 +151,7 @@ class hittable_list : public hittable {
                 vec3 cam = unit_vector(lookAt - lookFrom);
 
                 double d = dot(n, cam);
-                double theta = acos(d); 
+                // double theta = acos(d); 
                 
 
                 // cout << endl;

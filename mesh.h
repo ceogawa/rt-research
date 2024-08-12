@@ -5,6 +5,7 @@
 #include "triangle.h"
 #include "tri.h"
 #include "tiny_obj_loader.h"
+#include "dbscan.h"
 #include <algorithm>
 
 // https://github.com/anandhotwani/obj_raytracer/blob/master/src/trianglemesh.cpp
@@ -120,7 +121,7 @@ class mesh : public hittable {
                 // initialize all face points to default cluster id 
 
                 // unclassified
-                face_cluster_id.push_back(-1);
+                face_cluster_id.push_back(UNCLASSIFIED);
 
                 // cout << "normal: <" << n_center[0] << ", " << n_center[1] << ", " << n_center[2] << ">" << endl;
                 index_offset += fv;
@@ -150,8 +151,12 @@ class mesh : public hittable {
         cout << endl;
         bbox = aabb(min_point, max_point);
 
-        DBSCAN ds = DBSCAN(4, .5, normals_origin, face_cluster_id);
+        DBSCAN ds = DBSCAN(50, .5, normals_origin, face_cluster_id);
         ds.run();
+
+        for(std::vector<vec3>::size_type m = 0; m < ds.cluster_ids.size(); m++){
+            // cout << "id: " << ds.cluster_ids[m] << endl;
+        }
 
         // Loops points
         for (size_t i=0; i<pts.size()/3; ++i) {

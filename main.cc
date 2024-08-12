@@ -156,8 +156,8 @@ void simple_light(char* fname, float intensity) {
 }
 
 void simple_light2(char* fname, float intensity) {
-    hittable_list world;
-
+    hittable_list world; 
+ 
     world.add(make_shared<sphere>(point3(0,-1000,0), 1000, make_shared<lambertian>(color(0.1, 0.2, 0.5))));
     world.add(make_shared<sphere>(point3(0,2,0), 2, make_shared<lambertian>(color(0.1, 0.2, 0.5))));
 
@@ -271,7 +271,7 @@ void cornell_box(char* fname, float intensity) {
     // point3 lookAt = point3(278, 278, 100);
    
     // k num of clusters
-    int k = 4; 
+    int k = 4;  
     cms = world.layer(lookFrom, lookAt, k, 2); 
 
     //  world = hittable_list(make_shared<bvh_node>(world));
@@ -619,10 +619,10 @@ void beach(char* fname, float intensity) {
     // cam.background        = color(0.70, 0.80, 1.00);
 
     cam.vfov     = 20;
-    cam.lookfrom = lookFrom;
+    cam.lookfrom = lookFrom; 
     cam.lookat   = lookAt;
     cam.vup      = vec3(0,1,0);
-
+ 
     cam.defocus_angle = 0;
 
     cam.render(world, fname);
@@ -645,7 +645,7 @@ void test_scene(char* fname, float intensity){
          
     // load meshes             
     auto lamp = make_shared<mesh>("lamp2.obj", yellow, vec3(0, 5.2, 1), 1.0, false);
-    auto cube = make_shared<mesh>("cube5.obj", green, vec3(0, 3, 0), 3.0, false);
+    // auto cube = make_shared<mesh>("cube5.obj", green, vec3(0, 3, 0), 3.0, false);
  
 
     world.add(make_shared<sphere>(point3(0, 70, -20), 40, firelight));
@@ -655,10 +655,10 @@ void test_scene(char* fname, float intensity){
     // for(size_t i = 0; i < lamp->normals_origin.size(); i++){
     //     if(i%2){
     //         world.add(make_shared<sphere>(lamp->normals_origin[i], .2, yellow));
-    //     }  
+    //     }   
     // }    
           
-    world.add(lamp);    
+    world.add(lamp);     
     // world.add(cube);          
      
     point3 lookFrom = point3(0,24,-65); 
@@ -700,7 +700,7 @@ void test_scene(char* fname, float intensity){
     cam.render(world, fname);
 }
 
-void indoor_scene(char* fname, float intensity) {
+void indoor_scene(char* fname, float intensity) { 
     hittable_list world;
     std::vector<vec3> cms;
        
@@ -780,8 +780,8 @@ void indoor_scene(char* fname, float intensity) {
     // cam.background        = color(0.70, 0.80, 1.00);
 
     cam.vfov     = 20; 
-    cam.lookfrom = lookFrom;
-    cam.lookat   = lookAt;
+    cam.lookfrom = lookFrom;   
+    cam.lookat   = lookAt;    
     cam.vup      = vec3(0,1,0);
 
     cam.defocus_angle = 0; 
@@ -799,9 +799,9 @@ int main(int argc, char** argv) {
         std::cerr << "Intensity must be a floating point value between 0 and 1." << std::endl;
     }
 
-    srand(time(NULL));
- 
-    switch (10) {
+    srand(time(NULL)); 
+   
+    switch (11) {
         case 1:  finalscene(argv[1], intensity); break;
         case 2:  simple_light2(argv[1], intensity); break;
         case 3:  quads(argv[1], intensity); break;
