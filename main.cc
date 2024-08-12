@@ -641,7 +641,7 @@ void test_scene(char* fname, float intensity){
     auto orange      = make_shared<lambertian>(color(0.7, 0.4, 0.3));
     auto purple      = make_shared<lambertian>(color(0.5, 0.3, 0.6));
     auto yellow      = make_shared<lambertian>(color(0.8, 0.6, 0.6));
-    auto white       = make_shared<lambertian>(color(0.8, 0.8, 0.8));  
+    auto white       = make_shared<lambertian>(color(0.8, 0.8, 0.8));    
           
     // load meshes               
     auto lamp = make_shared<mesh>("lamp2.obj", yellow, vec3(0, 5.2, 1), 1.0, false);
@@ -742,7 +742,7 @@ void indoor_scene(char* fname, float intensity) {
     world.add(lamp);              
     world.add(sofa);       
     world.add(vase);            
-    world.add(cube);      
+    world.add(cube);         
      
     point3 lookFrom = point3(0,13,-70); 
     point3 lookAt   = point3(0,3,0);
@@ -764,11 +764,11 @@ void indoor_scene(char* fname, float intensity) {
         extraLights.push_back(make_shared<point>(cm, intensity, difflight, lookFrom)); 
     }
     // for(std::shared_ptr<sphere> light : extraLights) {
-    for(std::shared_ptr<point> light : extraLights) { 
+    for(std::shared_ptr<point> light : extraLights) {  
         world.add(light); 
     }         
              
-    world = hittable_list(make_shared<bvh_node>(world));
+    world = hittable_list(make_shared<bvh_node>(world)); 
 
     camera cam;
 
@@ -781,7 +781,7 @@ void indoor_scene(char* fname, float intensity) {
 
     cam.vfov     = 20; 
     cam.lookfrom = lookFrom;   
-    cam.lookat   = lookAt;    
+    cam.lookat   = lookAt;     
     cam.vup      = vec3(0,1,0);
 
     cam.defocus_angle = 0; 
@@ -790,7 +790,7 @@ void indoor_scene(char* fname, float intensity) {
 }
 
 int main(int argc, char** argv) {
-    float intensity;
+    float intensity; 
     if (argc !=3) {
         std::cerr << "Usage: ./raytracer filename.ppm intensity" << std::endl;
     }
@@ -857,7 +857,7 @@ int main(int argc, char** argv) {
 //     cam.aspect_ratio      = 1.0;
 //     cam.image_width       = 200;
 //     cam.samples_per_pixel = 300;
-//     cam.max_depth         = 30;
+//     cam.max_depth         = 30; 
 //     cam.background        = color(0,0,0);
 
 //     cam.vfov     = 40;

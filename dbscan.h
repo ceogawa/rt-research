@@ -24,7 +24,7 @@
 
 class DBSCAN {
 public:    
-    DBSCAN(unsigned int minPts, float eps, vector<point3> face_points, vector<int> clusterids){  
+    DBSCAN(unsigned int minPts, float eps, vector<point3> face_points, shared_ptr<vector<int>> clusterids){  
         m_minPoints = minPts;
         m_epsilon = eps;
         m_points = face_points;
@@ -33,7 +33,7 @@ public:
     ~DBSCAN(){}
 
     
-    vector<int> run()
+    int run()
     {
         int clusterID = 1;
 
@@ -42,7 +42,7 @@ public:
             // std::clog << "\rNORMAL " << i << ' ' << std::flush;
             // cout << i << endl;
 
-            if (cluster_ids[i] == UNCLASSIFIED){
+            if ((*cluster_ids)[i] == UNCLASSIFIED){
                 if (expandCluster(i, clusterID)){
                     // cluster_ids[i]++;
                     clusterID++;
@@ -51,7 +51,7 @@ public:
             // cout << "num cluster id: " << clusterID << endl;
         }
 
-        return cluster_ids;
+        return 0;
     }
 
     vector<int> calculateCluster(point3 point){
@@ -84,16 +84,18 @@ public:
             // cout << "TRUE" << endl;
             for(std::vector<vec3>::size_type i = 0; i < clusterSeeds.size(); i++)
             {
-                cluster_ids[i] = clusterID;
+                
+                (*cluster_ids)[i] = clusterID;
+                cout << "lets check mid alg: " << (*cluster_ids)[i] << endl;
                 vector<int> clusterNeighbors = calculateCluster(m_points[clusterSeeds[i]]);
 
                 if (clusterNeighbors.size() >= m_minPoints)
                 {
                     for(std::vector<vec3>::size_type k = 0; k < clusterNeighbors.size(); k++){
-                        if(cluster_ids[k] == UNCLASSIFIED){
+                        if((*cluster_ids)[k] == UNCLASSIFIED){
                             clusterSeeds.push_back(k);
                         }
-                        cluster_ids[k] = clusterID;
+                        (*cluster_ids)[k] = clusterID;
                     }
                 }
             }
@@ -112,8 +114,8 @@ public:
     
     void changeMaterial(){
 
-        for(std::vector<vec3>::size_type i = 0; i < cluster_ids.size(); i++){
-            cout << cluster_ids[i] << endl;
+        for(std::vector<vec3>::size_type i = 0; i < cluster_ids->size(); i++){
+            cout << (*cluster_ids)[i] << endl;
         }
         
     }
@@ -125,7 +127,7 @@ public:
 public:
     // shared_ptr<mesh> m;
     vector<point3> m_points;
-    vector<int> cluster_ids;
+    shared_ptr<vector<int>> cluster_ids;
     
     
 private:    

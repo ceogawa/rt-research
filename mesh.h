@@ -61,6 +61,7 @@ class mesh : public hittable {
         point3 max_point(-std::numeric_limits<float>::max(), -std::numeric_limits<float>::max(), -std::numeric_limits<float>::max());
 
         // Loop over shapes
+        face_cluster_id = make_shared<vector<int>>();
 
         cout << "shapes.size(): " << shapes.size() << endl;
 
@@ -121,7 +122,9 @@ class mesh : public hittable {
                 // initialize all face points to default cluster id 
 
                 // unclassified
-                face_cluster_id.push_back(UNCLASSIFIED);
+                // cout << "before pushback" << endl;
+                face_cluster_id->push_back(-1);
+                // cout << "after pushback" << endl;
 
                 // cout << "normal: <" << n_center[0] << ", " << n_center[1] << ", " << n_center[2] << ">" << endl;
                 index_offset += fv;
@@ -151,8 +154,11 @@ class mesh : public hittable {
         cout << endl;
         bbox = aabb(min_point, max_point);
 
+        // cout << "before dbscan" << endl;
+
         DBSCAN ds = DBSCAN(22, .5, normals_origin, face_cluster_id);
-        face_cluster_id = ds.run();
+        // cout << "after dbscan init" << endl;
+        ds.run();
 
         // for(std::vector<vec3>::size_type m = 0; m < ds.cluster_ids.size(); m++){
         //     cout << "id: " << ds.cluster_ids[m] << endl;
@@ -163,8 +169,8 @@ class mesh : public hittable {
         //     // }
         // }
 
-        for(std::vector<vec3>::size_type m = 0; m < face_cluster_id.size(); m++){
-            // cout << "id: " << face_cluster_id[m] << endl;
+        for(std::vector<vec3>::size_type m = 0; m < face_cluster_id->size(); m++){
+            cout << "id: " << (*face_cluster_id)[m] << endl;
             // switch(ds.cluster_ids[m]){
             //     case(0){
 
@@ -185,7 +191,7 @@ class mesh : public hittable {
         for(size_t j = 0; j < normals_origin.size(); j++){
 
             // triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], make_shared<lambertian>(color((ds.cluster_ids[j]*2)/255, ))));
-            switch(ds.cluster_ids[j]){
+            switch((*face_cluster_id)[j]){
                 case(0):
                     triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], brown));
                 case(1):
@@ -251,7 +257,7 @@ class mesh : public hittable {
         aabb bbox;
         vector<vec3> normals;
         vector<point3> normals_origin;
-        vector<int> face_cluster_id;
+        shared_ptr<vector<int>> face_cluster_id;
         bool addLight;
 
 };
