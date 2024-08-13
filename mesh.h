@@ -1,8 +1,11 @@
-#pragma once
+// #pragma once
+#ifndef MESH_H
+#define MESH_H
 
 #include "triangle.h"
 #include "tri.h"
 #include "tiny_obj_loader.h"
+#include "dbscan.h"
 #include <algorithm>
 
 // https://github.com/anandhotwani/obj_raytracer/blob/master/src/trianglemesh.cpp
@@ -58,6 +61,7 @@ class mesh : public hittable {
         point3 max_point(-std::numeric_limits<float>::max(), -std::numeric_limits<float>::max(), -std::numeric_limits<float>::max());
 
         // Loop over shapes
+        face_cluster_id = make_shared<vector<int>>();
 
         cout << "shapes.size(): " << shapes.size() << endl;
 
@@ -108,7 +112,6 @@ class mesh : public hittable {
                 //     normals_origin.push_back(ns[0]);
                 // }
                 vec3 n_center;
-                // if(!(find(normals.begin(), normals.end(), n) != normals.end())){
                 normals.push_back(n);
 
                 n_center[0] = (ns[0][0] + ns[1][0] + ns[2][0])/3.0;// + translate[0];
@@ -116,10 +119,16 @@ class mesh : public hittable {
                 n_center[2] = (ns[0][2] + ns[1][2] + ns[2][2])/3.0;// + translate[2];
                 
                 normals_origin.push_back(n_center);
-                // cout << "normal: <" << n_center[0] << ", " << n_center[1] << ", " << n_center[2] << ">" << endl;
-                // }
+                // initialize all face points to default cluster id 
 
+                // unclassified
+                // cout << "before pushback" << endl;
+                face_cluster_id->push_back(-1);
+                // cout << "after pushback" << endl;
+
+                // cout << "normal: <" << n_center[0] << ", " << n_center[1] << ", " << n_center[2] << ">" << endl;
                 index_offset += fv;
+
             }
         }
 
@@ -145,11 +154,63 @@ class mesh : public hittable {
         cout << endl;
         bbox = aabb(min_point, max_point);
 
+        // table
+        // DBSCAN ds = DBSCAN(20, 1.6, normals_origin, face_cluster_id);
+
+        //lamp 
+        DBSCAN ds = DBSCAN(20, 1.95, normals_origin, face_cluster_id);
+
+        ds.run();
+
         // Loops points
-        for (size_t i=0; i<pts.size()/3; ++i) {
-            triangles.push_back(std::make_shared<triangle>(pts[i*3], pts[i*3+1], pts[i*3+2], m));
-            // triangles.push_back(std::make_shared<tri>(pts[i*3], pts[i*3+1], pts[i*3+2], m));
-        }        
+
+        auto blue       = make_shared<lambertian>(color(0.2, 0.2, 0.7));
+
+        for(size_t j = 0; j < pts.size()/3; j++){
+            int id = (*face_cluster_id)[j];
+
+            float r = static_cast<float>((id * 100) % 256) / 255.0f; 
+            float g = static_cast<float>((id * 50) % 256) / 255.0f; 
+            float b = static_cast<float>((id * 180) % 256) / 255.0f;
+
+            auto col = make_shared<lambertian>(color(r,g,b));
+            if(id < 0){
+                triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], blue));
+            }
+            else{
+                triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], col));
+            }
+            // switch((*face_cluster_id)[j]){
+            //     case(0):
+            //         triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], green));
+            //         break;
+            //     case(1):
+            //         triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], brown));
+            //         break;
+            //     case(2):
+            //         triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], orange));
+            //         break;
+            //     case(3):
+            //         triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], purple));
+            //         break;
+            //     case(4):
+            //         triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], yellow));
+            //         break;
+            //     case(5):
+            //         triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], white));
+            //         break;
+            //     default:
+            //         triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], blue));
+            //         break;
+            // }
+   
+        }
+            
+        // for (size_t i=0; i<pts.size()/3; ++i) {
+            
+        //     triangles.push_back(std::make_shared<triangle>(pts[i*3], pts[i*3+1], pts[i*3+2], blue));
+        //     // triangles.push_back(std::make_shared<tri>(pts[i*3], pts[i*3+1], pts[i*3+2], m));
+        // }        
         shapes.clear();
         materials.clear();
     }
@@ -192,7 +253,9 @@ class mesh : public hittable {
         aabb bbox;
         vector<vec3> normals;
         vector<point3> normals_origin;
+        shared_ptr<vector<int>> face_cluster_id;
         bool addLight;
 
 };
 
+#endif

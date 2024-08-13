@@ -7,6 +7,7 @@
 #include "mesh.h"
 #include "triangle.h"
 #include "cluster.h"
+#include "dbscan.h"
 
 #include <memory>
 #include <vector>
@@ -150,7 +151,7 @@ class hittable_list : public hittable {
                 vec3 cam = unit_vector(lookAt - lookFrom);
 
                 double d = dot(n, cam);
-                double theta = acos(d); 
+                // double theta = acos(d); 
                 
 
                 // cout << endl;
@@ -161,6 +162,10 @@ class hittable_list : public hittable {
                 if((d <= -.97 && d >= -1.0) && (meshObjects[o]->normals_origin[i][2] >= c[2])){
                     lights.push_back(meshObjects[o]->normals_origin[i]);
                 }
+
+                // RUN DBSCAN
+               
+
 
                 // if((d > .96 && d < 1) || d == .989949){
                 //     lights.push_back(meshObjects[o]->normals_origin[i]);
