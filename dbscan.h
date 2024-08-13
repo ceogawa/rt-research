@@ -11,9 +11,9 @@
 #define UNCLASSIFIED -1
 // #define CORE_POINT 1
 // #define BORDER_POINT 2
-// #define NOISE -2
+#define NOISE -3
 #define SUCCESS 0
-#define FAILURE -3
+// #define FAILURE -2
 
 // #define FAILURE 0
 // #define SUCCESS 1
@@ -45,25 +45,26 @@ public:
             if ((*cluster_ids)[i] == UNCLASSIFIED){
                 if (expandCluster(i, clusterID)){
                     // cluster_ids[i]++;
-                    clusterID++;
+                    clusterID++; 
                 }
             }
-            // cout << "num cluster id: " << clusterID << endl;
+           
         }
+        cout << "total num cluster: " << clusterID << endl;
 
+        for (std::vector<vec3>::size_type j = 0; j < cluster_ids->size(); j+=5){
+            cout << "cluster id: " << (*cluster_ids)[j] << endl;
+        }
         return 0;
     }
 
     vector<int> calculateCluster(point3 point){
         vector<int> clusterIndex;
 
-        int index = 0;
-
         for (std::vector<vec3>::size_type i = 0; i < m_points.size(); i++){
             if ((calculateDistance(point, m_points[i]) <= m_epsilon) && (!(point == m_points[i]))){
-                clusterIndex.push_back(index);
+                clusterIndex.push_back(i);
             }
-            index++;
         } 
         return clusterIndex;
 }   
@@ -74,28 +75,31 @@ public:
 
         vector<int> clusterSeeds = calculateCluster(point);
 
+        (*cluster_ids)[i] = clusterID;
+
         if (clusterSeeds.size() < m_minPoints){
-            // cluster_ids[i] = NOISE;
+            // (*cluster_ids)[i] = NOISE;
             return false;
             // cout << "FALSE" << endl;
         }
         else
         {
             // cout << "TRUE" << endl;
-            for(std::vector<vec3>::size_type i = 0; i < clusterSeeds.size(); i++)
+            for(std::vector<vec3>::size_type j = 0; j < clusterSeeds.size(); j++)
             {
                 
-                (*cluster_ids)[i] = clusterID;
-                cout << "lets check mid alg: " << (*cluster_ids)[i] << endl;
-                vector<int> clusterNeighbors = calculateCluster(m_points[clusterSeeds[i]]);
+                (*cluster_ids)[clusterSeeds[j]] = clusterID;
+                // cout << "lets check mid alg: " << (*cluster_ids)[i] << endl;
+                vector<int> clusterNeighbors = calculateCluster(m_points[clusterSeeds[j]]);
 
                 if (clusterNeighbors.size() >= m_minPoints)
                 {
                     for(std::vector<vec3>::size_type k = 0; k < clusterNeighbors.size(); k++){
-                        if((*cluster_ids)[k] == UNCLASSIFIED){
-                            clusterSeeds.push_back(k);
+                        if((*cluster_ids)[clusterNeighbors[k]] == UNCLASSIFIED){
+                            clusterSeeds.push_back(clusterNeighbors[k]);
+                            (*cluster_ids)[clusterNeighbors[k]] = clusterID;
                         }
-                        (*cluster_ids)[k] = clusterID;
+                        
                     }
                 }
             }
