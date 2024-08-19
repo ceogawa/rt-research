@@ -158,6 +158,7 @@ class mesh : public hittable {
         // DBSCAN ds = DBSCAN(20, 1.6, normals_origin, face_cluster_id);
 
         //lamp 
+        
         auto clusters = dbscan(normals_origin, 1.95, 20);
 
         auto flat_clusters = std::vector<size_t>(normals_origin->size());

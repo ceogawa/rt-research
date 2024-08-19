@@ -16,8 +16,11 @@ inline auto get_pt(const point3& p, std::size_t dim)
     return p[2];
 }
 
+struct point_adapted{
+    float x, y, z;
+};
 
-template<typename Point>
+// template<typename Point>
 struct adaptor
 {
     shared_ptr<std::vector<point3>> points;
@@ -27,14 +30,14 @@ struct adaptor
     //inline const Derived& derived() const { return obj; }
 
     // Must return the number of data points
-    inline std::size_t kdtree_get_point_count() const { return points.size(); }
+    inline std::size_t kdtree_get_point_count() const { return points->size(); }
 
     // Returns the dim'th component of the idx'th point in the class:
     // Since this is inlined and the "dim" argument is typically an immediate value, the
     //  "if/else's" are actually solved at compile time.
     inline float kdtree_get_pt(const std::size_t idx, const std::size_t dim) const
     {
-        return get_pt(points[idx], dim);
+        return get_pt(points->at(idx), dim);
     }
 
     // Optional bounding-box computation: return false to default to a standard bbox computation loop.
@@ -46,7 +49,10 @@ struct adaptor
     auto const * elem_ptr(const std::size_t idx) const
     {
         // return &points[idx].x;
-        return &points[idx][0];
+        // point_adapted p = {points->at(idx)[0], points->at(idx)[1], points->at(idx)[2]};
+        // return &p;
+
+        return &(*points)[idx];
     }
 };
 
@@ -60,15 +66,14 @@ auto sort_clusters(std::vector<std::vector<size_t>>& clusters)
     }
 }
 
-
-template<int n_cols, typename Adaptor>
-auto dbscan(const Adaptor& adapt, float eps, int min_pts)
+// template<int n_cols, typename Adaptor>
+auto dbscan(const adaptor& adapt, float eps, int min_pts)
 {
     eps *= eps;
     using namespace nanoflann;
-    using  my_kd_tree_t = KDTreeSingleIndexAdaptor<L2_Simple_Adaptor<float, decltype(adapt)>, decltype(adapt), n_cols>;
+    using  my_kd_tree_t = KDTreeSingleIndexAdaptor<L2_Simple_Adaptor<float, decltype(adapt)>, decltype(adapt), 3>;
 
-    auto index = my_kd_tree_t(n_cols, adapt, KDTreeSingleIndexAdaptorParams(10));
+    auto index = my_kd_tree_t(3, adapt, KDTreeSingleIndexAdaptorParams(10));
     index.buildIndex();
 
     const auto n_points = adapt.kdtree_get_point_count();
@@ -108,9 +113,9 @@ auto dbscan(const Adaptor& adapt, float eps, int min_pts)
     return clusters;
 }
 
-std::vector<std::vector<size_t>> dbscan(shared_ptr<std::vector<point3>> data, float eps, int min_pts)
-{
-    const auto adapt = adaptor<shared_ptr<std::vector<point3>>>(data);
+// std::vector<std::vector<size_t>> dbscan(shared_ptr<std::vector<point3>> data, float eps, int min_pts)
+// {
+//     const auto adapt = adaptor<shared_ptr<std::vector<point3>>>(data);
 
-    return dbscan<3>(adapt, eps, min_pts);
-}
+//     return dbscan<3>(adapt, eps, min_pts);
+// }

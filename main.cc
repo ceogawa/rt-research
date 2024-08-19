@@ -804,7 +804,7 @@ void cube(char* fname, float intensity){
     // point3 lookFrom = point3(0,24,-65); 
     point3 lookFrom = point3(15,24,-65); 
     point3 lookAt   = point3(0,5,0);
-   
+    
     cms = world.layer(lookFrom, lookAt, 3, 0); 
   
     std::cout << "len: " << cms.size() << std::endl;

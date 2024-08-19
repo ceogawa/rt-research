@@ -144,7 +144,7 @@ class hittable_list : public hittable {
             point3 currMin = currBbox.get_min();
 
             cout << "num normals for mesh: " << meshObjects[o]->normals.size() << endl;
-            cout << "num normal points of origin for mesh: " << meshObjects[o]->normals_origin.size() << endl;
+            cout << "num normal points of origin for mesh: " << meshObjects[o]->normals_origin->size() << endl;
             for(size_t i=0; i < meshObjects[o]->normals.size(); i++){
 
                 vec3 n = unit_vector(meshObjects[o]->normals[i]);
@@ -159,8 +159,8 @@ class hittable_list : public hittable {
                 // if(d == 0.0){    
                 //     lights.push_back(meshObjects[o]->normals_origin[i]);
                 // }
-                if((d <= -.97 && d >= -1.0) && (meshObjects[o]->normals_origin[i][2] >= c[2])){
-                    lights.push_back(meshObjects[o]->normals_origin[i]);
+                if((d <= -.97 && d >= -1.0) && (meshObjects[o]->normals_origin->at(i)[2] >= c[2])){
+                    lights.push_back(meshObjects[o]->normals_origin->at(i));
                 }
 
                 // RUN DBSCAN
