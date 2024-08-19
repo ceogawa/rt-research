@@ -5,7 +5,7 @@
 #include "triangle.h"
 #include "tri.h"
 #include "tiny_obj_loader.h"
-#include "dbscan.h"
+#include "dbscan3.h"
 #include <algorithm>
 
 // https://github.com/anandhotwani/obj_raytracer/blob/master/src/trianglemesh.cpp
@@ -29,7 +29,7 @@ class mesh : public hittable {
         std::string objname = inputfile.substr(pos+1, inputfile.length());
 
         normals.clear();
-        normals_origin.clear();
+        normals_origin->clear();
 
         tinyobj::attrib_t attributes;
         std::vector<tinyobj::shape_t> shapes;
@@ -118,7 +118,7 @@ class mesh : public hittable {
                 n_center[1] = (ns[0][1] + ns[1][1] + ns[2][1])/3.0;// + translate[1];
                 n_center[2] = (ns[0][2] + ns[1][2] + ns[2][2])/3.0;// + translate[2];
                 
-                normals_origin.push_back(n_center);
+                normals_origin->push_back(n_center);
                 // initialize all face points to default cluster id 
 
                 // unclassified
@@ -158,16 +158,33 @@ class mesh : public hittable {
         // DBSCAN ds = DBSCAN(20, 1.6, normals_origin, face_cluster_id);
 
         //lamp 
-        DBSCAN ds = DBSCAN(20, 1.95, normals_origin, face_cluster_id);
+        auto clusters = dbscan(normals_origin, 1.95, 20);
 
-        ds.run();
+        auto flat_clusters = std::vector<size_t>(normals_origin->size());
+
+        for(size_t i = 0; i < clusters.size(); i++)
+        {
+            for(auto p: clusters[i])
+            {
+                flat_clusters[p] = i + 1;
+            }
+        }
+
+        for(size_t i = 0; i < normals_origin->size(); i++)
+        {
+            std::cout << normals_origin->at(i)[0] << ',' << normals_origin->at(i)[1] << ',' << normals_origin->at(i)[2] << ',' << flat_clusters[i] << '\n';
+        }
+        // DBSCAN ds = DBSCAN(20, 1.95, normals_origin, face_cluster_id);
+
+        // ds.run();
 
         // Loops points
 
         auto blue       = make_shared<lambertian>(color(0.2, 0.2, 0.7));
 
         for(size_t j = 0; j < pts.size()/3; j++){
-            int id = (*face_cluster_id)[j];
+            // int id = (*face_cluster_id)[j];
+            int id = -1;
 
             float r = static_cast<float>((id * 100) % 256) / 255.0f; 
             float g = static_cast<float>((id * 50) % 256) / 255.0f; 
@@ -252,7 +269,7 @@ class mesh : public hittable {
     public:
         aabb bbox;
         vector<vec3> normals;
-        vector<point3> normals_origin;
+        shared_ptr<vector<point3>> normals_origin;
         shared_ptr<vector<int>> face_cluster_id;
         bool addLight;
 
