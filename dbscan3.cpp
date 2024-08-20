@@ -9,22 +9,24 @@
 
 // And this is the "dataset to kd-tree" adaptor class:
 
-inline auto get_pt(const point3& p, std::size_t dim)
-{
-    if(dim == 0) return p[0];
-    if(dim == 1) return p[1];
-    return p[2];
-}
-
 struct point_adapted{
     float x, y, z;
 };
 
+inline auto get_pt(const point_adapted& p, std::size_t dim)
+{
+    if(dim == 0) return p.x;
+    if(dim == 1) return p.y;
+    return p.z;
+}
+
 // template<typename Point>
 struct adaptor
 {
-    shared_ptr<std::vector<point3>> points;
-    adaptor(shared_ptr<std::vector<point3>> points) : points(points) { }
+    // shared_ptr<std::vector<point3>> points;
+    // adaptor(shared_ptr<std::vector<point3>> points) : points(points) { }
+    std::shared_ptr<std::vector<point_adapted>> points;
+    adaptor(std::shared_ptr<std::vector<point_adapted>> points) : points(points) { }
 
     /// CRTP helper method
     //inline const Derived& derived() const { return obj; }

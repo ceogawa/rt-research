@@ -808,7 +808,7 @@ void cube(char* fname, float intensity){
     cms = world.layer(lookFrom, lookAt, 3, 0); 
   
     std::cout << "len: " << cms.size() << std::endl;
-    
+          
     std::vector<std::shared_ptr<point>> extraLights;
     for(vec3 cm : cms) {
         // extraLights.push_back(make_shared<sphere>(cm, intensity, difflight));
@@ -877,7 +877,7 @@ void indoor_scene(char* fname, float intensity) {
     //     if(i%2){
     //         world.add(make_shared<sp here>(lamp- >normals_origin[i], .5, yellow));
     //     }  
-    // }    
+    // }     
           
     world.add(table);   
     world.add(lamp);              
@@ -939,10 +939,10 @@ int main(int argc, char** argv) {
     if ((intensity < 0) || (intensity > 1)) {
         std::cerr << "Intensity must be a floating point value between 0 and 1." << std::endl;
     }  
-  
-    srand(time(NULL)); 
-    
-    switch (13) {
+     
+    srand(time(NULL));   
+         
+    switch (12) {
         case 1:  finalscene(argv[1], intensity); break;
         case 2:  simple_light2(argv[1], intensity); break;
         case 3:  quads(argv[1], intensity); break;
