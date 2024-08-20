@@ -8,10 +8,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <chrono>
-
-using namespace std;
-using namespace std::chrono;
 
 class camera {
   public:
@@ -42,11 +38,7 @@ class camera {
                 for (int s_j = 0; s_j < sqrt_spp; s_j++) {
                     for (int s_i = 0; s_i < sqrt_spp; s_i++) {
                         ray r = get_ray(i, j, s_i, s_j);
-
-                        auto pixelcolor_old = steady_clock::now();
                         pixel_color += ray_color(r, max_depth, world);
-                        auto pixelcolor_dur = steady_clock::now() - pixelcolor_old;
-                        // cout << "pxl color: " << duration_cast<microseconds>(pixelcolor_dur).count() << endl;
                     }
                 }
                 write_color(outFile, pixel_color, samples_per_pixel);
@@ -122,20 +114,12 @@ class camera {
             return color(0,0,0);
 
         // If the ray hits nothing, return the background color.
-        auto old = steady_clock::now();          
         if (!world.hit(r, interval(0.001, infinity), rec))
             return background;
 
-        auto dur = steady_clock::now() - old;
-        // cout << "check if ray hit: " << duration_cast<microseconds>(dur).count() << endl;
-
         ray scattered;
         color attenuation;
-
-        old = steady_clock::now();   
         color color_from_emission = rec.mat->emitted(rec.u, rec.v, rec.p);
-        dur = steady_clock::now() - old;
-        // cout << "emitted light: " << duration_cast<microseconds>(dur).count() << endl;
 
         if (!rec.mat->scatter(r, rec, attenuation, scattered)) {
             // std::cout << "color: (" << color_from_emission[0] << ", " << color_from_emission[1] << ", " << color_from_emission[2] << ")" << std::endl;
