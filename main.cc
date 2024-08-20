@@ -645,7 +645,7 @@ void table_scene(char* fname, float intensity){
           
     // load meshes               
     // auto lamp = make_shared<mesh>("lamp2.obj", yellow, vec3(0, 5.2, 1), 1.0, false);
-     auto table = make_shared<mesh>("coffeetable4.obj", brown, vec3(0, 5, 0), 1.1, false);
+     auto table = make_shared<mesh>("coffeetable4.obj", brown, vec3(0, 5, 0), 4.1, false);
  
     world.add(make_shared<sphere>(point3(0, 70, -50), 30, firelight));
     // world.add(make_shared<quad>(point3(-6,0,-10), vec3(12,0,0), vec3(0,0,25), white));
@@ -654,7 +654,7 @@ void table_scene(char* fname, float intensity){
     world.add(table);     
     // world.add(cube);          
      
-    point3 lookFrom = point3(0,19,-50);  
+    point3 lookFrom = point3(10,60,-150);  
     point3 lookAt   = point3(0,5,0);
    
     cms = world.layer(lookFrom, lookAt, 3, 0); 
@@ -677,9 +677,9 @@ void table_scene(char* fname, float intensity){
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 300; // 400
-    cam.samples_per_pixel = 400; // 100
-    cam.max_depth         = 40;
+    cam.image_width       = 200; // 400
+    cam.samples_per_pixel = 100; // 100
+    cam.max_depth         = 20;
     cam.background        = color(0,0,0); 
     // cam.background        = color(0.70, 0.80, 1.00);
 
@@ -957,7 +957,7 @@ int main(int argc, char** argv) {
         case 12: table_scene(argv[1], intensity); break; 
         case 13: cube(argv[1], intensity); break;
     }
-}
+} 
 
 // void cornell_box(char* fname, float intensity) {
 //     hittable_list world;

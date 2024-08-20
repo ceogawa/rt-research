@@ -210,7 +210,11 @@ class mesh : public hittable {
 
         // Loops points
 
-        auto blue       = make_shared<lambertian>(color(0.2, 0.2, 0.7));
+        auto blue       = make_shared<lambertian>(color(0.1, 0.1, 0.7));
+         auto red       = make_shared<lambertian>(color(0.9, 0.1, 0.1));
+          auto green       = make_shared<lambertian>(color(0.2, 0.9, 0.2));
+           auto yellow       = make_shared<lambertian>(color(0.5, 0.3, 0.05));
+            auto white       = make_shared<lambertian>(color(1, 1, 1));
         cout << "flat clusters size: " << flat_clusters.size() << endl;
         cout << "num pts: " << normals_origin->size() << endl;
 
@@ -225,12 +229,24 @@ class mesh : public hittable {
             float b = static_cast<float>((id * 180) % 256) / 255.0f;
 
             auto col = make_shared<lambertian>(color(r,g,b));
-            // if(id < 0){
-                // triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], blue));
-            // }
-            // else{
-                // triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], col));
-            // }
+            if(id < 0){
+                triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], blue));
+            }
+            else if(id == 0){
+                triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], red));
+            }
+            else if(id == 1){
+                triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], green));
+            }
+            else if(id == 2){
+                triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], yellow));
+            }
+            else if(id == 3){
+                triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], white));
+            }
+            else{
+                triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], col));
+            }
             // switch((*face_cluster_id)[j]){
             //     case(0):
             //         triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], green));
@@ -259,7 +275,7 @@ class mesh : public hittable {
             
         for (size_t i=0; i<pts.size()/3; ++i) {
             
-            triangles.push_back(std::make_shared<triangle>(pts[i*3], pts[i*3+1], pts[i*3+2], blue));
+            // triangles.push_back(std::make_shared<triangle>(pts[i*3], pts[i*3+1], pts[i*3+2], blue));
             // triangles.push_back(std::make_shared<tri>(pts[i*3], pts[i*3+1], pts[i*3+2], m));
         }        
         shapes.clear();
