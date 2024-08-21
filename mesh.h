@@ -3,6 +3,10 @@
 #include "triangle.h"
 #include "tri.h"
 #include "tiny_obj_loader.h"
+<<<<<<< HEAD
+=======
+#include "dbscan3_1.h"
+>>>>>>> ad346749cc5a8e2bb92d59d8a119897b99d635c9
 #include <algorithm>
 
 // https://github.com/anandhotwani/obj_raytracer/blob/master/src/trianglemesh.cpp
@@ -13,10 +17,17 @@ class mesh : public hittable {
   public:
     std::vector<std::shared_ptr<triangle>> triangles;
     std::shared_ptr<material> mat;
+    aabb bbox;
+    vector<vec3> normals;
+    shared_ptr<vector<point3>> normals_origin;
+    shared_ptr<vector<int>> face_cluster_id;
+    bool addLight;
     // std::vector<std::shared_ptr<tri>> triangles;
 
     mesh(const char* path, shared_ptr<material> m, vec3 translate, float scale, bool add)
     {
+
+        cout << "mesh init beginning" << endl;
         addLight = add;
         mat = m;
         // models//skeleton.obj
@@ -26,7 +37,11 @@ class mesh : public hittable {
         std::string objname = inputfile.substr(pos+1, inputfile.length());
 
         normals.clear();
-        normals_origin.clear();
+        cout << "before clearing normals origin" << endl;
+
+        normals_origin = make_shared<std::vector<point3>>();
+        normals_origin->clear();
+        cout << "after clearing normals origin" << endl;
 
         tinyobj::attrib_t attributes;
         std::vector<tinyobj::shape_t> shapes;
@@ -39,6 +54,7 @@ class mesh : public hittable {
         // cout << "objname: " << objname << endl;
 
         // after changing "file path" it loaded
+        cout << "before tinyobj loading" << endl;
         bool ret = tinyobj::LoadObj(&attributes, &shapes, &materials, &warnings, &errors, inputfile.c_str(), "");
         // cout << "after load obj" << endl;
         cout << inputfile.c_str() << endl;
@@ -53,10 +69,13 @@ class mesh : public hittable {
         std::vector<point3> pts;
         vector<vec3> ns;
 
-        // Min and max coordinates for bbox
-        point3 min_point(std::numeric_limits<float>::max(), std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
-        point3 max_point(-std::numeric_limits<float>::max(), -std::numeric_limits<float>::max(), -std::numeric_limits<float>::max());
+        cout << "before weird min max" << endl;
 
+        // Min and max coordinates for bbox
+        point3 min_point((std::numeric_limits<float>::max)(), (std::numeric_limits<float>::max)(), (std::numeric_limits<float>::max)());
+        point3 max_point(-(std::numeric_limits<float>::max)(), -(std::numeric_limits<float>::max)(), -(std::numeric_limits<float>::max)());
+
+        cout << "after min max weirdness" << endl;
         // Loop over shapes
 
         cout << "shapes.size(): " << shapes.size() << endl;
@@ -109,14 +128,25 @@ class mesh : public hittable {
                 n_center[0] = (ns[0][0] + ns[1][0] + ns[2][0])/3.0;// + translate[0];
                 n_center[1] = (ns[0][1] + ns[1][1] + ns[2][1])/3.0;// + translate[1];
                 n_center[2] = (ns[0][2] + ns[1][2] + ns[2][2])/3.0;// + translate[2];
+
+                // cout << "push back to normals origins " << endl;
                 
+<<<<<<< HEAD
                 normals_origin.push_back(n_center);
+=======
+                normals_origin->push_back(n_center);
+                // initialize all face points to default cluster id 
+>>>>>>> ad346749cc5a8e2bb92d59d8a119897b99d635c9
                 // cout << "normal: <" << n_center[0] << ", " << n_center[1] << ", " << n_center[2] << ">" << endl;
                 // }
 
                 index_offset += fv;
             }
         }
+
+
+        cout << "num of vertices: " << pts.size() << endl;
+        cout << "num of faces: " << normals_origin->size() << endl;
 
         vec3 center = (min_point + max_point) / 2;
         min_point = point3(std::numeric_limits<float>::max(), std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
@@ -140,11 +170,87 @@ class mesh : public hittable {
         cout << endl;
         bbox = aabb(min_point, max_point);
 
+<<<<<<< HEAD
         // Loops points
         for (size_t i=0; i<pts.size()/3; ++i) {
             triangles.push_back(std::make_shared<triangle>(pts[i*3], pts[i*3+1], pts[i*3+2], m));
             // triangles.push_back(std::make_shared<tri>(pts[i*3], pts[i*3+1], pts[i*3+2], m));
         }        
+=======
+        //lamp 
+        cout << "making thingy" << endl;
+
+        std::shared_ptr<std::vector<point3d>> points = make_shared<std::vector<point3d>>();
+        for(std::vector<vec3>::size_type m = 0; m < normals_origin->size(); m++){
+            point3d p = {normals_origin->at(m)[0], normals_origin->at(m)[1], normals_origin->at(m)[2]};
+            points->push_back(p);
+        }
+
+        cout << "before dbscan" << endl;
+
+        //////////////////////////
+        // DBSCAN FROM GITHUB
+
+        // auto clusters = dbscan(points, 9);
+        auto clusters = dbscan(points, (float)normals.size()*.003);
+
+        cout << "after dbscan" << endl;
+
+        auto flat_clusters = std::vector<size_t>(normals_origin->size());
+
+        for(size_t i = 0; i < clusters.size(); i++)
+        {
+            for(auto p: clusters[i])
+            {
+                flat_clusters[p] = i + 1;
+            }
+        }
+
+        for(size_t i = 0; i < normals_origin->size(); i++)
+        {
+            // std::cout << normals_origin->at(i)[0] << ',' << normals_origin->at(i)[1] << ',' << normals_origin->at(i)[2] << ',' << flat_clusters[i] << '\n';
+        }
+
+        ////////////////////
+
+        // Loops points
+
+        auto blue       = make_shared<lambertian>(color(0.1, 0.1, 0.7));
+         auto red       = make_shared<lambertian>(color(0.9, 0.1, 0.1));
+          auto green       = make_shared<lambertian>(color(0.2, 0.9, 0.2));
+           auto yellow       = make_shared<lambertian>(color(0.5, 0.3, 0.05));
+            auto white       = make_shared<lambertian>(color(1, 1, 1));
+        cout << "flat clusters size: " << flat_clusters.size() << endl;
+        cout << "num pts: " << normals_origin->size() << endl;
+
+
+        for(size_t j = 0; j < pts.size()/3; j++){
+            int id = flat_clusters[j];
+
+            float r = static_cast<float>((id * 100) % 256) / 255.0f; 
+            float g = static_cast<float>((id * 50) % 256) / 255.0f; 
+            float b = static_cast<float>((id * 180) % 256) / 255.0f;
+
+            auto col = make_shared<lambertian>(color(r,g,b));
+            // if(id == 0){
+            //     triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], blue));
+            // }
+            // else if(id == 1){
+            //     triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], green));
+            // }
+            // else if(id == 2){
+            //     triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], yellow));
+            // }
+            // else if(id == 3){
+            //     triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], white));
+            // }
+            // else{
+                triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], col));
+            // }
+   
+        }
+                   
+>>>>>>> ad346749cc5a8e2bb92d59d8a119897b99d635c9
         shapes.clear();
         materials.clear();
     }
@@ -183,11 +289,14 @@ class mesh : public hittable {
         return hit;
     }
 
+<<<<<<< HEAD
     public:
         aabb bbox;
         vector<vec3> normals;
         vector<point3> normals_origin;
         bool addLight;
+=======
+>>>>>>> ad346749cc5a8e2bb92d59d8a119897b99d635c9
 
 };
 
