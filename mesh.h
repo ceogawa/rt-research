@@ -3,10 +3,7 @@
 #include "triangle.h"
 #include "tri.h"
 #include "tiny_obj_loader.h"
-<<<<<<< HEAD
-=======
 #include "dbscan3_1.h"
->>>>>>> ad346749cc5a8e2bb92d59d8a119897b99d635c9
 #include <algorithm>
 
 // https://github.com/anandhotwani/obj_raytracer/blob/master/src/trianglemesh.cpp
@@ -131,12 +128,8 @@ class mesh : public hittable {
 
                 // cout << "push back to normals origins " << endl;
                 
-<<<<<<< HEAD
-                normals_origin.push_back(n_center);
-=======
                 normals_origin->push_back(n_center);
                 // initialize all face points to default cluster id 
->>>>>>> ad346749cc5a8e2bb92d59d8a119897b99d635c9
                 // cout << "normal: <" << n_center[0] << ", " << n_center[1] << ", " << n_center[2] << ">" << endl;
                 // }
 
@@ -170,13 +163,6 @@ class mesh : public hittable {
         cout << endl;
         bbox = aabb(min_point, max_point);
 
-<<<<<<< HEAD
-        // Loops points
-        for (size_t i=0; i<pts.size()/3; ++i) {
-            triangles.push_back(std::make_shared<triangle>(pts[i*3], pts[i*3+1], pts[i*3+2], m));
-            // triangles.push_back(std::make_shared<tri>(pts[i*3], pts[i*3+1], pts[i*3+2], m));
-        }        
-=======
         //lamp 
         cout << "making thingy" << endl;
 
@@ -250,7 +236,6 @@ class mesh : public hittable {
    
         }
                    
->>>>>>> ad346749cc5a8e2bb92d59d8a119897b99d635c9
         shapes.clear();
         materials.clear();
     }
@@ -289,14 +274,6 @@ class mesh : public hittable {
         return hit;
     }
 
-<<<<<<< HEAD
-    public:
-        aabb bbox;
-        vector<vec3> normals;
-        vector<point3> normals_origin;
-        bool addLight;
-=======
->>>>>>> ad346749cc5a8e2bb92d59d8a119897b99d635c9
 
 };
 
