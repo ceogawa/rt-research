@@ -66,13 +66,9 @@ class mesh : public hittable {
         std::vector<point3> pts;
         vector<vec3> ns;
 
-        cout << "before weird min max" << endl;
-
         // Min and max coordinates for bbox
         point3 min_point((std::numeric_limits<float>::max)(), (std::numeric_limits<float>::max)(), (std::numeric_limits<float>::max)());
         point3 max_point(-(std::numeric_limits<float>::max)(), -(std::numeric_limits<float>::max)(), -(std::numeric_limits<float>::max)());
-
-        cout << "after min max weirdness" << endl;
         // Loop over shapes
 
         cout << "shapes.size(): " << shapes.size() << endl;
