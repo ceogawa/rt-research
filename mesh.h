@@ -137,19 +137,16 @@ class mesh : public hittable {
                 
                 normals_origin->push_back(n_center);
                 // initialize all face points to default cluster id 
-
-                // unclassified
-                // cout << "before pushback" << endl;
-                face_cluster_id->push_back(-1);
-                // cout << "after pushback" << endl;
-
                 // cout << "normal: <" << n_center[0] << ", " << n_center[1] << ", " << n_center[2] << ">" << endl;
                 index_offset += fv;
 
             }
         }
 
-        cout << "points initialized" << endl;
+
+        cout << "num of vertices: " << pts.size() << endl;
+        cout << "num of faces: " << normals_origin->size() << endl;
+
         vec3 center = (min_point + max_point) / 2;
         min_point = point3(std::numeric_limits<float>::max(), std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
         max_point = point3(-std::numeric_limits<float>::max(), -std::numeric_limits<float>::max(), -std::numeric_limits<float>::max());
@@ -172,9 +169,6 @@ class mesh : public hittable {
         cout << endl;
         bbox = aabb(min_point, max_point);
 
-        // table
-        // DBSCAN ds = DBSCAN(20, 1.6, normals_origin, face_cluster_id);
-
         //lamp 
         cout << "making thingy" << endl;
 
@@ -186,7 +180,11 @@ class mesh : public hittable {
 
         cout << "before dbscan" << endl;
 
-        auto clusters = dbscan(points, 1.95, 20);
+        //////////////////////////
+        // DBSCAN FROM GITHUB
+
+        // auto clusters = dbscan(points, 9);
+        auto clusters = dbscan(points, (float)normals.size()*.003);
 
         cout << "after dbscan" << endl;
 
@@ -202,11 +200,10 @@ class mesh : public hittable {
 
         for(size_t i = 0; i < normals_origin->size(); i++)
         {
-            std::cout << normals_origin->at(i)[0] << ',' << normals_origin->at(i)[1] << ',' << normals_origin->at(i)[2] << ',' << flat_clusters[i] << '\n';
+            // std::cout << normals_origin->at(i)[0] << ',' << normals_origin->at(i)[1] << ',' << normals_origin->at(i)[2] << ',' << flat_clusters[i] << '\n';
         }
-        // DBSCAN ds = DBSCAN(20, 1.95, normals_origin, face_cluster_id);
 
-        // ds.run();
+        ////////////////////
 
         // Loops points
 
@@ -222,62 +219,29 @@ class mesh : public hittable {
         for(size_t j = 0; j < pts.size()/3; j++){
             int id = flat_clusters[j];
 
-            // int id = -1;
-
             float r = static_cast<float>((id * 100) % 256) / 255.0f; 
             float g = static_cast<float>((id * 50) % 256) / 255.0f; 
             float b = static_cast<float>((id * 180) % 256) / 255.0f;
 
             auto col = make_shared<lambertian>(color(r,g,b));
-            if(id < 0){
-                triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], blue));
-            }
-            else if(id == 0){
-                triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], red));
-            }
-            else if(id == 1){
-                triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], green));
-            }
-            else if(id == 2){
-                triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], yellow));
-            }
-            else if(id == 3){
-                triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], white));
-            }
-            else{
+            // if(id == 0){
+            //     triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], blue));
+            // }
+            // else if(id == 1){
+            //     triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], green));
+            // }
+            // else if(id == 2){
+            //     triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], yellow));
+            // }
+            // else if(id == 3){
+            //     triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], white));
+            // }
+            // else{
                 triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], col));
-            }
-            // switch((*face_cluster_id)[j]){
-            //     case(0):
-            //         triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], green));
-            //         break;
-            //     case(1):
-            //         triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], brown));
-            //         break;
-            //     case(2):
-            //         triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], orange));
-            //         break;
-            //     case(3):
-            //         triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], purple));
-            //         break;
-            //     case(4):
-            //         triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], yellow));
-            //         break;
-            //     case(5):
-            //         triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], white));
-            //         break;
-            //     default:
-            //         triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], blue));
-            //         break;
             // }
    
         }
-            
-        for (size_t i=0; i<pts.size()/3; ++i) {
-            
-            // triangles.push_back(std::make_shared<triangle>(pts[i*3], pts[i*3+1], pts[i*3+2], blue));
-            // triangles.push_back(std::make_shared<tri>(pts[i*3], pts[i*3+1], pts[i*3+2], m));
-        }        
+                   
         shapes.clear();
         materials.clear();
     }

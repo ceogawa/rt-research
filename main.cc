@@ -589,16 +589,16 @@ void beach(char* fname, float intensity) {
 
     point3 lookFrom = point3(26,3,0);
     point3 lookAt   = point3(0,3,0);
-
+ 
     cms = world.layer(lookFrom, lookAt, 3, 0);
-
+ 
     // world.clear();
     // world.add(make_shared<sphere>(point3(0,-1000,0), 1000, yellow));
     std::cout << "len: " << cms.size() << std::endl;
 
     // std::vector<std::shared_ptr<sphere>> extraLights;
     std::vector<std::shared_ptr<point>> extraLights;
-    for(vec3 cm : cms) {
+    for(vec3 cm : cms) {    
         // extraLights.push_back(make_shared<sphere>(cm, intensity, difflight));
         extraLights.push_back(make_shared<point>(cm, intensity, difflight, lookFrom));
     }
@@ -609,7 +609,7 @@ void beach(char* fname, float intensity) {
 
     world = hittable_list(make_shared<bvh_node>(world));
 
-    camera cam;
+    camera cam;     
 
     cam.aspect_ratio      = 16.0 / 9.0;
     cam.image_width       = 600; // 400
@@ -644,17 +644,18 @@ void table_scene(char* fname, float intensity){
     auto white       = make_shared<lambertian>(color(0.8, 0.8, 0.8));    
           
     // load meshes               
-    // auto lamp = make_shared<mesh>("lamp2.obj", yellow, vec3(0, 5.2, 1), 1.0, false);
-     auto table = make_shared<mesh>("coffeetable4.obj", brown, vec3(0, 5, 0), 4.1, false);
+    auto lamp = make_shared<mesh>("lamp2.obj", yellow, vec3(-19, 5.2, 1), 2.0, false);
+    auto table = make_shared<mesh>("coffeetable4.obj", brown, vec3(15, 5, 0), 3.8, false);
+
  
-    world.add(make_shared<sphere>(point3(0, 70, -50), 30, firelight));
+    world.add(make_shared<sphere>(point3(0, 80, -50), 29, firelight));
     // world.add(make_shared<quad>(point3(-6,0,-10), vec3(12,0,0), vec3(0,0,25), white));
     // world.add(make_shared<quad>(point3(-6,0,16), vec3(12,0,0), vec3(0,12,0), white));
           
     world.add(table);     
-    // world.add(cube);          
+    world.add(lamp);          
      
-    point3 lookFrom = point3(10,60,-150);  
+    point3 lookFrom = point3(30,60,-165);  
     point3 lookAt   = point3(0,5,0);
    
     cms = world.layer(lookFrom, lookAt, 3, 0); 
@@ -669,22 +670,22 @@ void table_scene(char* fname, float intensity){
     }
     // for(std::shared_ptr<sphere> light : extraLights) {
     for(std::shared_ptr<point> light : extraLights) { 
-        world.add(light);
+        world.add(light); 
     }       
-         
+              
     world = hittable_list(make_shared<bvh_node>(world));
 
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 200; // 400
+    cam.image_width       = 300; // 400
     cam.samples_per_pixel = 100; // 100
     cam.max_depth         = 20;
     cam.background        = color(0,0,0); 
     // cam.background        = color(0.70, 0.80, 1.00);
 
     cam.vfov     = 20; 
-    cam.lookfrom = lookFrom; 
+    cam.lookfrom = lookFrom;   
     cam.lookat   = lookAt;
     cam.vup      = vec3(0,1,0);
 
@@ -857,7 +858,7 @@ void indoor_scene(char* fname, float intensity) {
     auto yellow      = make_shared<lambertian>(color(0.8, 0.6, 0.6));
     auto white       = make_shared<lambertian>(color(0.8, 0.8, 0.8));
           
-    // load meshes                     
+    // load meshes                        
     auto table = make_shared<mesh>("coffeetable4.obj", brown, vec3(0, 2, -26), .9, false);
     auto lamp = make_shared<mesh>("lamp2.obj", yellow, vec3(5, 4, -19), .3, false);
     auto sofa = make_shared<mesh>("couch3.obj", green, vec3(0, 3, -2), 1.4, false);
