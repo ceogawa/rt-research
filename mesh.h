@@ -4,6 +4,7 @@
 #include "tri.h"
 #include "tiny_obj_loader.h"
 #include "dbscan3_1.h"
+#include "contours.h"
 #include <algorithm>
 
 // https://github.com/anandhotwani/obj_raytracer/blob/master/src/trianglemesh.cpp
@@ -15,6 +16,7 @@ class mesh : public hittable {
     std::vector<std::shared_ptr<triangle>> triangles;
     std::shared_ptr<material> mat;
     aabb bbox;
+    vector<point3> vertices;
     vector<vec3> normals;
     shared_ptr<vector<point3>> normals_origin;
     shared_ptr<vector<int>> face_cluster_id;
@@ -159,9 +161,9 @@ class mesh : public hittable {
         cout << endl;
         bbox = aabb(min_point, max_point);
 
-        //lamp 
-        cout << "making thingy" << endl;
+        vertices = pts;
 
+        //lamp 
         std::shared_ptr<std::vector<point3d>> points = make_shared<std::vector<point3d>>();
         for(std::vector<vec3>::size_type m = 0; m < normals_origin->size(); m++){
             point3d p = {normals_origin->at(m)[0], normals_origin->at(m)[1], normals_origin->at(m)[2]};
@@ -198,10 +200,10 @@ class mesh : public hittable {
         // Loops points
 
         auto blue       = make_shared<lambertian>(color(0.1, 0.1, 0.7));
-         auto red       = make_shared<lambertian>(color(0.9, 0.1, 0.1));
-          auto green       = make_shared<lambertian>(color(0.2, 0.9, 0.2));
-           auto yellow       = make_shared<lambertian>(color(0.5, 0.3, 0.05));
-            auto white       = make_shared<lambertian>(color(1, 1, 1));
+        auto red       = make_shared<lambertian>(color(0.9, 0.1, 0.1));
+        auto green       = make_shared<lambertian>(color(0.2, 0.9, 0.2));
+        auto yellow       = make_shared<lambertian>(color(0.5, 0.3, 0.05));
+        auto white       = make_shared<lambertian>(color(1, 1, 1));
         cout << "flat clusters size: " << flat_clusters.size() << endl;
         cout << "num pts: " << normals_origin->size() << endl;
 

@@ -157,6 +157,7 @@ class hittable_list : public hittable {
                     lights.push_back(meshObjects[o]->normals_origin->at(i));
                 }
 
+
                 // if((d > .96 && d < 1) || d == .989949){
                 //     lights.push_back(meshObjects[o]->normals_origin[i]);
                 //     lights.push_back(meshObjects[o]->normals_origin[i]);
