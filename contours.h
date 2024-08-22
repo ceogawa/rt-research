@@ -85,10 +85,26 @@ void check_contour(edge e, shared_ptr<map<edge, pair<vec3,vec3>>> adjacencies, s
     }
 }   
 
-void contour_lights(vector<vec3> pts, vector<vec3> normals, vec3 camera){
+vector<vec3> contour_lights(vector<vec3> pts, vector<vec3> normals, vec3 camera){
     shared_ptr<map<edge, pair<vec3,vec3>>> contours = create_edges(pts, normals, camera);
+    vector<vec3> lights;
+    int divisions = 10;
+
+    for (auto it = contours->begin(); it != contours->end(); it++) {
+        vec3 u = it->first.second - it->first.first;
+        for(int t = 0; t < divisions; t ++){
+            lights.push_back(point_along_line(u, it->first.first, (double)(t/divisions)));
+        }
+    }
     // create light at the contours, add tons of small point lights along the length of the contour...
 
 }
 
+point3 point_along_line(vec3 u, point3 v, double t){
+    double x = v[0] + t*u[0];
+    double y = v[1] + t*u[1];
+    double z = v[2] + t*u[2];
+
+    return point3(x, y, z);
+}
 

@@ -942,8 +942,8 @@ int main(int argc, char** argv) {
     }  
      
     srand(time(NULL));   
-         
-    switch (12) {
+           
+    switch (10) {
         case 1:  finalscene(argv[1], intensity); break;
         case 2:  simple_light2(argv[1], intensity); break;
         case 3:  quads(argv[1], intensity); break;

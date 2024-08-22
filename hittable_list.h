@@ -145,7 +145,7 @@ class hittable_list : public hittable {
                 vec3 cam = unit_vector(lookAt - lookFrom);
 
                 double d = dot(n, cam);
-                double theta = acos(d); 
+                // double theta = acos(d); 
                 
 
                 // cout << endl;
@@ -155,7 +155,10 @@ class hittable_list : public hittable {
                 // }
                 if((d <= -.97 && d >= -1.0) && (meshObjects[o]->normals_origin->at(i)[2] >= c[2])){
                     lights.push_back(meshObjects[o]->normals_origin->at(i));
-                }
+                }    
+                
+                // create edges
+
 
 
                 // if((d > .96 && d < 1) || d == .989949){
