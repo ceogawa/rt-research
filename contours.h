@@ -23,6 +23,17 @@ using edge = pair<point3, point3>;
 // for (auto it = vec.begin(); it != vec.end(); ++it) {
 //     std::cout << "Index: " << idx++ << ", Key: " << it->first << ", Value: " << it->second << std::endl;
 // }
+bool edge_equals(edge e1, edge e2){
+    return ((e1.first == e2.first) && (e1.second == e2.second));
+}
+
+void check_contour(edge e, shared_ptr<map<edge, pair<vec3,vec3>>> adjacencies, shared_ptr<map<edge, pair<vec3,vec3>>> contours, vec3 camera){
+    double dot1 = dot((*adjacencies)[e].first, camera);
+    double dot2 = dot((*adjacencies)[e].second, camera);
+    if (((dot1 < 0) && (dot2 > 0)) || ((dot1 > 0) && (dot2 < 0))){
+        contours->insert({e, (*adjacencies)[e]});
+    }
+}   
 
 void check_edge(edge e, shared_ptr<vector<edge>> edges, vec3 face_normal, shared_ptr<map<edge, pair<vec3,vec3>>> adjacencies, shared_ptr<map<edge, pair<vec3,vec3>>> contours
 , vec3 camera){
@@ -30,10 +41,9 @@ void check_edge(edge e, shared_ptr<vector<edge>> edges, vec3 face_normal, shared
         edges->push_back(e);
     }
 
-    for(int i = 0; i < edges->size(); i++){
+    for(size_t i = 0; i < edges->size(); i++){
         // checking if edge is already "seen" and in edges, it would also already be in adjacencies
-        if((*edges)[i] == edge(e.first, e.second) || (*edges)[i] == edge(e.second, e.first)){
-
+        if((edge_equals((*edges)[i], edge(e.first, e.second))) || edge_equals(((*edges)[i]), edge(e.second, e.first))){
             if(edges->size() == 1){
                 // the first edge will always be in the list upon entering the loop, so must initialize
                 pair<vec3, vec3> p(face_normal, vec3(0));
@@ -64,7 +74,7 @@ shared_ptr<map<edge, pair<vec3,vec3>>> create_edges(vector<vec3> pts, vector<vec
     shared_ptr<map<edge, pair<vec3,vec3>>> contours = make_shared<map<edge, pair<vec3,vec3>>>();
 
     // create edges and update adjacencies
-    for(int i = 0; i < normals.size(); i++){
+    for(size_t i = 0; i < normals.size(); i++){
         edge e1 = edge(pts[i], pts[i+1]);
         edge e2 = edge(pts[i+1], pts[i+2]);
         edge e3 = edge(pts[i+2], pts[i]);
@@ -77,13 +87,13 @@ shared_ptr<map<edge, pair<vec3,vec3>>> create_edges(vector<vec3> pts, vector<vec
     return contours;
 }
 
-void check_contour(edge e, shared_ptr<map<edge, pair<vec3,vec3>>> adjacencies, shared_ptr<map<edge, pair<vec3,vec3>>> contours, vec3 camera){
-    double dot1 = dot((*adjacencies)[e].first, camera);
-    double dot2 = dot((*adjacencies)[e].second, camera);
-    if (((dot1 < 0) && (dot2 > 0)) || ((dot1 > 0) && (dot2 < 0))){
-        contours->insert({e, (*adjacencies)[e]});
-    }
-}   
+point3 point_along_line(vec3 u, point3 v, double t){
+    double x = v[0] + t*u[0];
+    double y = v[1] + t*u[1];
+    double z = v[2] + t*u[2];
+
+    return point3(x, y, z);
+}
 
 vector<vec3> contour_lights(vector<vec3> pts, vector<vec3> normals, vec3 camera){
     shared_ptr<map<edge, pair<vec3,vec3>>> contours = create_edges(pts, normals, camera);
@@ -96,15 +106,9 @@ vector<vec3> contour_lights(vector<vec3> pts, vector<vec3> normals, vec3 camera)
             lights.push_back(point_along_line(u, it->first.first, (double)(t/divisions)));
         }
     }
+
+    return lights;
     // create light at the contours, add tons of small point lights along the length of the contour...
-
 }
 
-point3 point_along_line(vec3 u, point3 v, double t){
-    double x = v[0] + t*u[0];
-    double y = v[1] + t*u[1];
-    double z = v[2] + t*u[2];
-
-    return point3(x, y, z);
-}
 

@@ -869,7 +869,7 @@ void indoor_scene(char* fname, float intensity) {
         // world.add(make_shared<sphere>(cube->normals_origin[2], .3, firelight));
         // world.add(make_shared<sphere>(cube->normals_origin[3], .3, firelight));
 
-    world.add(make_shared<sphere>(point3(0, 30, -16), 14, firelight));
+    world.add(make_shared<sphere>(point3(0, 30, -16), 5, firelight));
 
     // WINDOW
     world.add(make_shared<quad>(point3(-14.9, 6, -11), vec3(0,0,5), vec3(0,7,0), moonlight));
