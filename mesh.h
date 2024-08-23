@@ -6,6 +6,7 @@
 #include "tri.h"
 #include "tiny_obj_loader.h"
 #include "dbscan3_1.h"
+
 #include <algorithm>
 
 // https://github.com/anandhotwani/obj_raytracer/blob/master/src/trianglemesh.cpp
