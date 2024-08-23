@@ -678,7 +678,7 @@ void table_scene(char* fname, float intensity){
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 300; // 400
+    cam.image_width       = 200; // 400
     cam.samples_per_pixel = 100; // 100
     cam.max_depth         = 20;
     cam.background        = color(0,0,0); 
@@ -844,7 +844,7 @@ void cube(char* fname, float intensity){
 
 void indoor_scene(char* fname, float intensity) { 
     hittable_list world;
-    std::vector<vec3> cms;
+    std::vector<vec3> cms;  
        
     // colors   
     auto difflight   = make_shared<diffuse_light>(color(4, 4, 4));
@@ -853,11 +853,11 @@ void indoor_scene(char* fname, float intensity) {
     auto grey        = make_shared<lambertian>(color(0.2, 0.2, 0.4));
     auto brown       = make_shared<lambertian>(color(0.4, 0.2, 0.2));
     auto green       = make_shared<lambertian>(color(0.5, 1.0, 0.5));
-    auto orange      = make_shared<lambertian>(color(0.7, 0.4, 0.3));
+    auto orange      = make_shared<lambertian>(color(0.7, 0.4, 0.3)); 
     auto purple      = make_shared<lambertian>(color(0.5, 0.3, 0.6));
     auto yellow      = make_shared<lambertian>(color(0.8, 0.6, 0.6));
     auto white       = make_shared<lambertian>(color(0.8, 0.8, 0.8));
-          
+            
     // load meshes                        
     auto table = make_shared<mesh>("coffeetable4.obj", brown, vec3(0, 2, -26), .9, false);
     auto lamp = make_shared<mesh>("lamp2.obj", yellow, vec3(5, 4, -19), .3, false);
@@ -915,7 +915,7 @@ void indoor_scene(char* fname, float intensity) {
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 400; // 400
+    cam.image_width       = 100; // 400
     cam.samples_per_pixel = 100; // 100
     cam.max_depth         = 30;
     cam.background        = color(0,0,0);
@@ -926,7 +926,7 @@ void indoor_scene(char* fname, float intensity) {
     cam.lookat   = lookAt;      
     cam.vup      = vec3(0,1,0);
 
-    cam.defocus_angle = 0; 
+    cam.defocus_angle = 0;  
 
     cam.render(world, fname);  
 }
@@ -943,7 +943,7 @@ int main(int argc, char** argv) {
      
     srand(time(NULL));   
            
-    switch (10) {
+    switch (12) {
         case 1:  finalscene(argv[1], intensity); break;
         case 2:  simple_light2(argv[1], intensity); break;
         case 3:  quads(argv[1], intensity); break;

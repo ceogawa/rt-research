@@ -79,6 +79,11 @@ class vec3 {
 using point3 = vec3;   // 3D point
 
 // vec3 Utility Functions
+inline bool operator<(const vec3& v1, const vec3& v2) {
+    if (v1[0] != v2[0]) return v1[0] < v2[0];
+    if (v1[1] != v2[1]) return v1[1] < v2[1];
+    return v1[2] < v2[2];
+}
 
 inline std::ostream& operator<<(std::ostream &out, const vec3 &v) {
     return out << v.e[0] << ' ' << v.e[1] << ' ' << v.e[2];

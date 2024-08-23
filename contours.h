@@ -32,40 +32,42 @@ void check_contour(edge e, shared_ptr<map<edge, pair<vec3,vec3>>> adjacencies, s
     double dot2 = dot((*adjacencies)[e].second, camera);
     if (((dot1 < 0) && (dot2 > 0)) || ((dot1 > 0) && (dot2 < 0))){
         contours->insert({e, (*adjacencies)[e]});
-    }
+    } 
 }   
 
 void check_edge(edge e, shared_ptr<vector<edge>> edges, vec3 face_normal, shared_ptr<map<edge, pair<vec3,vec3>>> adjacencies, shared_ptr<map<edge, pair<vec3,vec3>>> contours
 , vec3 camera){
+    // base case
     if(edges->size() == 0){
         edges->push_back(e);
+        pair<vec3, vec3> p(face_normal, vec3(0));
+        adjacencies->insert({e, p});
     }
 
-    for(size_t i = 0; i < edges->size(); i++){
+    bool found = false;
+
+    for(size_t i = 1; i < edges->size(); i++){
+        cout << "edges index: " << i << "adjacencies size: " << adjacencies->size() << endl;
         // checking if edge is already "seen" and in edges, it would also already be in adjacencies
         if((edge_equals((*edges)[i], edge(e.first, e.second))) || edge_equals(((*edges)[i]), edge(e.second, e.first))){
-            if(edges->size() == 1){
-                // the first edge will always be in the list upon entering the loop, so must initialize
-                pair<vec3, vec3> p(face_normal, vec3(0));
-                adjacencies->insert({e, p});
-            }
-            else{
-                // edge already exists, therefore we need to update the adjacencies value to include the contour's second face
-                (*adjacencies)[e].second = face_normal;
+            // edge already exists, therefore we need to update the adjacencies value to include the contour's second face
+            (*adjacencies)[e].second = face_normal;
 
-                // can check if the contour at this point is a silhouette
-                check_contour(e, adjacencies, contours, camera);     
-            }
-                       
-        }
-        else{
-            // temporarily assign the second face to an arbitrary zero vector
-            edges->push_back(e);
-            pair<vec3, vec3> p(face_normal, vec3(0));
-            // insert new contour with associated edge and one face pair
-            adjacencies->insert({e, p});
+            // can check if the contour at this point is a silhouette
+            check_contour(e, adjacencies, contours, camera);     
+            found = true;
+            break;             
         }
     }
+    if(!found){
+        // temporarily assign the second face to an arbitrary zero vector
+        edges->push_back(e);
+        pair<vec3, vec3> p(face_normal, vec3(0));
+        // insert new contour with associated edge and one face pair
+        adjacencies->insert({e, p});
+    }
+            
+    
 }
 
 shared_ptr<map<edge, pair<vec3,vec3>>> create_edges(vector<vec3> pts, vector<vec3> normals, vec3 camera){
@@ -103,6 +105,7 @@ vector<vec3> contour_lights(vector<vec3> pts, vector<vec3> normals, vec3 camera)
     for (auto it = contours->begin(); it != contours->end(); it++) {
         vec3 u = it->first.second - it->first.first;
         for(int t = 0; t < divisions; t++){
+            cout << "pushing back light" << endl;
             lights.push_back(point_along_line(u, it->first.first, (double)(t/divisions)));
         }
     }
