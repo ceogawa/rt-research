@@ -216,21 +216,21 @@ class mesh : public hittable {
             float b = static_cast<float>((id * 180) % 256) / 255.0f;
 
             auto col = make_shared<lambertian>(color(r,g,b));
-            // if(id == 0){
-            //     triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], blue));
-            // }
-            // else if(id == 1){
-            //     triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], green));
-            // }
-            // else if(id == 2){
-            //     triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], yellow));
-            // }
-            // else if(id == 3){
-            //     triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], white));
-            // }
-            // else{
+            if(id == 0){
+                triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], blue));
+            }
+            else if(id == 1){
+                triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], green));
+            }
+            else if(id == 2){
+                triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], yellow));
+            }
+            else if(id == 3){
+                triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], white));
+            }
+            else{
                 triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], col));
-            // }
+            }
    
         }
                    

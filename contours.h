@@ -92,7 +92,7 @@ vector<vec3> contour_lights(vector<vec3> pts, vector<vec3> normals, vec3 camera)
 
     for (auto it = contours->begin(); it != contours->end(); it++) {
         vec3 u = it->first.second - it->first.first;
-        for(int t = 0; t < divisions; t ++){
+        for(int t = 0; t < divisions; t++){
             lights.push_back(point_along_line(u, it->first.first, (double)(t/divisions)));
         }
     }

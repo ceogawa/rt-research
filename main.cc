@@ -846,7 +846,7 @@ void indoor_scene(char* fname, float intensity) {
     hittable_list world;
     std::vector<vec3> cms;
        
-    // colors  
+    // colors   
     auto difflight   = make_shared<diffuse_light>(color(4, 4, 4));
     auto moonlight   = make_shared<diffuse_light>(color(2, 2, 4));
     auto firelight   = make_shared<diffuse_light>(color(15, 10, 8));
@@ -869,7 +869,7 @@ void indoor_scene(char* fname, float intensity) {
         // world.add(make_shared<sphere>(cube->normals_origin[2], .3, firelight));
         // world.add(make_shared<sphere>(cube->normals_origin[3], .3, firelight));
 
-    // world.add(make_shared<sphere>(point3(0, 30, -10), 2.5, firelight));
+    world.add(make_shared<sphere>(point3(0, 30, -16), 14, firelight));
 
     // WINDOW
     world.add(make_shared<quad>(point3(-14.9, 6, -11), vec3(0,0,5), vec3(0,7,0), moonlight));
@@ -915,9 +915,9 @@ void indoor_scene(char* fname, float intensity) {
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 200; // 400
+    cam.image_width       = 400; // 400
     cam.samples_per_pixel = 100; // 100
-    cam.max_depth         = 20;
+    cam.max_depth         = 30;
     cam.background        = color(0,0,0);
     // cam.background        = color(0.70, 0.80, 1.00);
 
