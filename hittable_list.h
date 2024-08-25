@@ -7,6 +7,7 @@
 #include "mesh.h"
 #include "triangle.h"
 #include "cluster.h"
+#include "contours.h"
 
 #include <memory>
 #include <vector>
@@ -150,33 +151,18 @@ class hittable_list : public hittable {
 
                 // cout << endl;
                 point3 c = currBbox.get_center();
-                // if(d == 0.0){    
-                //     lights.push_back(meshObjects[o]->normals_origin[i]);
+
+                // if((d <= -.97 && d >= -1.0) && (meshObjects[o]->normals_origin->at(i)[2] >= c[2])){
+                //     lights.push_back(meshObjects[o]->normals_origin->at(i));
                 // }
-                if((d <= -.97 && d >= -1.0) && (meshObjects[o]->normals_origin->at(i)[2] >= c[2])){
-                    lights.push_back(meshObjects[o]->normals_origin->at(i));
+
+                 // create edges
+                vector<vec3> c_lights = contour_lights(meshObjects[o]->vertices, meshObjects[o]->normals, cam);
+                for(size_t j = 0; j < c_lights.size(); j++){
+                    lights.push_back(c_lights[j]);
                 }
 
-                // if((d > .96 && d < 1) || d == .989949){
-                //     lights.push_back(meshObjects[o]->normals_origin[i]);
-                //     lights.push_back(meshObjects[o]->normals_origin[i]);
-                //     lights.push_back(meshObjects[o]->normals_origin[i]);
-                // }
-
-                // if((theta <= 1.62 && theta >= 1.57) && (d < 0)) {
-                //     lights.push_back(meshObjects[o]->normals_origin[i]);
-                // }
-                // point3 c = currBbox.get_center();
-                //  if((theta <= 1.57 && theta >= 0.5) && (d >= 0) && (meshObjects[o]->normals_origin[i][2] >= c[2])) {
-                //     lights.push_back(meshObjects[o]->normals_origin[i]);
-
-
-                // }
-                // double theta = acos(d/(n.length() * (lookAt-lookFrom).length()));
-                // cout << "theta: " << theta << endl;
-                // if(theta <= 6.28 && theta >= 0){
-                //     // lights.push_back(meshObjects[o]->normals_origin[i]);
-                // }
+                
             }
 
             cout << "lights.size()" << lights.size() << endl;
