@@ -35,6 +35,8 @@ void check_contour(edge e, shared_ptr<map<edge, pair<vec3,vec3>>> adjacencies, s
     } 
 }   
 
+// hashmap edges
+
 void check_edge(edge e, shared_ptr<vector<edge>> edges, vec3 face_normal, shared_ptr<map<edge, pair<vec3,vec3>>> adjacencies, shared_ptr<map<edge, pair<vec3,vec3>>> contours
 , vec3 camera){
     // base case
