@@ -4,6 +4,7 @@
 #include "tri.h"
 #include "tiny_obj_loader.h"
 #include "dbscan3_1.h"
+
 #include <algorithm>
 
 // https://github.com/anandhotwani/obj_raytracer/blob/master/src/trianglemesh.cpp
@@ -16,6 +17,7 @@ class mesh : public hittable {
     std::shared_ptr<material> mat;
     aabb bbox;
     vector<vec3> normals;
+    vector<vec3> vertices;
     shared_ptr<vector<point3>> normals_origin;
     shared_ptr<vector<int>> face_cluster_id;
     bool addLight;
@@ -159,6 +161,8 @@ class mesh : public hittable {
         cout << endl;
         bbox = aabb(min_point, max_point);
 
+        vertices = pts;
+
         //lamp 
         cout << "making thingy" << endl;
 
@@ -167,8 +171,9 @@ class mesh : public hittable {
             point3d p = {normals_origin->at(m)[0], normals_origin->at(m)[1], normals_origin->at(m)[2]};
             points->push_back(p);
         }
-
         cout << "before dbscan" << endl;
+
+        
 
         //////////////////////////
         // DBSCAN FROM GITHUB
@@ -214,21 +219,21 @@ class mesh : public hittable {
             float b = static_cast<float>((id * 180) % 256) / 255.0f;
 
             auto col = make_shared<lambertian>(color(r,g,b));
-            // if(id == 0){
-            //     triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], blue));
-            // }
-            // else if(id == 1){
-            //     triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], green));
-            // }
-            // else if(id == 2){
-            //     triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], yellow));
-            // }
-            // else if(id == 3){
-            //     triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], white));
-            // }
-            // else{
+            if(id == 0){
+                triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], blue));
+            }
+            else if(id == 1){
+                triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], green));
+            }
+            else if(id == 2){
+                triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], yellow));
+            }
+            else if(id == 3){
+                triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], white));
+            }
+            else{
                 triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], col));
-            // }
+            }
    
         }
                    
