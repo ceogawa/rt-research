@@ -32,23 +32,25 @@ bool edge_equals(edge e1, edge e2){
     return ((e1.first == e2.first) && (e1.second == e2.second));
 }
 
-void check_contour(edge e, shared_ptr<map<edge, pair<vec3,vec3>>> adjacencies, shared_ptr<map<edge, pair<vec3,vec3>>> contours, vec3 camera){
-    double dot1 = dot((*adjacencies)[e].first, camera);
-    double dot2 = dot((*adjacencies)[e].second, camera);
+void check_contour(edge e, shared_ptr<unordered_map<edge, pair<vec3, vec3>, edge_hash>> edges, shared_ptr<map<edge, pair<vec3,vec3>>> contours, vec3 camera){
+    double dot1 = dot((*edges)[e].first, camera);
+    double dot2 = dot((*edges)[e].second, camera);
     if (((dot1 < 0) && (dot2 > 0)) || ((dot1 > 0) && (dot2 < 0))){
-        contours->insert({e, (*adjacencies)[e]});
+        contours->insert({e, (*edges)[e]});
     } 
 }   
 
 // hashmap edges
 
 
-void check_edge(edge e, shared_ptr<unordered_map<edge, bool, edge_hash>> edges, vec3 face_normal, shared_ptr<map<edge, pair<vec3,vec3>>> adjacencies, shared_ptr<map<edge, 
+void check_edge(edge e, shared_ptr<unordered_map<edge, pair<vec3, vec3>, edge_hash>> edges, vec3 face_normal, shared_ptr<map<edge, pair<vec3,vec3>>> adjacencies, shared_ptr<map<edge, 
                 pair<vec3,vec3>>> contours, vec3 camera){
     // base case
     if(edges->size() == 0){
-        edges->insert({e, true});
+
         pair<vec3, vec3> p(face_normal, vec3(0));
+
+        edges->insert({e, p});
         adjacencies->insert({e, p});
     }
 
@@ -61,9 +63,11 @@ void check_edge(edge e, shared_ptr<unordered_map<edge, bool, edge_hash>> edges, 
             // checking if edge is already "seen" and in edges, it would also already be in adjacencies
              // edge already exists, therefore we need to update the adjacencies value to include the contour's second face
             (*adjacencies)[e].second = face_normal;
+            (*edges)[e].second = face_normal;
 
             // can check if the contour at this point is a silhouette
-            check_contour(e, adjacencies, contours, camera);     
+            // check_contour(e, adjacencies, contours, camera);  
+            check_contour(e, edges, contours, camera);     
             found = true;
             break;     
         }
@@ -71,9 +75,10 @@ void check_edge(edge e, shared_ptr<unordered_map<edge, bool, edge_hash>> edges, 
     }
     if(!found){
         // temporarily assign the second face to an arbitrary zero vector
-        edges->insert({e, true});
+
         pair<vec3, vec3> p(face_normal, vec3(0));
         // insert new contour with associated edge and one face pair
+        edges->insert({e, p});
         adjacencies->insert({e, p});
     }
             
@@ -92,8 +97,8 @@ struct edge_hash{
 
 shared_ptr<map<edge, pair<vec3,vec3>>> create_edges(vector<vec3> pts, vector<vec3> normals, vec3 camera){
 
-    shared_ptr<unordered_map<edge, bool, edge_hash>> es = make_shared<unordered_map<edge, bool, edge_hash>>();
-    
+    shared_ptr<unordered_map<edge, pair<vec3, vec3>, edge_hash>> es = make_shared<unordered_map<edge, pair<vec3, vec3>, edge_hash>>();
+
     shared_ptr<map<edge, pair<vec3,vec3>>> adjacencies = make_shared<map<edge, pair<vec3,vec3>>>();
     shared_ptr<map<edge, pair<vec3,vec3>>> contours = make_shared<map<edge, pair<vec3,vec3>>>();
 
