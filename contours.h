@@ -3,6 +3,10 @@
 #include <utility>
 #include <map>
 #include <vector>
+#include <hashtable.h>
+#include <hash_map>
+#include <unordered_map>
+#include <functional>
 #include "vec3.h"
 
 using namespace std;
@@ -23,6 +27,7 @@ using edge = pair<point3, point3>;
 // for (auto it = vec.begin(); it != vec.end(); ++it) {
 //     std::cout << "Index: " << idx++ << ", Key: " << it->first << ", Value: " << it->second << std::endl;
 // }
+
 bool edge_equals(edge e1, edge e2){
     return ((e1.first == e2.first) && (e1.second == e2.second));
 }
@@ -37,11 +42,12 @@ void check_contour(edge e, shared_ptr<map<edge, pair<vec3,vec3>>> adjacencies, s
 
 // hashmap edges
 
-void check_edge(edge e, shared_ptr<vector<edge>> edges, vec3 face_normal, shared_ptr<map<edge, pair<vec3,vec3>>> adjacencies, shared_ptr<map<edge, 
+
+void check_edge(edge e, shared_ptr<unordered_map<edge, bool, edge_hash>> edges, vec3 face_normal, shared_ptr<map<edge, pair<vec3,vec3>>> adjacencies, shared_ptr<map<edge, 
                 pair<vec3,vec3>>> contours, vec3 camera){
     // base case
     if(edges->size() == 0){
-        edges->push_back(e);
+        edges->insert({e, true});
         pair<vec3, vec3> p(face_normal, vec3(0));
         adjacencies->insert({e, p});
     }
@@ -50,20 +56,22 @@ void check_edge(edge e, shared_ptr<vector<edge>> edges, vec3 face_normal, shared
 
     for(size_t i = 1; i < edges->size(); i++){
         cout << "edges index: " << i << "adjacencies size: " << adjacencies->size() << endl;
-        // checking if edge is already "seen" and in edges, it would also already be in adjacencies
-        if((edge_equals((*edges)[i], edge(e.first, e.second))) || edge_equals(((*edges)[i]), edge(e.second, e.first))){
-            // edge already exists, therefore we need to update the adjacencies value to include the contour's second face
+
+        if(edges->find({e.first, e.second}) != edges->end() || edges->find({e.second, e.first}) != edges->end()){
+            // checking if edge is already "seen" and in edges, it would also already be in adjacencies
+             // edge already exists, therefore we need to update the adjacencies value to include the contour's second face
             (*adjacencies)[e].second = face_normal;
 
             // can check if the contour at this point is a silhouette
             check_contour(e, adjacencies, contours, camera);     
             found = true;
-            break;             
+            break;     
         }
+        
     }
     if(!found){
         // temporarily assign the second face to an arbitrary zero vector
-        edges->push_back(e);
+        edges->insert({e, true});
         pair<vec3, vec3> p(face_normal, vec3(0));
         // insert new contour with associated edge and one face pair
         adjacencies->insert({e, p});
@@ -72,9 +80,21 @@ void check_edge(edge e, shared_ptr<vector<edge>> edges, vec3 face_normal, shared
     
 }
 
+struct edge_hash{
+    // Used ChatGPT to derive hash function for two vectors
+    std::size_t operator()(const edge e) const {
+        std::size_t h1 = std::hash<float>()(e.first[0]) ^ (std::hash<float>()(e.first[1]) << 1) ^ (std::hash<float>()(e.first[2]) << 2);
+        std::size_t h2 = std::hash<float>()(e.second[0]) ^ (std::hash<float>()(e.second[1]) << 1) ^ (std::hash<float>()(e.second[2]) << 2);
+
+        return h1 ^ (h2 << 1);
+    }
+};
+
 shared_ptr<map<edge, pair<vec3,vec3>>> create_edges(vector<vec3> pts, vector<vec3> normals, vec3 camera){
+
+    shared_ptr<unordered_map<edge, bool, edge_hash>> es = make_shared<unordered_map<edge, bool, edge_hash>>();
+    
     shared_ptr<map<edge, pair<vec3,vec3>>> adjacencies = make_shared<map<edge, pair<vec3,vec3>>>();
-    shared_ptr<vector<edge>> edges = make_shared<vector<edge>>();
     shared_ptr<map<edge, pair<vec3,vec3>>> contours = make_shared<map<edge, pair<vec3,vec3>>>();
 
     // create edges and update adjacencies
@@ -83,9 +103,9 @@ shared_ptr<map<edge, pair<vec3,vec3>>> create_edges(vector<vec3> pts, vector<vec
         edge e2 = edge(pts[i+1], pts[i+2]);
         edge e3 = edge(pts[i+2], pts[i]);
 
-        check_edge(e1, edges, normals[i], adjacencies, contours, camera);
-        check_edge(e2, edges, normals[i], adjacencies, contours, camera);
-        check_edge(e3, edges, normals[i], adjacencies, contours, camera);
+        check_edge(e1, es, normals[i], adjacencies, contours, camera);
+        check_edge(e2, es, normals[i], adjacencies, contours, camera);
+        check_edge(e3, es, normals[i], adjacencies, contours, camera);
     }
 
     return contours;
