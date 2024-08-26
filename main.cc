@@ -660,7 +660,7 @@ void table_scene(char* fname, float intensity){
    
     cms = world.layer(lookFrom, lookAt, 3, 0); 
   
-    std::cout << "len: " << cms.size() << std::endl;
+    std::cout << "len: " << cms.size() << std::endl;  
     
     std::vector<std::shared_ptr<point>> extraLights;
     for(vec3 cm : cms) {
@@ -675,7 +675,7 @@ void table_scene(char* fname, float intensity){
               
     world = hittable_list(make_shared<bvh_node>(world));
 
-    camera cam;
+    camera cam; 
 
     cam.aspect_ratio      = 16.0 / 9.0;
     cam.image_width       = 300; // 400
@@ -684,7 +684,7 @@ void table_scene(char* fname, float intensity){
     cam.background        = color(0,0,0); 
     // cam.background        = color(0.70, 0.80, 1.00);
 
-    cam.vfov     = 20; 
+    cam.vfov     = 20;     
     cam.lookfrom = lookFrom;   
     cam.lookat   = lookAt;
     cam.vup      = vec3(0,1,0);
@@ -873,6 +873,10 @@ void indoor_scene(char* fname, float intensity) {
 
     // WINDOW
     world.add(make_shared<quad>(point3(-14.9, 6, -11), vec3(0,0,5), vec3(0,7,0), moonlight));
+    
+    aabb tablebox = table->bounding_box();
+    world.add(make_shared<quad>(point3(-14.9, 6, -11), vec3(0,0,5), vec3(0,7,0), moonlight));   
+    
 
     // for(size_t i = 0; i < lamp->normals_origin.size(); i++){
     //     if(i%2){

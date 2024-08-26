@@ -161,6 +161,8 @@ class mesh : public hittable {
         cout << endl;
         bbox = aabb(min_point, max_point);
 
+        
+
         vertices = pts;
 
         //lamp 

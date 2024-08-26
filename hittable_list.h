@@ -137,36 +137,19 @@ class hittable_list : public hittable {
             point3 currCenter = currBbox.get_center();
             point3 currMax = currBbox.get_max();
             point3 currMin = currBbox.get_min();
+            vec3 cam = unit_vector(lookAt - lookFrom);
 
             cout << "num normals for mesh: " << meshObjects[o]->normals.size() << endl;
             cout << "num normal points of origin for mesh: " << meshObjects[o]->normals_origin->size() << endl;
-            for(size_t i=0; i < meshObjects[o]->normals.size(); i++){
 
-                vec3 n = unit_vector(meshObjects[o]->normals[i]);
-                vec3 cam = unit_vector(lookAt - lookFrom);
-
-                double d = dot(n, cam);
-                double theta = acos(d); 
-                
-
-                // cout << endl;
-                point3 c = currBbox.get_center();
-
-                // if((d <= -.97 && d >= -1.0) && (meshObjects[o]->normals_origin->at(i)[2] >= c[2])){
-                //     lights.push_back(meshObjects[o]->normals_origin->at(i));
-                // }
-
-                 // create edges
-                vector<vec3> c_lights = contour_lights(meshObjects[o]->vertices, meshObjects[o]->normals, cam);
-                for(size_t j = 0; j < c_lights.size(); j++){
-                    lights.push_back(c_lights[j]);
-                }
-
-                
+            // create edges
+            vector<vec3> c_lights = contour_lights(meshObjects[o]->vertices, meshObjects[o]->normals, cam);
+            for(size_t j = 0; j < c_lights.size(); j++){
+                lights.push_back(c_lights[j]);
             }
-
-            cout << "lights.size()" << lights.size() << endl;
             
+            cout << "lights.size()" << lights.size() << endl;
+    
             /* ADD LIGHTS BEHIND EACH OBJECT */
 
             if (meshObjects[o]->addLight != false) {
