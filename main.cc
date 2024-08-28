@@ -647,15 +647,18 @@ void table_scene(char* fname, float intensity){
     auto lamp = make_shared<mesh>("lamp2.obj", yellow, vec3(-19, 5.2, 1), 2.0, false);
     auto table = make_shared<mesh>("coffeetable4.obj", brown, vec3(15, 5, 0), 3.8, false);
 
+    // aabb tbox = table->bounding_box();
+
  
-    world.add(make_shared<sphere>(point3(0, 80, -50), 29, firelight));
-    // world.add(make_shared<quad>(point3(-6,0,-10), vec3(12,0,0), vec3(0,0,25), white));
-    // world.add(make_shared<quad>(point3(-6,0,16), vec3(12,0,0), vec3(0,12,0), white));
+ 
+    world.add(make_shared<sphere>(point3(0, 80, -50), 35, difflight));
+    // world.add(make_shared<quad>(point3(-30,0,40), vec3(50,0,0), vec3(0,0,-50), brown));
+    // world.add(make_shared<quad>(point3(-70,0,100), vec3(100,0,0), vec3(0,50,0), brown));
           
     world.add(table);     
     world.add(lamp);          
      
-    point3 lookFrom = point3(30,60,-165);  
+    point3 lookFrom = point3(20,60,-165);  
     point3 lookAt   = point3(0,5,0);
    
     cms = world.layer(lookFrom, lookAt, 3, 0); 
@@ -666,7 +669,7 @@ void table_scene(char* fname, float intensity){
     for(vec3 cm : cms) {
         // extraLights.push_back(make_shared<sphere>(cm, intensity, difflight));
         // std::cout << "light (" << cm[0] << ", " << cm[1] << ", " << cm[2] << ")" << std::endl;
-        extraLights.push_back(make_shared<point>(cm, intensity, difflight, lookFrom)); 
+        extraLights.push_back(make_shared<point>(cm, intensity, firelight, lookFrom)); 
     }
     // for(std::shared_ptr<sphere> light : extraLights) {
     for(std::shared_ptr<point> light : extraLights) { 
@@ -676,9 +679,9 @@ void table_scene(char* fname, float intensity){
     world = hittable_list(make_shared<bvh_node>(world));
 
     camera cam; 
-
+   
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 300; // 400
+    cam.image_width       = 200; // 400
     cam.samples_per_pixel = 100; // 100
     cam.max_depth         = 20;
     cam.background        = color(0,0,0); 
@@ -875,7 +878,31 @@ void indoor_scene(char* fname, float intensity) {
     world.add(make_shared<quad>(point3(-14.9, 6, -11), vec3(0,0,5), vec3(0,7,0), moonlight));
     
     aabb tablebox = table->bounding_box();
-    world.add(make_shared<quad>(point3(-14.9, 6, -11), vec3(0,0,5), vec3(0,7,0), moonlight));   
+    point3 max = tablebox.get_max();
+    point3 min = tablebox.get_min();
+
+
+    world.add(make_shared<sphere>(min, .3, moonlight));
+
+     //1 left wall   
+    world.add(make_shared<quad>(point3(max[0], min[1], min[2]), vec3(0,max[1],0), vec3(0,0,max[2]), white));
+    //2 right wall
+    // world.add(make_shared<quad>(point3(0,0,0), vec3(0,555,0), vec3(0,0,555), white));
+    //4 floor
+    // world.add(make_shared<quad>(point3(0,0,0), vec3(555,0,0), vec3(0,0,555), white));
+    // //5 ceiling
+    // world.add(make_shared<quad>(point3(555,555,555), vec3(-555,0,0), vec3(0,0,-555), white));
+    // // back wall
+    // world.add(make_shared<quad>(point3(0,0,555), vec3(555,0,0), vec3(0,555,0), white));
+
+    // //right wall
+    // world.add(make_shared<quad>(min, vec3(0, 0, (max[2]-min[2])), vec3(0, max[1]-min[1], 0), white));
+    // //left wall
+    // world.add(make_shared<quad>(max, vec3(0, 0, -(max[2]-min[2])), vec3(0, -max[1], 0), white));
+
+    world.add(make_shared<sphere>(max, .3, firelight));
+
+    // world.add(make_shared<quad>(point3(-14.9, 6, -11), vec3(0,0,5), vec3(0,7,0), moonlight));   
     
 
     // for(size_t i = 0; i < lamp->normals_origin.size(); i++){
@@ -919,7 +946,7 @@ void indoor_scene(char* fname, float intensity) {
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 200; // 400
+    cam.image_width       = 150; // 400
     cam.samples_per_pixel = 100; // 100
     cam.max_depth         = 20;
     cam.background        = color(0,0,0);
@@ -947,7 +974,7 @@ int main(int argc, char** argv) {
      
     srand(time(NULL));   
          
-    switch (12) {
+    switch (12) {  
         case 1:  finalscene(argv[1], intensity); break;
         case 2:  simple_light2(argv[1], intensity); break;
         case 3:  quads(argv[1], intensity); break;
