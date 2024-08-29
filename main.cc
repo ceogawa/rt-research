@@ -769,14 +769,14 @@ void test_scene(char* fname, float intensity){
     cam.defocus_angle = 0; 
 
     cam.render(world, fname);
-}
+}       
  
 
 void cube(char* fname, float intensity){
     hittable_list world;
     std::vector<vec3> cms;
          
-    // colors 
+    // colors      
     auto difflight   = make_shared<diffuse_light>(color(4, 4, 4));
     auto firelight   = make_shared<diffuse_light>(color(15, 10, 8));
     auto grey        = make_shared<lambertian>(color(0.2, 0.2, 0.4));
@@ -816,6 +816,7 @@ void cube(char* fname, float intensity){
     for(size_t i = 0; i < cube->normals.size(); i++){
         // dot > 0 away from camera towards pos z axis
         // dot < 0 faces towards camera
+            
         double d = dot(cube->normals[i], unit_vector(lookAt - lookFrom));
         // if((d >= 1.0)){
             // world.add(make_shared<sphere>((*cube->normals_origin)[i], .4, purple));

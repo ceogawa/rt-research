@@ -26,6 +26,19 @@ using edge = pair<point3, point3>;
 //     std:: << "Index: " << idx++ << ", Key: " << it->first << ", Value: " << it->second << std::endl;
 // }
 
+// point3 max_pt(point3 p1, point3 p2){
+//     // condition ? expression1 : expression2;
+//     // expression1 if true, expression2 if false
+//     bool check = (p1[0] > p2[0]) ? true : false;
+//     if(check){
+//         return p1;
+//     }
+//     else{
+//         return p2;
+//     }
+// }
+
+
 void adjacency_list(shared_ptr<map<vec3, vector<edge>>> adjs){
 
      //contours <map<edge, pair<vec3, vec3>>>
@@ -83,42 +96,56 @@ point3 point_along_line(vec3 u, point3 v, double t){
 void check_if_contour(edge e, shared_ptr<unordered_map<edge, pair<vec3, vec3>, edge_hash>> edges, shared_ptr<map<edge, pair<vec3,vec3>>> contours, vec3 camera){
     double dot1 = dot((*edges)[e].first, camera);
     double dot2 = dot((*edges)[e].second, camera);
-    cout << "contour check: " << dot1 << " and " << dot2 << endl;
+    // cout << "contour check: " << dot1 << " and " << dot2 << endl;
     // TODO CLEANUP ?? <= >=???
-    if (((dot1 <= 0) && (dot2 > 0)) || ((dot1 >= 0) && (dot2 < 0)) || ((dot1 > 0) && (dot2 <= 0)) || ((dot1 < 0) && (dot2 >= 0))){
+    if((dot1 < -0.01 && dot2 > 0.01 ) || (dot2 < -0.01 && dot1 > 0.01 )){
+        cout << "true contour: " << dot1 << " and " << dot2 << endl;
         contours->insert({e, (*edges)[e]});
-    } 
+    }
+    // if (((dot1 <= 0.0) && (dot2 > 0.0)) || ((dot1 >= 0.0) && (dot2 < 0.0)) || ((dot1 > 0.0) && (dot2 <= 0.0)) || ((dot1 < 0.0) && (dot2 >= 0.0))){
+    //     contours->insert({e, (*edges)[e]});
+    // } 
 }   
+
+bool pt_order(point3 p1, point3 p2){
+    // condition ? expression1 : expression2;
+    // expression1 if true, expression2 if false
+    bool check = (p1[0] <= p2[0]) ? true : false;
+    return check;
+}
 
 void check_edge(edge e,  shared_ptr<map<vec3, edge>> adjacencies, shared_ptr<unordered_map<edge, pair<vec3, vec3>, edge_hash>> edges, vec3 face_normal, shared_ptr<map<edge, pair<vec3,vec3>>> contours, vec3 camera){
     // base case
+    point3 minpt = (pt_order(e.first, e.second)) ? e.first : e.second;
+    point3 maxpt = (pt_order(e.first, e.second)) ? e.second : e.first;
+    edge new_edge = edge(minpt, maxpt);
+
     if(edges->size() == 0){
         pair<vec3, vec3> p(face_normal, vec3(0));
-        edges->insert({e, p});
-        adjacencies->insert({e.first, e});
-        adjacencies->insert({e.second, e});
+        edges->insert({new_edge, p});
+        // cout << "edge: " << "("<< new_edge.first << ") and (" << new_edge.second << ") "<< endl;
         return;
     }
 
-    if(edges->find({e.first, e.second}) != edges->end() || edges->find({e.second, e.first}) != edges->end()){
+    if(edges->find({new_edge.first, new_edge.second}) != edges->end() || edges->find({new_edge.second, new_edge.first}) != edges->end()){
         // edge already exists, therefore we need to update value to include the contour's second face
-        (*edges)[e].second = face_normal;
+        (*edges)[new_edge].second = face_normal;
         // can check if the edge e is a silhouette now that we have a complete adjacency from edge to faces
-        check_if_contour(e, edges, contours, camera);      
+        // cout << "repeat edge..." << endl;
+        check_if_contour(new_edge, edges, contours, camera);      
     }
     else{
         // temporarily assign the second face to an arbitrary zero vector
         pair<vec3, vec3> p(face_normal, vec3(0));
         // insert new contour with associated edge and one face pair
-        adjacencies->insert({e.first, e});
-        adjacencies->insert({e.second, e});
-        edges->insert({e, p});
+        // cout << "edge: " << "("<< new_edge.first << ") and (" << new_edge.second << ") "<< endl;
+        edges->insert({new_edge, p});
     }
 }
 
 vector<vec3> contour_lights(vector<vec3> pts, vector<vec3> normals, vec3 camera){
     shared_ptr<unordered_map<edge, pair<vec3, vec3>, edge_hash>> es = make_shared<unordered_map<edge, pair<vec3, vec3>, edge_hash>>();
-    shared_ptr<map<edge, pair<vec3,vec3>>> contours = make_shared<map<edge, pair<vec3,vec3>>>();
+    shared_ptr<vector<pair<edge, pair<vec3,vec3>>>> contours = make_shared<vector<pair<edge, pair<vec3,vec3>>>>();
     shared_ptr<map<vec3, edge>> adjs = make_shared<map<vec3, edge>>();
 
     // create edges and update their adjacent facies
@@ -134,18 +161,21 @@ vector<vec3> contour_lights(vector<vec3> pts, vector<vec3> normals, vec3 camera)
 
     vector<vec3> lights;
     lights.clear();
-    int divisions = 10;
+    int divisions = 1;
 
     cout << "edges size: " << es->size() << endl;
+    cout << "contours size: " << contours->size() << endl;
 
     // cout << "contours length: " << contours->size() << endl;
 
     for (auto it = contours->begin(); it != contours->end(); it++) {
-        vec3 u = it->first.second - it->first.first;
-        // lights.push_back(point_along_line(u, it->first.first, 0.5));
-        for(int t = 0; t < divisions; t++){
-            lights.push_back(point_along_line(u, it->first.first, (double)(t/divisions)));
-        }
+        cout << "in contours" << endl;
+        // vec3 u = it->first.second - it->first.first;
+        // // lights.push_back(point_along_line(u, it->first.first, 0.5));
+        // for(int t = 0; t < divisions; t++){
+        //     lights.push_back(it->first.first);
+        //     //lights.push_back(point_along_line(u, it->first.first, .5));//(double)(t/divisions)));
+        // }
     }
 
     return lights;
