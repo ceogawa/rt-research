@@ -770,7 +770,7 @@ void test_scene(char* fname, float intensity){
 
     cam.render(world, fname);
 }
-
+ 
 
 void cube(char* fname, float intensity){
     hittable_list world;
@@ -793,21 +793,34 @@ void cube(char* fname, float intensity){
     auto cube = make_shared<mesh>("cube5.obj", green, vec3(0, 5, 0), 3.0, false);
   
  
-    world.add(make_shared<sphere>(point3(0, 70, -20), 40, firelight));
-    // world.add(make_shared<quad>(point3(-6,0,-10), vec3(12,0,0), vec3(0,0,25), white));
-    // world.add(make_shared<quad>(point3(-6,0,16), vec3(12,0,0), vec3(0,12,0), white));
-
+    world.add(make_shared<sphere>(point3(0, 70, -20), 10, firelight));
+    world.add(make_shared<quad>(point3(-6,0,-10), vec3(12,0,0), vec3(0,0,27), brown));
+    world.add(make_shared<quad>(point3(-6,0,16), vec3(12,0,0), vec3(0,12,0), brown));
+    
     // for(size_t i = 0; i < lamp->normals_origin.size(); i++){
     //     if(i%2){
     //         world.add(make_shared<sphere>(lamp->normals_origin[i], .2, yellow));
     //     }    
     // }    
             
-    world.add(cube);          
+    world.add(cube);               
      
     // point3 lookFrom = point3(0,24,-65); 
     point3 lookFrom = point3(15,24,-65); 
     point3 lookAt   = point3(0,5,0);
+
+    for(size_t i = 0; i < cube->vertices.size(); i++){
+        // cout << "vert cube " << i << ": " << cube->vertices[i] << endl;
+    }
+
+    for(size_t i = 0; i < cube->normals.size(); i++){
+        // dot > 0 away from camera towards pos z axis
+        // dot < 0 faces towards camera
+        double d = dot(cube->normals[i], unit_vector(lookAt - lookFrom));
+        // if((d >= 1.0)){
+            // world.add(make_shared<sphere>((*cube->normals_origin)[i], .4, purple));
+        // }
+    }  
     
     cms = world.layer(lookFrom, lookAt, 3, 0); 
   
@@ -851,7 +864,7 @@ void indoor_scene(char* fname, float intensity) {
        
     // colors  
     auto difflight   = make_shared<diffuse_light>(color(4, 4, 4));
-    auto moonlight   = make_shared<diffuse_light>(color(2, 2, 4));
+    auto moonlight   = make_shared<diffuse_light>(color(4, 5, 20));
     auto firelight   = make_shared<diffuse_light>(color(15, 10, 8));
     auto grey        = make_shared<lambertian>(color(0.2, 0.2, 0.4));
     auto brown       = make_shared<lambertian>(color(0.4, 0.2, 0.2));
@@ -864,7 +877,7 @@ void indoor_scene(char* fname, float intensity) {
     // load meshes                        
     auto table = make_shared<mesh>("coffeetable4.obj", brown, vec3(0, 2, -26), .9, false);
     auto lamp = make_shared<mesh>("lamp2.obj", yellow, vec3(5, 4, -19), .3, false);
-    auto sofa = make_shared<mesh>("couch3.obj", green, vec3(0, 3, -2), 1.4, false);
+    auto sofa = make_shared<mesh>("couch_real2.obj", green, vec3(0, 3, -2), 1.4, false);
     auto vase = make_shared<mesh>("vase.obj", purple, vec3(12, 3, -5), 1.0, false);
     auto cube = make_shared<mesh>("cube5.obj", purple, vec3(13, 3, -23), 1.0, false);
  
@@ -872,20 +885,19 @@ void indoor_scene(char* fname, float intensity) {
         // world.add(make_shared<sphere>(cube->normals_origin[2], .3, firelight));
         // world.add(make_shared<sphere>(cube->normals_origin[3], .3, firelight));
 
-    // world.add(make_shared<sphere>(point3(0, 30, -10), 2.5, firelight));
+    // world.add(make_shared<sphere>(point3(0, 40, -10), 7, firelight));
 
-    // WINDOW
+    // WINDOW 
     world.add(make_shared<quad>(point3(-14.9, 6, -11), vec3(0,0,5), vec3(0,7,0), moonlight));
     
-    aabb tablebox = table->bounding_box();
-    point3 max = tablebox.get_max();
-    point3 min = tablebox.get_min();
+    // aabb tablebox = table->bounding_box();
+    // point3 max = tablebox.get_max();
+    // point3 min = tablebox.get_min();
 
-
-    world.add(make_shared<sphere>(min, .3, moonlight));
+    // world.add(make_shared<sphere>(min, .3, moonlight));
 
      //1 left wall   
-    world.add(make_shared<quad>(point3(max[0], min[1], min[2]), vec3(0,max[1],0), vec3(0,0,max[2]), white));
+    // world.add(make_shared<quad>(point3(max[0], min[1], min[2]), vec3(0,max[1],0), vec3(0,0,max[2]), white));
     //2 right wall
     // world.add(make_shared<quad>(point3(0,0,0), vec3(0,555,0), vec3(0,0,555), white));
     //4 floor
@@ -900,7 +912,7 @@ void indoor_scene(char* fname, float intensity) {
     // //left wall
     // world.add(make_shared<quad>(max, vec3(0, 0, -(max[2]-min[2])), vec3(0, -max[1], 0), white));
 
-    world.add(make_shared<sphere>(max, .3, firelight));
+    // world.add(make_shared<sphere>(max, .3, firelight));
 
     // world.add(make_shared<quad>(point3(-14.9, 6, -11), vec3(0,0,5), vec3(0,7,0), moonlight));   
     
@@ -946,7 +958,7 @@ void indoor_scene(char* fname, float intensity) {
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 150; // 400
+    cam.image_width       = 300; // 400
     cam.samples_per_pixel = 100; // 100
     cam.max_depth         = 20;
     cam.background        = color(0,0,0);
@@ -974,7 +986,7 @@ int main(int argc, char** argv) {
      
     srand(time(NULL));   
          
-    switch (12) {  
+    switch (13) {  
         case 1:  finalscene(argv[1], intensity); break;
         case 2:  simple_light2(argv[1], intensity); break;
         case 3:  quads(argv[1], intensity); break;

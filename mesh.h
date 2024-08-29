@@ -118,11 +118,13 @@ class mesh : public hittable {
 
                 vec3 n_center;
                 // if(!(find(normals.begin(), normals.end(), n) != normals.end())){
+                // normals.push_back(-1*n);
                 normals.push_back(n);
 
+
                 n_center[0] = (ns[0][0] + ns[1][0] + ns[2][0])/3.0;// + translate[0];
-                n_center[1] = (ns[0][1] + ns[1][1] + ns[2][1])/3.0;// + translate[1];
-                n_center[2] = (ns[0][2] + ns[1][2] + ns[2][2])/3.0;// + translate[2];
+                n_center[1] = (ns[0][1] + ns[1][1] + ns[2][1])/3.0;// + translate[1]; 
+                n_center[2] = (ns[0][2] + ns[1][2] + ns[2][2])/3.0;//+ translate[2];
 
                 // cout << "push back to normals origins " << endl;
                 
@@ -181,7 +183,7 @@ class mesh : public hittable {
         // DBSCAN FROM GITHUB
 
         // auto clusters = dbscan(points, 9);
-        auto clusters = dbscan(points, (float)normals.size()*.003);
+        auto clusters = dbscan(points, (float)normals.size()*.008);
 
         cout << "after dbscan" << endl;
 
@@ -221,8 +223,10 @@ class mesh : public hittable {
             float b = static_cast<float>((id * 180) % 256) / 255.0f;
 
             auto col = make_shared<lambertian>(color(r,g,b));
+            triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], m));
+ 
             // if(id == 0){
-                triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], blue));
+            //     triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], blue));
             // }
             // else if(id == 1){
             //     triangles.push_back(std::make_shared<triangle>(pts[j*3], pts[j*3+1], pts[j*3+2], green));
@@ -263,16 +267,12 @@ class mesh : public hittable {
 
     bool hit(const ray& r, interval ray_t, hit_record& rec) const {
         bool hit = false;
-        // long curr;
-        // float t = ray_t.max;
+
         long num_triangles = triangles.size();
         for (long i=0; i<num_triangles; ++i) {
             if (triangles[i]->hit(r, ray_t, rec)) {
                 hit = true;
-                // curr = i;
-                // ray_t.max = temp.t;
                 ray_t.max = rec.t;
-                // rec gets updated in intersect?
             }
         }
         return hit;

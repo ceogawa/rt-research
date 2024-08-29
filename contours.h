@@ -3,8 +3,6 @@
 #include <utility>
 #include <map>
 #include <vector>
-// #include <hashtable.h>
-// #include <hash_map>
 #include <unordered_map>
 #include <functional>
 #include "vec3.h"
@@ -28,6 +26,42 @@ using edge = pair<point3, point3>;
 //     std:: << "Index: " << idx++ << ", Key: " << it->first << ", Value: " << it->second << std::endl;
 // }
 
+void adjacency_list(shared_ptr<map<vec3, vector<edge>>> adjs){
+
+     //contours <map<edge, pair<vec3, vec3>>>
+    // iter through contours:
+        
+        // if (e.first IN adjs)
+        //     adj[e.first].push_back(e);
+        // else 
+            // adj insert({e.first, e})
+
+
+        // if (e.second IN adjs)
+        //  adj[e.second].push_back(e);
+        // else 
+            // adj insert({e.second, e})
+
+
+    // cur edge e;
+    // cur vertex v;
+    // double min_angle = std::max(double);
+    // int indx = 0;
+    // for each edge, in adjs (adjs[i]):
+    //     vector ei
+    //     if angle between ei and e < min angle:
+    //         min angle = angle bewtween ei and e;
+    //         indx = i;
+    // replace e and adjs[indx] with edge = chained edge;
+
+    // must keep track of:
+    //  - edgei with minimum angular change from cur edge e
+    //  - the "direction" of the edge e to new edge i... i guess it would be from
+        // - e.v != v -> edgei.v != v
+
+    // want to take the existing contours, and chain them.. only want adjacency list for contours??
+}
+
 struct edge_hash{
     // Used ChatGPT to derive hash function for two vectors
     std::size_t operator()(const edge e) const {
@@ -49,16 +83,20 @@ point3 point_along_line(vec3 u, point3 v, double t){
 void check_if_contour(edge e, shared_ptr<unordered_map<edge, pair<vec3, vec3>, edge_hash>> edges, shared_ptr<map<edge, pair<vec3,vec3>>> contours, vec3 camera){
     double dot1 = dot((*edges)[e].first, camera);
     double dot2 = dot((*edges)[e].second, camera);
-    if (((dot1 < 0) && (dot2 > 0)) || ((dot1 > 0) && (dot2 < 0))){
+    cout << "contour check: " << dot1 << " and " << dot2 << endl;
+    // TODO CLEANUP ?? <= >=???
+    if (((dot1 <= 0) && (dot2 > 0)) || ((dot1 >= 0) && (dot2 < 0)) || ((dot1 > 0) && (dot2 <= 0)) || ((dot1 < 0) && (dot2 >= 0))){
         contours->insert({e, (*edges)[e]});
     } 
 }   
 
-void check_edge(edge e, shared_ptr<unordered_map<edge, pair<vec3, vec3>, edge_hash>> edges, vec3 face_normal, shared_ptr<map<edge, pair<vec3,vec3>>> contours, vec3 camera){
+void check_edge(edge e,  shared_ptr<map<vec3, edge>> adjacencies, shared_ptr<unordered_map<edge, pair<vec3, vec3>, edge_hash>> edges, vec3 face_normal, shared_ptr<map<edge, pair<vec3,vec3>>> contours, vec3 camera){
     // base case
     if(edges->size() == 0){
         pair<vec3, vec3> p(face_normal, vec3(0));
         edges->insert({e, p});
+        adjacencies->insert({e.first, e});
+        adjacencies->insert({e.second, e});
         return;
     }
 
@@ -72,6 +110,8 @@ void check_edge(edge e, shared_ptr<unordered_map<edge, pair<vec3, vec3>, edge_ha
         // temporarily assign the second face to an arbitrary zero vector
         pair<vec3, vec3> p(face_normal, vec3(0));
         // insert new contour with associated edge and one face pair
+        adjacencies->insert({e.first, e});
+        adjacencies->insert({e.second, e});
         edges->insert({e, p});
     }
 }
@@ -79,6 +119,7 @@ void check_edge(edge e, shared_ptr<unordered_map<edge, pair<vec3, vec3>, edge_ha
 vector<vec3> contour_lights(vector<vec3> pts, vector<vec3> normals, vec3 camera){
     shared_ptr<unordered_map<edge, pair<vec3, vec3>, edge_hash>> es = make_shared<unordered_map<edge, pair<vec3, vec3>, edge_hash>>();
     shared_ptr<map<edge, pair<vec3,vec3>>> contours = make_shared<map<edge, pair<vec3,vec3>>>();
+    shared_ptr<map<vec3, edge>> adjs = make_shared<map<vec3, edge>>();
 
     // create edges and update their adjacent facies
     for(size_t i = 0; i < normals.size(); i++){
@@ -86,14 +127,16 @@ vector<vec3> contour_lights(vector<vec3> pts, vector<vec3> normals, vec3 camera)
         edge e2 = edge(pts[i+1], pts[i+2]);
         edge e3 = edge(pts[i+2], pts[i]);
 
-        check_edge(e1, es, normals[i], contours, camera);
-        check_edge(e2, es, normals[i], contours, camera);
-        check_edge(e3, es, normals[i], contours, camera);
+        check_edge(e1, adjs, es, normals[i], contours, camera);
+        check_edge(e2, adjs, es, normals[i], contours, camera);
+        check_edge(e3, adjs, es, normals[i], contours, camera);
     }
 
     vector<vec3> lights;
     lights.clear();
-    int divisions = 1;
+    int divisions = 10;
+
+    cout << "edges size: " << es->size() << endl;
 
     // cout << "contours length: " << contours->size() << endl;
 
