@@ -93,14 +93,16 @@ point3 point_along_line(vec3 u, point3 v, double t){
     return point3(x, y, z);
 }
 
-void check_if_contour(edge e, shared_ptr<unordered_map<edge, pair<vec3, vec3>, edge_hash>> edges, shared_ptr<map<edge, pair<vec3,vec3>>> contours, vec3 camera){
+void check_if_contour(edge e, shared_ptr<unordered_map<edge, pair<vec3, vec3>, edge_hash>> edges, shared_ptr<vector<pair<edge, pair<vec3,vec3>>>> contours, vec3 camera){
     double dot1 = dot((*edges)[e].first, camera);
     double dot2 = dot((*edges)[e].second, camera);
-    // cout << "contour check: " << dot1 << " and " << dot2 << endl;
+    cout << "contour check: " << dot1 << " and " << dot2 << endl;
     // TODO CLEANUP ?? <= >=???
-    if((dot1 < -0.01 && dot2 > 0.01 ) || (dot2 < -0.01 && dot1 > 0.01 )){
-        cout << "true contour: " << dot1 << " and " << dot2 << endl;
-        contours->insert({e, (*edges)[e]});
+    if(((dot1 < -0.2 && dot2 > 0.2 ) || (dot2 < -0.2 && dot1 > 0.2 ))){ //} && (abs(dot1 + dot2) >= 0.1)){
+        // cout << "true contour: " << dot1 << " and " << dot2 << endl;
+
+        contours->push_back({e, (*edges)[e]});
+        // cout << "contours: " << e.first << "   "<< e.second << endl;
     }
     // if (((dot1 <= 0.0) && (dot2 > 0.0)) || ((dot1 >= 0.0) && (dot2 < 0.0)) || ((dot1 > 0.0) && (dot2 <= 0.0)) || ((dot1 < 0.0) && (dot2 >= 0.0))){
     //     contours->insert({e, (*edges)[e]});
@@ -114,7 +116,7 @@ bool pt_order(point3 p1, point3 p2){
     return check;
 }
 
-void check_edge(edge e,  shared_ptr<map<vec3, edge>> adjacencies, shared_ptr<unordered_map<edge, pair<vec3, vec3>, edge_hash>> edges, vec3 face_normal, shared_ptr<map<edge, pair<vec3,vec3>>> contours, vec3 camera){
+void check_edge(edge e,  shared_ptr<map<vec3, edge>> adjacencies, shared_ptr<unordered_map<edge, pair<vec3, vec3>, edge_hash>> edges, vec3 face_normal,  shared_ptr<vector<pair<edge, pair<vec3,vec3>>>> contours, vec3 camera){
     // base case
     point3 minpt = (pt_order(e.first, e.second)) ? e.first : e.second;
     point3 maxpt = (pt_order(e.first, e.second)) ? e.second : e.first;
@@ -161,7 +163,7 @@ vector<vec3> contour_lights(vector<vec3> pts, vector<vec3> normals, vec3 camera)
 
     vector<vec3> lights;
     lights.clear();
-    int divisions = 1;
+    int divisions = 10;
 
     cout << "edges size: " << es->size() << endl;
     cout << "contours size: " << contours->size() << endl;
@@ -169,12 +171,20 @@ vector<vec3> contour_lights(vector<vec3> pts, vector<vec3> normals, vec3 camera)
     // cout << "contours length: " << contours->size() << endl;
 
     for (auto it = contours->begin(); it != contours->end(); it++) {
-        cout << "in contours" << endl;
-        // vec3 u = it->first.second - it->first.first;
-        // // lights.push_back(point_along_line(u, it->first.first, 0.5));
+        //cout << "in contours" << endl;
+        vec3 u = it->first.second - it->first.first;
+        lights.push_back(point_along_line(u, it->first.first, 0.5));
         // for(int t = 0; t < divisions; t++){
-        //     lights.push_back(it->first.first);
-        //     //lights.push_back(point_along_line(u, it->first.first, .5));//(double)(t/divisions)));
+        //     // lights.push_back(it->first.first);
+        //     // lights.push_back(it->first.second);
+        //     // lights.push_back(point_along_line(u, it->first.first, 0.3));
+        //     lights.push_back(point_along_line(u, it->first.first, 0.5));
+        //     // lights.push_back(point_along_line(u, it->first.first, 0.7));
+        //     // lights.push_back(point_along_line(u, it->first.first, 0.9));
+
+
+
+        //     // lights.push_back(point_along_line(u, it->first.first, (double)(t/divisions)));
         // }
     }
 

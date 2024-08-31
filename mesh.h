@@ -123,7 +123,7 @@ class mesh : public hittable {
 
 
                 n_center[0] = (ns[0][0] + ns[1][0] + ns[2][0])/3.0;// + translate[0];
-                n_center[1] = (ns[0][1] + ns[1][1] + ns[2][1])/3.0;// + translate[1]; 
+                n_center[1] = (ns[0][1] + ns[1][1] + ns[2][1])/3.0 + 5; 
                 n_center[2] = (ns[0][2] + ns[1][2] + ns[2][2])/3.0;//+ translate[2];
 
                 // cout << "push back to normals origins " << endl;

@@ -770,13 +770,13 @@ void test_scene(char* fname, float intensity){
 
     cam.render(world, fname);
 }       
- 
+            
 
 void cube(char* fname, float intensity){
     hittable_list world;
     std::vector<vec3> cms;
          
-    // colors      
+    // colors       
     auto difflight   = make_shared<diffuse_light>(color(4, 4, 4));
     auto firelight   = make_shared<diffuse_light>(color(15, 10, 8));
     auto grey        = make_shared<lambertian>(color(0.2, 0.2, 0.4));
@@ -788,42 +788,43 @@ void cube(char* fname, float intensity){
     auto white       = make_shared<lambertian>(color(0.8, 0.8, 0.8));    
           
     // load meshes                
-    // auto lamp = make_shared<mesh>("lamp2.obj", yellow, vec3(0, 5.2, 1), 1.0, false);
+    auto cube = make_shared<mesh>("lamp2.obj", yellow, vec3(0, 5.2, 1), 1.0, false);
     
-    auto cube = make_shared<mesh>("cube5.obj", green, vec3(0, 5, 0), 3.0, false);
+    // auto cube = make_shared<mesh>("cube5.obj", green, vec3(0, 5, 0), 3.0, false);
   
  
     world.add(make_shared<sphere>(point3(0, 70, -20), 10, firelight));
-    world.add(make_shared<quad>(point3(-6,0,-10), vec3(12,0,0), vec3(0,0,27), brown));
-    world.add(make_shared<quad>(point3(-6,0,16), vec3(12,0,0), vec3(0,12,0), brown));
+    // world.add(make_shared<quad>(point3(-6,0,-10), vec3(12,0,0), vec3(0,0,27), brown));
+    // world.add(make_shared<quad>(point3(-6,0,16), vec3(12,0,0), vec3(0,12,0), brown));
     
     // for(size_t i = 0; i < lamp->normals_origin.size(); i++){
     //     if(i%2){
     //         world.add(make_shared<sphere>(lamp->normals_origin[i], .2, yellow));
     //     }    
     // }    
-            
+              
     world.add(cube);               
      
     // point3 lookFrom = point3(0,24,-65); 
-    point3 lookFrom = point3(15,24,-65); 
+    point3 lookFrom = point3(0,24,-65); 
     point3 lookAt   = point3(0,5,0);
 
     for(size_t i = 0; i < cube->vertices.size(); i++){
         // cout << "vert cube " << i << ": " << cube->vertices[i] << endl;
     }
-
+  
     for(size_t i = 0; i < cube->normals.size(); i++){
         // dot > 0 away from camera towards pos z axis
         // dot < 0 faces towards camera
             
         double d = dot(cube->normals[i], unit_vector(lookAt - lookFrom));
-        // if((d >= 1.0)){
-            // world.add(make_shared<sphere>((*cube->normals_origin)[i], .4, purple));
-        // }
+        if((d < 0.0)){
+            //  world.add(make_shared<sphere>((*cube->normals_origin)[i], .5, purple)); 
+            cout << "1" << endl;
+        }
     }  
     
-    cms = world.layer(lookFrom, lookAt, 3, 0); 
+    cms = world.layer(lookAt, lookFrom, 3, 0); 
   
     std::cout << "len: " << cms.size() << std::endl;
           
@@ -969,7 +970,7 @@ void indoor_scene(char* fname, float intensity) {
     cam.lookfrom = lookFrom;   
     cam.lookat   = lookAt;      
     cam.vup      = vec3(0,1,0);
-
+  
     cam.defocus_angle = 0; 
 
     cam.render(world, fname);  
@@ -984,7 +985,7 @@ int main(int argc, char** argv) {
     if ((intensity < 0) || (intensity > 1)) {
         std::cerr << "Intensity must be a floating point value between 0 and 1." << std::endl;
     }  
-     
+       
     srand(time(NULL));   
          
     switch (13) {  
