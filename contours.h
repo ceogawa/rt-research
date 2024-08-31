@@ -89,17 +89,21 @@ point3 point_along_line(vec3 u, point3 v, double t){
     double x = v[0] + t*u[0];
     double y = v[1] + t*u[1];
     double z = v[2] + t*u[2];
-
+ 
     return point3(x, y, z);
 }
 
 void check_if_contour(edge e, shared_ptr<unordered_map<edge, pair<vec3, vec3>, edge_hash>> edges, shared_ptr<vector<pair<edge, pair<vec3,vec3>>>> contours, vec3 camera){
     double dot1 = dot((*edges)[e].first, camera);
     double dot2 = dot((*edges)[e].second, camera);
+    // cout << "len normals: 1: " << (*edges)[e].first.length() << " 2: " << (*edges)[e].second.length() << " cam: " << camera.length() << endl;
+    cout << "normal: " << (*edges)[e].first << " normal: " << (*edges)[e].second << endl;
+    // cout << "v1: " << e.first << " v2: " << e.second;
     cout << "contour check: " << dot1 << " and " << dot2 << endl;
+    double diff = acos((double)(dot(unit_vector((*edges)[e].first), unit_vector((*edges)[e].second))));///(double)((*edges)[e].first.length() + (*edges)[e].second.length()));
     // TODO CLEANUP ?? <= >=???
-    if(((dot1 < -0.2 && dot2 > 0.2 ) || (dot2 < -0.2 && dot1 > 0.2 ))){ //} && (abs(dot1 + dot2) >= 0.1)){
-        // cout << "true contour: " << dot1 << " and " << dot2 << endl;
+    if((((dot1 < -0.01 && dot2 > 0.01 ) || (dot2 < -0.01 && dot1 > 0.01 ))) && (fabs(diff) > 1.5)){ //} && (abs(dot1 + dot2) >= 0.1)){
+        cout << "true contour" << endl;//<< dot1 << " and " << dot2 << endl;
 
         contours->push_back({e, (*edges)[e]});
         // cout << "contours: " << e.first << "   "<< e.second << endl;
@@ -129,8 +133,9 @@ void check_edge(edge e,  shared_ptr<map<vec3, edge>> adjacencies, shared_ptr<uno
         return;
     }
 
-    if(edges->find({new_edge.first, new_edge.second}) != edges->end() || edges->find({new_edge.second, new_edge.first}) != edges->end()){
+    if(edges->find({new_edge.first, new_edge.second}) != edges->end()){// || edges->find({new_edge.second, new_edge.first}) != edges->end()){
         // edge already exists, therefore we need to update value to include the contour's second face
+        cout << "edge found and what is its first facenormal: " << (*edges)[new_edge].first << endl;
         (*edges)[new_edge].second = face_normal;
         // can check if the edge e is a silhouette now that we have a complete adjacency from edge to faces
         // cout << "repeat edge..." << endl;
@@ -152,10 +157,11 @@ vector<vec3> contour_lights(vector<vec3> pts, vector<vec3> normals, vec3 camera)
 
     // create edges and update their adjacent facies
     for(size_t i = 0; i < normals.size(); i++){
-        edge e1 = edge(pts[i], pts[i+1]);
-        edge e2 = edge(pts[i+1], pts[i+2]);
-        edge e3 = edge(pts[i+2], pts[i]);
+        edge e1 = edge(pts[i*3], pts[i*3+1]);
+        edge e2 = edge(pts[i*3+1], pts[i*3+2]);
+        edge e3 = edge(pts[i*3+2], pts[i*3]);
 
+        cout << "normals passed in: " << normals[i] << endl;
         check_edge(e1, adjs, es, normals[i], contours, camera);
         check_edge(e2, adjs, es, normals[i], contours, camera);
         check_edge(e3, adjs, es, normals[i], contours, camera);
@@ -173,19 +179,12 @@ vector<vec3> contour_lights(vector<vec3> pts, vector<vec3> normals, vec3 camera)
     for (auto it = contours->begin(); it != contours->end(); it++) {
         //cout << "in contours" << endl;
         vec3 u = it->first.second - it->first.first;
-        lights.push_back(point_along_line(u, it->first.first, 0.5));
-        // for(int t = 0; t < divisions; t++){
-        //     // lights.push_back(it->first.first);
-        //     // lights.push_back(it->first.second);
-        //     // lights.push_back(point_along_line(u, it->first.first, 0.3));
-        //     lights.push_back(point_along_line(u, it->first.first, 0.5));
-        //     // lights.push_back(point_along_line(u, it->first.first, 0.7));
-        //     // lights.push_back(point_along_line(u, it->first.first, 0.9));
-
-
-
-        //     // lights.push_back(point_along_line(u, it->first.first, (double)(t/divisions)));
-        // }
+        // lights.push_back(point_along_line(u, it->first.first, 0.5));
+        for(int t = 0; t < divisions; t++){
+            // lights.push_back(it->first.first);
+            // lights.push_back(it->first.second);
+            lights.push_back(point_along_line(u, it->first.first, (double)t/(double)(divisions - 1)));
+        }
     }
 
     return lights;

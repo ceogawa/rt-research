@@ -115,6 +115,8 @@ class mesh : public hittable {
                 vec3 v1 = ns[1] - ns[0];
                 vec3 v2 = ns[2] - ns[0];
                 vec3 n = unit_vector(cross(v1, v2));
+                
+                // cout << "v1 mesh init: " << v1 << " ||| v2 mesh init: " << v2 << " ||| normal: " << n <<  endl;
 
                 vec3 n_center;
                 // if(!(find(normals.begin(), normals.end(), n) != normals.end())){

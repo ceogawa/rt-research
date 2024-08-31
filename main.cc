@@ -788,7 +788,7 @@ void cube(char* fname, float intensity){
     auto white       = make_shared<lambertian>(color(0.8, 0.8, 0.8));    
           
     // load meshes                
-    auto cube = make_shared<mesh>("lamp2.obj", yellow, vec3(0, 5.2, 1), 1.0, false);
+    auto cube = make_shared<mesh>("polygon.obj", purple, vec3(0, 5.2, 1), 3.0, false);
     
     // auto cube = make_shared<mesh>("cube5.obj", green, vec3(0, 5, 0), 3.0, false);
   
@@ -803,27 +803,28 @@ void cube(char* fname, float intensity){
     //     }    
     // }    
               
-    world.add(cube);               
+    world.add(cube);                   
      
     // point3 lookFrom = point3(0,24,-65); 
-    point3 lookFrom = point3(0,24,-65); 
-    point3 lookAt   = point3(0,5,0);
+    point3 lookFrom = point3(-10,24,-65); 
 
+    point3 lookAt   = point3(0,5,0);
+      
     for(size_t i = 0; i < cube->vertices.size(); i++){
         // cout << "vert cube " << i << ": " << cube->vertices[i] << endl;
-    }
+    }   
   
     for(size_t i = 0; i < cube->normals.size(); i++){
         // dot > 0 away from camera towards pos z axis
-        // dot < 0 faces towards camera
-            
+        // dot < 0 faces towards camera 
+             //
         double d = dot(cube->normals[i], unit_vector(lookAt - lookFrom));
         if((d < 0.0)){
-            //  world.add(make_shared<sphere>((*cube->normals_origin)[i], .5, purple)); 
-            cout << "1" << endl;
+            //  world.add(make_shared<sphere>((*cube->normals_origin)[i], .5,    purple)); 
+            // cout << "1" << endl;       
         }
-    }  
-    
+    }       
+        
     cms = world.layer(lookAt, lookFrom, 3, 0); 
   
     std::cout << "len: " << cms.size() << std::endl;
@@ -837,14 +838,14 @@ void cube(char* fname, float intensity){
     // for(std::shared_ptr<sphere> light : extraLights) {
     for(std::shared_ptr<point> light : extraLights) { 
         world.add(light);
-    }      
+    }       
          
     world = hittable_list(make_shared<bvh_node>(world));
 
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 200; // 400
+    cam.image_width       = 300; // 400
     cam.samples_per_pixel = 300; // 100
     cam.max_depth         = 20;
     cam.background        = color(0,0,0);

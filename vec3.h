@@ -131,8 +131,16 @@ inline vec3 cross(const vec3 &u, const vec3 &v) {
                 u.e[0] * v.e[1] - u.e[1] * v.e[0]);
 }
 
-inline vec3 unit_vector(vec3 v) {
-    return v / v.length();
+// inline vec3 unit_vector(vec3 v) {
+//     return v / v.length();
+// }
+
+inline vec3 unit_vector(const vec3& v) {
+    double length = v.length();
+    if (length == 0) {
+        return vec3(0, 0, 0); 
+    }
+    return v / length;
 }
 
 inline vec3 distance(const vec3 &u, const vec3 &v) {
