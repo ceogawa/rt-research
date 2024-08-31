@@ -788,10 +788,10 @@ void cube(char* fname, float intensity){
     auto white       = make_shared<lambertian>(color(0.8, 0.8, 0.8));    
           
     // load meshes                
-    auto cube = make_shared<mesh>("polygon.obj", purple, vec3(0, 5.2, 1), 3.0, false);
-    
-    // auto cube = make_shared<mesh>("cube5.obj", green, vec3(0, 5, 0), 3.0, false);
-  
+    // auto cube = make_shared<mesh>("polygon.obj", purple, vec3(0, 5.2, 1), 3.0, false);
+      
+    auto cube = make_shared<mesh>("vase.obj", green, vec3(0, 5, 0), 2.5, false);
+ 
  
     world.add(make_shared<sphere>(point3(0, 70, -20), 10, firelight));
     // world.add(make_shared<quad>(point3(-6,0,-10), vec3(12,0,0), vec3(0,0,27), brown));
@@ -806,7 +806,7 @@ void cube(char* fname, float intensity){
     world.add(cube);                   
      
     // point3 lookFrom = point3(0,24,-65); 
-    point3 lookFrom = point3(-10,24,-65); 
+    point3 lookFrom = point3(10,24,-65); 
 
     point3 lookAt   = point3(0,5,0);
       
@@ -817,7 +817,7 @@ void cube(char* fname, float intensity){
     for(size_t i = 0; i < cube->normals.size(); i++){
         // dot > 0 away from camera towards pos z axis
         // dot < 0 faces towards camera 
-             //
+             //  
         double d = dot(cube->normals[i], unit_vector(lookAt - lookFrom));
         if((d < 0.0)){
             //  world.add(make_shared<sphere>((*cube->normals_origin)[i], .5,    purple)); 
@@ -846,10 +846,10 @@ void cube(char* fname, float intensity){
 
     cam.aspect_ratio      = 16.0 / 9.0;
     cam.image_width       = 300; // 400
-    cam.samples_per_pixel = 300; // 100
+    cam.samples_per_pixel = 200; // 100
     cam.max_depth         = 20;
     cam.background        = color(0,0,0);
-    // cam.background        = color(0.70, 0.80, 1.00);
+    // cam.background        = color(0.70, 0.80, 1.00); 
 
     cam.vfov     = 20; 
     cam.lookfrom = lookFrom; 
@@ -861,7 +861,7 @@ void cube(char* fname, float intensity){
     cam.render(world, fname);
 }
 
-void indoor_scene(char* fname, float intensity) { 
+void indoor_scene(char* fname, float intensity) {  
     hittable_list world;
     std::vector<vec3> cms;
        
