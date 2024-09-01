@@ -790,8 +790,8 @@ void cube(char* fname, float intensity){
     // load meshes                
     // auto cube = make_shared<mesh>("polygon.obj", purple, vec3(0, 5.2, 1), 3.0, false);
       
-    auto cube = make_shared<mesh>("vase.obj", green, vec3(0, 5, 0), 2.5, false);
- 
+    auto cube = make_shared<mesh>("lamp2.obj", purple, vec3(0, 5, 0), 0.8, false);
+  
  
     world.add(make_shared<sphere>(point3(0, 70, -20), 10, firelight));
     // world.add(make_shared<quad>(point3(-6,0,-10), vec3(12,0,0), vec3(0,0,27), brown));
@@ -879,16 +879,16 @@ void indoor_scene(char* fname, float intensity) {
           
     // load meshes                        
     auto table = make_shared<mesh>("coffeetable4.obj", brown, vec3(0, 2, -26), .9, false);
-    auto lamp = make_shared<mesh>("lamp2.obj", yellow, vec3(5, 4, -19), .3, false);
-    auto sofa = make_shared<mesh>("couch_real2.obj", green, vec3(0, 3, -2), 1.4, false);
+    auto lamp = make_shared<mesh>("lamp2.obj", yellow, vec3(5, 4.2, -21), .3, false);
+    auto sofa = make_shared<mesh>("couch_real5.obj", green, vec3(0, 3, -2), 1.5, false);
     auto vase = make_shared<mesh>("vase.obj", purple, vec3(12, 3, -5), 1.0, false);
     auto cube = make_shared<mesh>("cube5.obj", purple, vec3(13, 3, -23), 1.0, false);
- 
+  
     // // for(size_t i = 0; i < cube->normals_origin.size(); i++){
         // world.add(make_shared<sphere>(cube->normals_origin[2], .3, firelight));
         // world.add(make_shared<sphere>(cube->normals_origin[3], .3, firelight));
 
-    // world.add(make_shared<sphere>(point3(0, 40, -10), 7, firelight));
+    // world.add(make_shared<sphere>(point3(0, 40, -10), 7, firelight)); 
 
     // WINDOW 
     world.add(make_shared<quad>(point3(-14.9, 6, -11), vec3(0,0,5), vec3(0,7,0), moonlight));
@@ -961,7 +961,7 @@ void indoor_scene(char* fname, float intensity) {
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 300; // 400
+    cam.image_width       = 200; // 400
     cam.samples_per_pixel = 100; // 100
     cam.max_depth         = 20;
     cam.background        = color(0,0,0);
@@ -989,7 +989,7 @@ int main(int argc, char** argv) {
        
     srand(time(NULL));   
          
-    switch (13) {  
+    switch (10) {  
         case 1:  finalscene(argv[1], intensity); break;
         case 2:  simple_light2(argv[1], intensity); break;
         case 3:  quads(argv[1], intensity); break;

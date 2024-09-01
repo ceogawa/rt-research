@@ -39,7 +39,34 @@ using edge = pair<point3, point3>;
 // }
 
 
-void adjacency_list(shared_ptr<map<vec3, vector<edge>>> adjs){
+void adjacency_list(shared_ptr<map<vec3, vector<edge>>> adjs, shared_ptr<vector<pair<edge, pair<vec3,vec3>>>> contours){
+    
+    // init adjacency list for vertices and corresponding edges
+    for(auto it = contours->begin(); it != contours->end(); it++){
+        vec3 v1 = it->first.first;
+        vec3 v2 = it->first.second;
+        vector<edge> es;
+
+        if(adjs->find(v1) != adjs->end()){
+            // push back edge to corresponding vertices adjacency list
+            (*adjs)[v1].push_back(it->first);
+        }
+        else{
+            es.clear();
+            es.push_back(it->first);
+            adjs->insert({v1, es});
+        }
+
+        if(adjs->find(v2) != adjs->end()){
+            // push back edge to corresponding vertices adjacency list
+            (*adjs)[v2].push_back(it->first);
+        }
+        else{
+            es.clear();
+            es.push_back(it->first);
+            adjs->insert({v2, es});
+        }
+    }
 
      //contours <map<edge, pair<vec3, vec3>>>
     // iter through contours:
@@ -97,13 +124,13 @@ void check_if_contour(edge e, shared_ptr<unordered_map<edge, pair<vec3, vec3>, e
     double dot1 = dot((*edges)[e].first, camera);
     double dot2 = dot((*edges)[e].second, camera);
     // cout << "len normals: 1: " << (*edges)[e].first.length() << " 2: " << (*edges)[e].second.length() << " cam: " << camera.length() << endl;
-    cout << "normal: " << (*edges)[e].first << " normal: " << (*edges)[e].second << endl;
+    // cout << "normal: " << (*edges)[e].first << " normal: " << (*edges)[e].second << endl;
     // cout << "v1: " << e.first << " v2: " << e.second;
-    cout << "contour check: " << dot1 << " and " << dot2 << endl;
+    // cout << "contour check: " << dot1 << " and " << dot2 << endl;
     double diff = acos((double)(dot(unit_vector((*edges)[e].first), unit_vector((*edges)[e].second))));///(double)((*edges)[e].first.length() + (*edges)[e].second.length()));
     // TODO CLEANUP ?? <= >=???
     if((((dot1 < -0.01 && dot2 > 0.01 ) || (dot2 < -0.01 && dot1 > 0.01 )))){// && (fabs(diff) > 1.5)){ //} && (abs(dot1 + dot2) >= 0.1)){
-        cout << "true contour" << endl;//<< dot1 << " and " << dot2 << endl;
+        // cout << "true contour" << endl;//<< dot1 << " and " << dot2 << endl;
 
         contours->push_back({e, (*edges)[e]});
         // cout << "contours: " << e.first << "   "<< e.second << endl;
@@ -135,7 +162,7 @@ void check_edge(edge e,  shared_ptr<map<vec3, edge>> adjacencies, shared_ptr<uno
 
     if(edges->find({new_edge.first, new_edge.second}) != edges->end()){// || edges->find({new_edge.second, new_edge.first}) != edges->end()){
         // edge already exists, therefore we need to update value to include the contour's second face
-        cout << "edge found and what is its first facenormal: " << (*edges)[new_edge].first << endl;
+        // cout << "edge found and what is its first facenormal: " << (*edges)[new_edge].first << endl;
         (*edges)[new_edge].second = face_normal;
         // can check if the edge e is a silhouette now that we have a complete adjacency from edge to faces
         // cout << "repeat edge..." << endl;
@@ -161,7 +188,7 @@ vector<vec3> contour_lights(vector<vec3> pts, vector<vec3> normals, vec3 camera)
         edge e2 = edge(pts[i*3+1], pts[i*3+2]);
         edge e3 = edge(pts[i*3+2], pts[i*3]);
 
-        cout << "normals passed in: " << normals[i] << endl;
+        // cout << "normals passed in: " << normals[i] << endl;
         check_edge(e1, adjs, es, normals[i], contours, camera);
         check_edge(e2, adjs, es, normals[i], contours, camera);
         check_edge(e3, adjs, es, normals[i], contours, camera);
@@ -169,7 +196,7 @@ vector<vec3> contour_lights(vector<vec3> pts, vector<vec3> normals, vec3 camera)
 
     vector<vec3> lights;
     lights.clear();
-    int divisions = 8;
+    int divisions = 4;
 
     cout << "edges size: " << es->size() << endl;
     cout << "contours size: " << contours->size() << endl;
