@@ -39,8 +39,8 @@ using edge = pair<point3, point3>;
 // }
 
 
-void adjacency_list(shared_ptr<map<vec3, vector<edge>>> adjs, shared_ptr<vector<pair<edge, pair<vec3,vec3>>>> contours){
-    
+void adjacency_list(shared_ptr<vector<pair<edge, pair<vec3,vec3>>>> contours){
+    shared_ptr<map<vec3, vector<edge>>> adjs = make_shared<map<vec3, vector<edge>>>();
     // init adjacency list for vertices and corresponding edges
     for(auto it = contours->begin(); it != contours->end(); it++){
         vec3 v1 = it->first.first;
@@ -50,6 +50,7 @@ void adjacency_list(shared_ptr<map<vec3, vector<edge>>> adjs, shared_ptr<vector<
         if(adjs->find(v1) != adjs->end()){
             // push back edge to corresponding vertices adjacency list
             (*adjs)[v1].push_back(it->first);
+            cout << "v1 num edges: " << (*adjs)[v1].size() << endl;
         }
         else{
             es.clear();
@@ -57,15 +58,23 @@ void adjacency_list(shared_ptr<map<vec3, vector<edge>>> adjs, shared_ptr<vector<
             adjs->insert({v1, es});
         }
 
-        if(adjs->find(v2) != adjs->end()){
-            // push back edge to corresponding vertices adjacency list
-            (*adjs)[v2].push_back(it->first);
+        if(adjs->find(v2) != adjs->end()){ (*adjs)[v2].push_back(it->first); 
+        cout << "v2 num edges: " << (*adjs)[v2].size() << endl;
         }
         else{
             es.clear();
             es.push_back(it->first);
             adjs->insert({v2, es});
         }
+
+    }
+
+    vector<edge> chained_contours;
+    for(auto it = contours->begin(); it != contours->end(); it++){
+        point3 v1 = it->first.first;
+        point3 v2 = it->first.second;
+
+        
     }
 
      //contours <map<edge, pair<vec3, vec3>>>
@@ -202,10 +211,12 @@ vector<vec3> contour_lights(vector<vec3> pts, vector<vec3> normals, vec3 camera)
     cout << "contours size: " << contours->size() << endl;
 
     // cout << "contours length: " << contours->size() << endl;
+    // adjacency_list(contours); 
 
     for (auto it = contours->begin(); it != contours->end(); it++) {
         //cout << "in contours" << endl;
         vec3 u = it->first.second - it->first.first;
+        divisions = (u.length()/0.08);
         // lights.push_back(point_along_line(u, it->first.first, 0.5));
         for(int t = 0; t < divisions; t++){
             // lights.push_back(it->first.first);

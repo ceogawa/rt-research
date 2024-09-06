@@ -119,6 +119,12 @@ inline bool operator==(vec3 v, vec3 u) {
     return (v[0] == u[0] && v[1] == u[1] && v[1] == u[1]);
 } 
 
+
+inline bool sortClusters(point3 p1, point3 p2){ 
+    return (p1[2] > p2[2]); 
+} 
+  
+
 inline double dot(const vec3 &u, const vec3 &v) {
     return u.e[0] * v.e[0]
          + u.e[1] * v.e[1]

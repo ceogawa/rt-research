@@ -8,6 +8,7 @@
 #include "triangle.h"
 #include "cluster.h"
 #include "contours.h"
+#include "point.h"
 
 #include <memory>
 #include <vector>
@@ -21,6 +22,7 @@
 class hittable_list : public hittable {
   public:
     std::vector<shared_ptr<hittable>> objects;
+    std::vector<point> extraLights;
 
     hittable_list() {}
     hittable_list(shared_ptr<hittable> object) { add(object); }
@@ -97,6 +99,10 @@ class hittable_list : public hittable {
         return 0;
     }
 
+    int determine_num_lights(size_t clusters_len){
+        // may complicate number of lights to select based on density/size/span of cluster
+        return clusters_len*0.009;
+    }
     /* Pseudocode:
     1. Find bounds of scene (furthest point from camera in camera direction)
     2. Assign k centers to the planes of the scene perpendicular to the camera 
@@ -105,11 +111,12 @@ class hittable_list : public hittable {
     4. Find center of mass for each layer 
     5. Place lights at each, ensuring that there is an object in front of the light */
 
-    std::vector<vec3> layer(point3 lookAt, point3 lookFrom, int k, int a) {
+    void layer(point3 lookAt, point3 lookFrom, int k, int a, float intensity) {
 
         std::vector<std::shared_ptr<mesh>> meshObjects; // Meshes
         std::vector<std::shared_ptr<triangle>> tris; // Triangles
-        std::vector<vec3> lights; // Centers of Mass
+        std::vector<vector<vec3>> lights; // Centers of Mass
+        // std::vector<std::shared_ptr<point>> extraLights;
 
         // Convert objects to meshObjects
         for (const auto& obj : objects) {
@@ -138,44 +145,95 @@ class hittable_list : public hittable {
             point3 currMax = currBbox.get_max();
             point3 currMin = currBbox.get_min();
             vec3 cam = unit_vector(lookAt - lookFrom);
+            lights.clear();
 
             cout << "num normals for mesh: " << meshObjects[o]->normals.size() << endl;
-            cout << "num normal points of origin for mesh: " << meshObjects[o]->normals_origin->size() << endl;
+            // cout << "num normal points of origin for mesh: " << meshObjects[o]->normals_origin->size() << endl;
 
             // create edges
-            vector<vec3> c_lights = contour_lights(meshObjects[o]->vertices, meshObjects[o]->normals, cam);
-            for(size_t j = 0; j < c_lights.size(); j++){
-                lights.push_back(c_lights[j]);
+            vector<vec3> contour_l = contour_lights(meshObjects[o]->vertices, meshObjects[o]->normals, cam);
+            lights.push_back(contour_l);
+            // for(size_t j = 0; j < c_lights.size(); j++){
+            //     lights.push_back(c_lights[j]);
+            // }
+
+            cout << "after contours" << endl;
+
+            vector<vec3> cluster_l;
+            vector<vector<point3>> clusters(meshObjects[o]->cls.size());
+
+            cout << "pre cluster lights" << endl;
+            cout << "cls size: " << meshObjects[o]->cls.size() << endl;
+            for(size_t i = 0; i < meshObjects[o]->cls.size(); i++){
+                for(size_t j = 0; j < meshObjects[o]->cls[i].size(); j++){
+                    // clusters contains groups of normal origins separated by cluster
+                    cout << "pre clusters pushback" << endl;
+                    clusters[i].push_back((*meshObjects[o]->normals_origin)[j]);
+                }
+                // make the number of lights behind each cluster size dependent;
+                size_t num_lights = determine_num_lights(clusters[i].size());
+                cout << "determined num of backlights: " << num_lights << endl;
+                // sort each list in ascending order, based on depth (deepest points in object selected first)
+                sort(clusters[i].begin(), clusters[i].end(), sortClusters);
+                for(size_t k = 0; k < (int)num_lights; k++){
+                    // want to select a point early on in the cluster list (farther back in the obj pts so backlights are not visible)
+                    int indx = random_int(0, clusters[i].size()/5);
+                    cluster_l.push_back(clusters[i][indx]);
+                }
+                
             }
-            
+            // for(size_t k = 0; k < meshObjects[o]->clusters->size(); k++){
+            //     sort((*meshObjects[o]->clusters)[k].begin(),(*meshObjects[o]->clusters)[k].end(), sortClusters);
+            //     size_t num_lights = ((*meshObjects[o]->clusters)[k].size())*0.01;
+            //     for(size_t l = 0; l < (int)num_lights; l++){
+            //         int indx = random_int(0, (*meshObjects[o]->clusters)[k].size()/4);
+            //         cluster_l.push_back((*meshObjects[o]->clusters)[k][indx]);
+            //     }
+            // } 
+            lights.push_back(cluster_l);
             cout << "lights.size()" << lights.size() << endl;
+
+            auto moonlight   = make_shared<diffuse_light>(color(4, 7, 15));
+            auto rimlight    = make_shared<diffuse_light>(color(2, 6, 17));
+            float backlight_intensity = 0.1;
+
+            // for(size_t i = 0; i < lights.size(); i++){
+                for(size_t j = 0; j < lights[0].size(); j++){
+                    // if(i % 2 == 0){
+                        extraLights.push_back(point(lights[0][j], intensity, rimlight, lookFrom));  
+                    // }
+                    // else{
+                        // extraLights.push_back(make_shared<point>(lights[i][j], backlight_intensity, moonlight, lookFrom));  
+                    // }
+                }
+            // }
     
             /* ADD LIGHTS BEHIND EACH OBJECT */
 
-            if (meshObjects[o]->addLight != false) {
-                float yDist = currBbox.y.max-currBbox.y.min;
-                point3 pt = point3(currBbox.x.min-(currBbox.x.max-currBbox.x.min)/8, 
-                                currBbox.y.min+(yDist*scale),
-                                currCenter[2]);
-                lights.push_back(pt);
+            // if (meshObjects[o]->addLight != false) {
+            //     float yDist = currBbox.y.max-currBbox.y.min;
+            //     point3 pt = point3(currBbox.x.min-(currBbox.x.max-currBbox.x.min)/8, 
+            //                     currBbox.y.min+(yDist*scale),
+            //                     currCenter[2]);
+            //     lights.push_back(pt);
 
-                pt = point3(currBbox.x.min-(currBbox.x.max-currBbox.x.min)/8, 
-                                currBbox.y.min+(yDist*scale2),
-                                currBbox.z.min+(currBbox.z.max-currBbox.z.min)/6);
-                lights.push_back(pt);
+            //     pt = point3(currBbox.x.min-(currBbox.x.max-currBbox.x.min)/8, 
+            //                     currBbox.y.min+(yDist*scale2),
+            //                     currBbox.z.min+(currBbox.z.max-currBbox.z.min)/6);
+            //     lights.push_back(pt);
 
-                pt = point3(currBbox.x.min-(currBbox.x.max-currBbox.x.min)/8, 
-                                currBbox.y.min+(yDist*scale2),
-                                currBbox.z.max-(currBbox.z.max-currBbox.z.min)/6);
-                lights.push_back(pt);
+            //     pt = point3(currBbox.x.min-(currBbox.x.max-currBbox.x.min)/8, 
+            //                     currBbox.y.min+(yDist*scale2),
+            //                     currBbox.z.max-(currBbox.z.max-currBbox.z.min)/6);
+            //     lights.push_back(pt);
 
-                std::cout << "size: " << currMax[1]-currMin[1] << std::endl;
-                std::cout << "Max: " << "(" << currMax[0] << ", " << currMax[1] << ", " << currMax[2] << ")" << std::endl; // COMMENT
-                std::cout << "Min: " << "(" << currMin[0] << ", " << currMin[1] << ", " << currMin[2] << ")" << std::endl; // COMMENT
-                std::cout << "Cen: " << "(" << currCenter[0] << ", " << currCenter[1] << ", " << currCenter[2] << ")" << std::endl; // COMMENT
-                std::cout << "Out: " << "(" << pt[0] << ", " << pt[1] << ", " << pt[2] << ")" << std::endl; // COMMENT
-                std::cout << "-" << std::endl;
-            } 
+            //     std::cout << "size: " << currMax[1]-currMin[1] << std::endl;
+            //     std::cout << "Max: " << "(" << currMax[0] << ", " << currMax[1] << ", " << currMax[2] << ")" << std::endl; // COMMENT
+            //     std::cout << "Min: " << "(" << currMin[0] << ", " << currMin[1] << ", " << currMin[2] << ")" << std::endl; // COMMENT
+            //     std::cout << "Cen: " << "(" << currCenter[0] << ", " << currCenter[1] << ", " << currCenter[2] << ")" << std::endl; // COMMENT
+            //     std::cout << "Out: " << "(" << pt[0] << ", " << pt[1] << ", " << pt[2] << ")" << std::endl; // COMMENT
+            //     std::cout << "-" << std::endl;
+            // } 
             currDist = std::max(abs(currBbox.axis(a).min-lookFrom[a]), 
                                 abs(currBbox.axis(a).max-lookFrom[a]));
             if (currDist > maxDist) {
@@ -251,12 +309,13 @@ class hittable_list : public hittable {
         }
 
         cout << "NUM LIGHTS: " << lights.size() << endl;
-        return lights;
     }
+    
 
 
 private:
     aabb bbox;  
+
 };
 
 #endif
