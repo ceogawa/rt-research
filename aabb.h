@@ -16,7 +16,8 @@ class aabb {
         max = point3(x.max, y.max, z.max);
         pad_to_minimums();
         find_center();
-      }
+        init_planes(min, max);
+    }
 
     aabb(const point3& a, const point3& b) {
         // Treat the two points a and b as extrema for the bounding box, so we don't require a
@@ -28,6 +29,7 @@ class aabb {
         max = point3(x.max, y.max, z.max);
         pad_to_minimums();
         find_center();
+        init_planes(min, max);
     }
 
     aabb(const point3& a, const point3& b, const point3& c) {
@@ -38,6 +40,7 @@ class aabb {
         max = point3(x.max, y.max, z.max);
         pad_to_minimums();
         find_center();
+        init_planes(min, max);
     }
 
 
@@ -48,6 +51,7 @@ class aabb {
         min = point3(x.min, y.min, z.min);
         max = point3(x.max, y.max, z.max);
         find_center();
+        init_planes(min, max);
     }
 
     aabb pad() {
@@ -100,7 +104,18 @@ class aabb {
         center[1] = y.min + (y.max-y.min)/2;
         center[2] = z.min + (z.max-z.min)/2;
     }
+
+    double pt_distance_plane(std::array<double, 4> plane_eq, point3 p){
+        return (plane_eq[0]*p[0] + plane_eq[1]*p[1] + plane_eq[2]*p[2] + plane_eq[3]);
+    }
     
+    std::array<double, 4> ff;
+    std::array<double, 4> lf;
+    std::array<double, 4> rf;
+    std::array<double, 4> backf;
+    std::array<double, 4> tf;
+    std::array<double, 4> bottomf;
+
     point3 get_center() { return center; }
     point3 get_max() { return max; }
     point3 get_min() { return min; }
@@ -111,12 +126,6 @@ class aabb {
     point3 center;
     point3 max;
     point3 min;
-    std::array<double, 4> ff;
-    std::array<double, 4> lf;
-    std::array<double, 4> rf;
-    std::array<double, 4> backf;
-    std::array<double, 4> tf;
-    std::array<double, 4> bottomf;
 
     void pad_to_minimums() {
         // Adjust the AABB so that no side is narrower than some delta, padding if necessary.
@@ -159,7 +168,7 @@ class aabb {
         backf = plane_calcs(backtopleft, backtopright, backbottomleft);
         tf = plane_calcs(toptopleft, toptopright, topbottomleft);
         bottomf = plane_calcs(bottomtopleft, bottomtopright, bottombottomleft);
-        
+
     }
 
     std::array<double, 4> plane_calcs(point3 tl, point3 tr, point3 bl){
@@ -182,6 +191,8 @@ aabb operator+(const aabb& bbox, const vec3& offset) {
 aabb operator+(const vec3& offset, const aabb& bbox) {
     return bbox + offset;
 }
+
+
 
 
 #endif

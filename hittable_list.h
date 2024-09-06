@@ -167,7 +167,7 @@ class hittable_list : public hittable {
             for(size_t i = 0; i < meshObjects[o]->cls.size(); i++){
                 for(size_t j = 0; j < meshObjects[o]->cls[i].size(); j++){
                     // clusters contains groups of normal origins separated by cluster
-                    cout << "pre clusters pushback" << endl;
+                    // cout << "pre clusters pushback" << endl;
                     clusters[i].push_back((*meshObjects[o]->normals_origin)[j]);
                 }
                 // make the number of lights behind each cluster size dependent;
@@ -177,7 +177,7 @@ class hittable_list : public hittable {
                 sort(clusters[i].begin(), clusters[i].end(), sortClusters);
                 for(size_t k = 0; k < (int)num_lights; k++){
                     // want to select a point early on in the cluster list (farther back in the obj pts so backlights are not visible)
-                    int indx = random_int(0, clusters[i].size()/5);
+                    int indx = random_int(0, clusters[i].size()/6);
                     cluster_l.push_back(clusters[i][indx]);
                 }
                 
@@ -197,16 +197,71 @@ class hittable_list : public hittable {
             auto rimlight    = make_shared<diffuse_light>(color(2, 6, 17));
             float backlight_intensity = 0.1;
 
-            // for(size_t i = 0; i < lights.size(); i++){
-                for(size_t j = 0; j < lights[0].size(); j++){
-                    // if(i % 2 == 0){
-                        extraLights.push_back(point(lights[0][j], intensity, rimlight, lookFrom));  
-                    // }
-                    // else{
-                        // extraLights.push_back(make_shared<point>(lights[i][j], backlight_intensity, moonlight, lookFrom));  
-                    // }
+            for(size_t i = 0; i < lights.size(); i++){
+                for(size_t j = 0; j < lights[i].size(); j++){
+                    if(i == 0){
+                        double min = std::numeric_limits<double>::max();
+                        bool check = false;
+                        double d = currBbox.pt_distance_plane(currBbox.ff, lights[i][j]);
+                        // min = (d < min) ? d : min;
+                        if (d < min) {
+                            min = d;
+                            check = true;
+                        }
+
+                        d = currBbox.pt_distance_plane(currBbox.lf, lights[i][j]);
+                        // min = (d < min) ? d : min;
+                        if (d < min) {
+                            min = d;
+                            check = false;
+                        }
+
+                        d = currBbox.pt_distance_plane(currBbox.rf, lights[i][j]);
+                        // min = (d < min) ? d : min;
+                        if (d < min) {
+                            min = d;
+                            check = false;
+                        }
+
+                        d = currBbox.pt_distance_plane(currBbox.backf, lights[i][j]);
+                        // min = (d < min) ? d : min;
+                        if (d < min) {
+                            min = d;
+                            check = true;
+                        }
+
+                        d = currBbox.pt_distance_plane(currBbox.tf, lights[i][j]);
+                        // min = (d < min) ? d : min;
+                        if (d < min) {
+                            min = d;
+                            check = false;
+                        }
+
+                        d = currBbox.pt_distance_plane(currBbox.bottomf, lights[i][j]);
+                        // min = (d < min) ? d : min;
+                        if (d < min) {
+                            min = d;
+                            check = false;
+                        }
+
+                        cout << "min distance to plane: " << min << endl;
+                        double reduce = 0.1;
+                        if(min != 0){
+                            intensity *= (1/min);
+                        }
+                        if(check){
+                            intensity *= reduce;
+                        }
+
+                        intensity = (intensity > 0.11) ? 0.11 : (intensity < 0.0) ? 0.0 : intensity;
+
+                        extraLights.push_back(point(lights[i][j], intensity, rimlight, lookFrom));  
+                    }
+                    else{
+                        extraLights.push_back(point(lights[i][j], backlight_intensity, moonlight, lookFrom));  
+                    }
                 }
-            // }
+            }
     
             /* ADD LIGHTS BEHIND EACH OBJECT */
 

@@ -880,7 +880,7 @@ void indoor_scene(char* fname, float intensity) {
        
     // colors  
     auto difflight   = make_shared<diffuse_light>(color(4, 4, 4));
-    auto moonlight   = make_shared<diffuse_light>(color(4, 7, 15));
+    auto moonlight   = make_shared<diffuse_light>(color(2, 6, 15));
     auto rimlight    = make_shared<diffuse_light>(color(7, 12, 20));
     auto firelight   = make_shared<diffuse_light>(color(15, 10, 8));
     auto grey        = make_shared<lambertian>(color(0.2, 0.2, 0.4));
@@ -892,8 +892,8 @@ void indoor_scene(char* fname, float intensity) {
     auto white       = make_shared<lambertian>(color(0.8, 0.8, 0.8));
           
     // load meshes                          
-    auto table = make_shared<mesh>("coffeetable4.obj", brown, vec3(-1, 2, -26), .9, false);
-    auto lamp = make_shared<mesh>("lamp2.obj", yellow, vec3(-5, 5.4, -24), .2, false);
+    auto table = make_shared<mesh>("coffeetable4.obj", brown, vec3(0, 2, -26), .9, false);
+    auto lamp = make_shared<mesh>("lamp2.obj", yellow, vec3(-5, 5.4, -26), .2, false);
     auto sofa = make_shared<mesh>("couch_real5.obj", green, vec3(0, 3, -2), 2, false); 
     auto vase = make_shared<mesh>("vase.obj", purple, vec3(12, 3, -5), 1.0, false);
     auto cube = make_shared<mesh>("cube5.obj", purple, vec3(13, 3, -23), 1.0, false);
@@ -950,8 +950,8 @@ void indoor_scene(char* fname, float intensity) {
     // point3 lookFrom = point3(-4,13,-78); 
     // point3 lookAt   = point3(-3,3,0);
 
-    point3 lookFrom = point3(2, 13, -68);
-    point3 lookAt = point3(2, 2, 0);
+    point3 lookFrom = point3(0, 13, -68);
+    point3 lookAt = point3(0, 2, 0);
    
     // before
     world.layer(lookAt, lookFrom, 3, 0, intensity); 
