@@ -111,7 +111,8 @@ class hittable_list : public hittable {
     4. Find center of mass for each layer 
     5. Place lights at each, ensuring that there is an object in front of the light */
 
-    void layer(point3 lookAt, point3 lookFrom, int k, int a, float intensity) {
+    void layer(point3 lookAt, point3 lookFrom, int k, int a, double intensity) {
+         cout << "in layer intensity : " << intensity << endl;
 
         std::vector<std::shared_ptr<mesh>> meshObjects; // Meshes
         std::vector<std::shared_ptr<triangle>> tris; // Triangles
@@ -139,6 +140,7 @@ class hittable_list : public hittable {
 
         // Find max distance of object and add all triangles in scene to one vector
         for(size_t o=0; o<meshObjects.size(); o++) {
+            cout << "preintensity: " << intensity << endl;
             float currDist = 0;
             aabb currBbox = meshObjects[o]->bbox;
             point3 currCenter = currBbox.get_center();
@@ -177,6 +179,7 @@ class hittable_list : public hittable {
                 sort(clusters[i].begin(), clusters[i].end(), sortClusters);
                 for(size_t k = 0; k < (int)num_lights; k++){
                     // want to select a point early on in the cluster list (farther back in the obj pts so backlights are not visible)
+                    int maxindx = (clusters[i].size()/6 < 5) ? 5 : clusters[i].size()/6;
                     int indx = random_int(0, clusters[i].size()/6);
                     cluster_l.push_back(clusters[i][indx]);
                 }
@@ -193,72 +196,77 @@ class hittable_list : public hittable {
             lights.push_back(cluster_l);
             cout << "lights.size()" << lights.size() << endl;
 
-            auto moonlight   = make_shared<diffuse_light>(color(4, 7, 15));
+            // auto moonlight   = make_shared<diffuse_light>(color(4, 7, 15));
+            auto backlight   = make_shared<diffuse_light>(color(4, 4, 4));
             auto rimlight    = make_shared<diffuse_light>(color(2, 6, 17));
-            float backlight_intensity = 0.1;
+            float backlight_intensity = 0.09;
+
+
 
             for(size_t i = 0; i < lights.size(); i++){
                 for(size_t j = 0; j < lights[i].size(); j++){
+                    float rimlight_intensity = intensity;
                     if(i == 0){
                         double min = std::numeric_limits<double>::max();
                         bool check = false;
-                        double d = currBbox.pt_distance_plane(currBbox.ff, lights[i][j]);
+                        double d = abs(currBbox.pt_distance_plane(currBbox.ff, lights[i][j]));
                         // min = (d < min) ? d : min;
                         if (d < min) {
                             min = d;
                             check = true;
                         }
 
-                        d = currBbox.pt_distance_plane(currBbox.lf, lights[i][j]);
+                        d = abs(currBbox.pt_distance_plane(currBbox.lf, lights[i][j]));
                         // min = (d < min) ? d : min;
                         if (d < min) {
                             min = d;
                             check = false;
                         }
 
-                        d = currBbox.pt_distance_plane(currBbox.rf, lights[i][j]);
+                        d = abs(currBbox.pt_distance_plane(currBbox.rf, lights[i][j]));
                         // min = (d < min) ? d : min;
                         if (d < min) {
                             min = d;
                             check = false;
                         }
 
-                        d = currBbox.pt_distance_plane(currBbox.backf, lights[i][j]);
+                        d = abs(currBbox.pt_distance_plane(currBbox.backf, lights[i][j]));
                         // min = (d < min) ? d : min;
                         if (d < min) {
                             min = d;
                             check = true;
                         }
 
-                        d = currBbox.pt_distance_plane(currBbox.tf, lights[i][j]);
+                        d = abs(currBbox.pt_distance_plane(currBbox.tf, lights[i][j]));
                         // min = (d < min) ? d : min;
                         if (d < min) {
                             min = d;
                             check = false;
                         }
 
-                        d = currBbox.pt_distance_plane(currBbox.bottomf, lights[i][j]);
+                        d = abs(currBbox.pt_distance_plane(currBbox.bottomf, lights[i][j]));
                         // min = (d < min) ? d : min;
                         if (d < min) {
                             min = d;
                             check = false;
                         }
 
-                        cout << "min distance to plane: " << min << endl;
-                        double reduce = 0.1;
+                        // cout << "min distance to plane: " << min << endl;
+                        double reduce = 0.08;
                         if(min != 0){
-                            intensity *= (1/min);
+                            rimlight_intensity = (double)rimlight_intensity/(double)min;
                         }
                         if(check){
-                            intensity *= reduce;
+                            rimlight_intensity *= reduce;
                         }
 
-                        intensity = (intensity > 0.11) ? 0.11 : (intensity < 0.0) ? 0.0 : intensity;
-
-                        extraLights.push_back(point(lights[i][j], intensity, rimlight, lookFrom));  
+                        rimlight_intensity = (rimlight_intensity > 0.2) ? 0.2 : (rimlight_intensity < 0.04) ? 0.04 : rimlight_intensity;
+                        
+                        cout << "intensity: " << rimlight_intensity << endl;
+                        extraLights.push_back(point(lights[i][j], rimlight_intensity, rimlight, lookFrom));  
                     }
                     else{
-                        extraLights.push_back(point(lights[i][j], backlight_intensity, moonlight, lookFrom));  
+                        extraLights.push_back(point(lights[i][j], backlight_intensity, backlight, lookFrom));  
                     }
                 }
             }

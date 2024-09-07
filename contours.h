@@ -138,7 +138,7 @@ void check_if_contour(edge e, shared_ptr<unordered_map<edge, pair<vec3, vec3>, e
     // cout << "contour check: " << dot1 << " and " << dot2 << endl;
     double diff = acos((double)(dot(unit_vector((*edges)[e].first), unit_vector((*edges)[e].second))));///(double)((*edges)[e].first.length() + (*edges)[e].second.length()));
     // TODO CLEANUP ?? <= >=???
-    if((((dot1 < -0.01 && dot2 > 0.01 ) || (dot2 < -0.01 && dot1 > 0.01 )))){// && (fabs(diff) > 1.5)){ //} && (abs(dot1 + dot2) >= 0.1)){
+    if((((dot1 < -0.001 && dot2 > 0.001 ) || (dot2 < -0.001 && dot1 > 0.001 )))){// && (fabs(diff) > 1.5)){ //} && (abs(dot1 + dot2) >= 0.1)){
         // cout << "true contour" << endl;//<< dot1 << " and " << dot2 << endl;
 
         contours->push_back({e, (*edges)[e]});
