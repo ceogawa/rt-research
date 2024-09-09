@@ -216,6 +216,9 @@ vector<vec3> contour_lights(vector<vec3> pts, vector<vec3> normals, vec3 camera)
     for (auto it = contours->begin(); it != contours->end(); it++) {
         //cout << "in contours" << endl;
         vec3 u = it->first.second - it->first.first;
+        // official
+        // divisions = (u.length()/0.08);
+        //temp divisions for faster rendering
         divisions = (u.length()/0.08);
         // lights.push_back(point_along_line(u, it->first.first, 0.5));
         for(int t = 0; t < divisions; t++){

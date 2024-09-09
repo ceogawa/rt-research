@@ -884,13 +884,13 @@ void indoor_scene(char* fname, double intensity) {
        
     // colors  
     auto difflight   = make_shared<diffuse_light>(color(4, 4, 4));
-    auto moonlight   = make_shared<diffuse_light>(color(0, 0.1, 6));
+    auto moonlight   = make_shared<diffuse_light>(color(0.5, 2, 18));
     auto rimlight    = make_shared<diffuse_light>(color(7, 12, 20)); 
     auto firelight   = make_shared<diffuse_light>(color(15, 10, 8)); 
     auto floorboard  = make_shared<lambertian>(color(0.74, 0.72, 0.59));
     auto grey        = make_shared<lambertian>(color(0.2, 0.2, 0.4));
     auto brown       = make_shared<lambertian>(color(0.4, 0.2, 0.2));
-    auto green       = make_shared<lambertian>(color(0.49, 0.69, 0.41));
+    auto green       = make_shared<lambertian>(color(0.49, 0.69, 0.41)); 
     auto orange      = make_shared<lambertian>(color(0.7, 0.4, 0.3));
     auto purple      = make_shared<lambertian>(color(0.5, 0.3, 0.6));
     auto yellow      = make_shared<lambertian>(color(0.8, 0.6, 0.6));
@@ -901,7 +901,7 @@ void indoor_scene(char* fname, double intensity) {
     auto table = make_shared<mesh>("coffeetable4.obj", brown, vec3(0, 2, -26), .9, false);
     auto lamp = make_shared<mesh>("lamp2.obj", orange, vec3(-4.1, 5.42, -26), .2, false);
     auto sofa = make_shared<mesh>("couch_real5.obj", green, vec3(0, 3, -2), 2, false); 
-    auto vase = make_shared<mesh>("vase.obj", blue, vec3(12, 2.8, -5), 1.0, false);
+    auto vase = make_shared<mesh>("vase.obj", blue, vec3(12, 2.7, -5), 1.0, false);
     auto cube = make_shared<mesh>("cube5.obj", purple, vec3(13, 3, -23), 1.0, false);
   
     // // for(size_t i = 0; i < cube->normals_origin.size(); i++){
@@ -994,8 +994,8 @@ void indoor_scene(char* fname, double intensity) {
 
     cam.aspect_ratio      = 16.0 / 9.0;
     cam.image_width       = 400; // 400
-    cam.samples_per_pixel = 300; // 100
-    cam.max_depth         = 30;
+    cam.samples_per_pixel = 400; // 100
+    cam.max_depth         = 20; 
     cam.background        = color(0,0,0);
     // cam.background        = color(0.70, 0.80, 1.00);
 

@@ -179,8 +179,8 @@ class hittable_list : public hittable {
                 sort(clusters[i].begin(), clusters[i].end(), sortClusters);
                 for(size_t k = 0; k < (int)num_lights; k++){
                     // want to select a point early on in the cluster list (farther back in the obj pts so backlights are not visible)
-                    int maxindx = (clusters[i].size()/6 < 5) ? 5 : clusters[i].size()/6;
-                    int indx = random_int(0, clusters[i].size()/6);
+                    int maxindx = (clusters[i].size()/8 < 5) ? 5 : clusters[i].size()/8;
+                    int indx = random_int(0, maxindx);
                     cluster_l.push_back(clusters[i][indx]);
                 }
                 
@@ -198,8 +198,8 @@ class hittable_list : public hittable {
 
             // auto moonlight   = make_shared<diffuse_light>(color(4, 7, 15));
             auto backlight   = make_shared<diffuse_light>(color(4, 4, 4));
-            auto rimlight    = make_shared<diffuse_light>(color(2, 6, 17));
-            float backlight_intensity = 0.09;
+            auto rimlight    = make_shared<diffuse_light>(color(4.1, 4.5, 5));
+            float backlight_intensity = 0.08;
 
 
 
@@ -251,16 +251,16 @@ class hittable_list : public hittable {
                             check = false;
                         }
 
-                        // cout << "min distance to plane: " << min << endl;
-                        double reduce = 0.08;
+                        cout << "min distance to plane: " << min << endl;
+                        double reduce = 0.1;
                         if(min != 0){
-                            rimlight_intensity = (double)rimlight_intensity/(double)min;
+                            rimlight_intensity = (double)rimlight_intensity/(double)(min+1);
                         }
                         if(check){
                             rimlight_intensity *= reduce;
                         }
 
-                        rimlight_intensity = (rimlight_intensity > 0.2) ? 0.2 : (rimlight_intensity < 0.04) ? 0.04 : rimlight_intensity;
+                        rimlight_intensity = (rimlight_intensity > 0.14) ? 0.14 : (rimlight_intensity < 0.04) ? 0.04 : rimlight_intensity;
                         
                         cout << "intensity: " << rimlight_intensity << endl;
                         extraLights.push_back(point(lights[i][j], rimlight_intensity, rimlight, lookFrom));  
