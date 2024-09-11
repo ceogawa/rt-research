@@ -101,7 +101,10 @@ class hittable_list : public hittable {
 
     int determine_num_lights(size_t clusters_len){
         // may complicate number of lights to select based on density/size/span of cluster
-        return clusters_len*0.009;
+        // for now, returns a certain percentage of the number of the number of pts per cluster, min 2 lights per cluster
+        double weight = 0.01;
+        int minlights = 2;
+        return (clusters_len*weight < minlights) ? minlights : clusters_len*weight;
     }
     /* Pseudocode:
     1. Find bounds of scene (furthest point from camera in camera direction)
@@ -212,54 +215,20 @@ class hittable_list : public hittable {
                     if(i == 0){
                         double min = std::numeric_limits<double>::max();
                         bool check = false;
-                        double d = abs(currBbox.pt_distance_plane(currBbox.ff, lights[i][j]));
-                        // d = the distance between the plane and the light;
-                        // min = (d < min) ? d : min;
-                        if (d < min) {
-                            min = d;
-                            check = false;
-                        }
 
-                        d = abs(currBbox.pt_distance_plane(currBbox.lf, lights[i][j]));
-                        // min = (d < min) ? d : min;
-                        if (d < min) {
-                            min = d;
-                            check = false;
-                        }
+                        // Array of all planes to check
+                        std::vector<std::array<double, 4>> planes = {currBbox.ff, currBbox.lf, currBbox.rf, currBbox.backf, currBbox.tf, currBbox.bottomf};
 
-                        d = abs(currBbox.pt_distance_plane(currBbox.rf, lights[i][j]));
-                        // min = (d < min) ? d : min;
-                        if (d < min) {
-                            min = d;
-                            check = false;
-                        }
-
-                        d = abs(currBbox.pt_distance_plane(currBbox.backf, lights[i][j]));
-                        // min = (d < min) ? d : min;
-                        if (d < min) {
-                            min = d;
-                            check = false;
-                        }
-
-                        d = abs(currBbox.pt_distance_plane(currBbox.tf, lights[i][j]));
-                        // min = (d < min) ? d : min;
-                        if (d < min) {
-                            min = d;
-                            check = true;
-                        }
-
-                        d = abs(currBbox.pt_distance_plane(currBbox.bottomf, lights[i][j]));
-                        // min = (d < min) ? d : min;
-                        if (d < min) {
-                            min = d;
-                            check = true;
+                        for (const auto& plane : planes) {
+                            double d = abs(currBbox.pt_distance_plane(plane, lights[i][j]));
+                            if (d < min) { min = d; }
                         }
 
                         // update min to be the distance to the nearest plane
                         // cout << "min distance to plane: " << min << endl;
                         double reduce = 0.1;
                         double enhance = 1.1;
-                        double eps = 0.8;
+                        double eps = 0.2;
                         // if(min >= 0.1){
                             // if the distance to the nearest plane is larger, the light is more towards the center of the object 
                             // so the intensity decreases
@@ -284,9 +253,9 @@ class hittable_list : public hittable {
                         //     rimlight_intensity *=  enhance;
                         // }
 
-                        rimlight_intensity = (rimlight_intensity > 0.13) ? 0.13 : (rimlight_intensity < 0.07) ? 0.07 : rimlight_intensity;
+                        rimlight_intensity = (rimlight_intensity > 0.12) ? 0.12 : (rimlight_intensity < 0.07) ? 0.07 : rimlight_intensity;
                         
-                        // cout << "intensity: " << rimlight_intensity << endl;
+                        cout << "intensity: " << rimlight_intensity << endl;
                         extraLights.push_back(point(lights[i][j], rimlight_intensity, rimlight, lookFrom));  
                     }
                     else{

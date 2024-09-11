@@ -1041,6 +1041,6 @@ int main(int argc, char** argv) {
         case 10: indoor_scene(argv[1], intensity); break;
         case 11: test_scene(argv[1], intensity); break;
         case 12: table_scene(argv[1], intensity); break; 
-        case 13: cube(argv[1], intensity); break;
+        case 13: cube(argv[1], intensity); break; 
     }
 } 
