@@ -2,6 +2,7 @@
 #define AABB_H
 
 #include "rtweekend.h"
+#include <array>
 
 class aabb {
   public:
@@ -15,7 +16,8 @@ class aabb {
         max = point3(x.max, y.max, z.max);
         pad_to_minimums();
         find_center();
-      }
+        init_planes(min, max);
+    }
 
     aabb(const point3& a, const point3& b) {
         // Treat the two points a and b as extrema for the bounding box, so we don't require a
@@ -27,6 +29,7 @@ class aabb {
         max = point3(x.max, y.max, z.max);
         pad_to_minimums();
         find_center();
+        init_planes(min, max);
     }
 
     aabb(const point3& a, const point3& b, const point3& c) {
@@ -37,6 +40,7 @@ class aabb {
         max = point3(x.max, y.max, z.max);
         pad_to_minimums();
         find_center();
+        init_planes(min, max);
     }
 
 
@@ -47,6 +51,7 @@ class aabb {
         min = point3(x.min, y.min, z.min);
         max = point3(x.max, y.max, z.max);
         find_center();
+        init_planes(min, max);
     }
 
     aabb pad() {
@@ -99,7 +104,18 @@ class aabb {
         center[1] = y.min + (y.max-y.min)/2;
         center[2] = z.min + (z.max-z.min)/2;
     }
+
+    double pt_distance_plane(std::array<double, 4> plane_eq, point3 p){
+        return (plane_eq[0]*p[0] + plane_eq[1]*p[1] + plane_eq[2]*p[2] + plane_eq[3]);
+    }
     
+    std::array<double, 4> ff;
+    std::array<double, 4> lf;
+    std::array<double, 4> rf;
+    std::array<double, 4> backf;
+    std::array<double, 4> tf;
+    std::array<double, 4> bottomf;
+
     point3 get_center() { return center; }
     point3 get_max() { return max; }
     point3 get_min() { return min; }
@@ -119,6 +135,50 @@ class aabb {
         if (y.size() < delta) y = y.expand(delta);
         if (z.size() < delta) z = z.expand(delta);
     }
+
+    void init_planes(point3 min, point3 max){
+        point3 fronttopleft = point3(max[0], max[1], min[2]);
+        point3 fronttopright = point3(min[0], max[1], min[2]);
+        point3 frontbottomleft = point3(max[0], min[1], min[2]);
+
+        point3 lefttopleft = max;
+        point3 leftopright = point3(max[0], max[1], min[2]);
+        point3 leftbottomleft = point3(max[0], min[1], max[2]);
+
+        point3 righttopleft = point3(min[0], max[1], min[2]);
+        point3 righttopright = point3(min[0], max[1], max[2]);
+        point3 rightbottomleft = min;
+
+        point3 backtopleft = point3(min[0], max[1], max[2]);
+        point3 backtopright = point3(max[0], max[1], max[2]);
+        point3 backbottomleft = point3(min[0], min[1], max[2]);
+
+        point3 toptopleft = max;
+        point3 toptopright = point3(min[0], max[1], max[2]);
+        point3 topbottomleft = point3(max[0], max[1], min[2]);
+        
+        point3 bottomtopleft = point3(max[0], min[1], max[0]);
+        point3 bottomtopright = point3(min[0], min[1], max[2]);
+        point3 bottombottomleft = point3(max[0], min[1], min[2]);
+
+        // do i normalize n??
+        ff = plane_calcs(fronttopleft, fronttopright, frontbottomleft);
+        lf = plane_calcs(lefttopleft, leftopright, leftbottomleft);
+        rf = plane_calcs(righttopleft, righttopright, rightbottomleft);
+        backf = plane_calcs(backtopleft, backtopright, backbottomleft);
+        tf = plane_calcs(toptopleft, toptopright, topbottomleft);
+        bottomf = plane_calcs(bottomtopleft, bottomtopright, bottombottomleft);
+
+    }
+
+    std::array<double, 4> plane_calcs(point3 tl, point3 tr, point3 bl){
+        vec3 p = tr - tl;
+        vec3 q = bl - tl;
+        vec3 n = unit_vector(cross(p, q));
+        double d = (n[0]*-tl[0]) + (n[1]*-tl[1]) + (n[2]*-tl[2]);
+        return {n[0], n[1], n[2], d};
+    }
+    
 };
 
 const aabb aabb::empty    = aabb(interval::empty,    interval::empty,    interval::empty);
@@ -131,6 +191,8 @@ aabb operator+(const aabb& bbox, const vec3& offset) {
 aabb operator+(const vec3& offset, const aabb& bbox) {
     return bbox + offset;
 }
+
+
 
 
 #endif

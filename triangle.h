@@ -55,7 +55,7 @@ class triangle : public hittable {
 
         // if the determinant is negative, the triangle is 'back facing'
         // if the determinant is close to 0, the ray misses the triangle
-        if (det < kEpsilon) { return false; }
+        if (det < (kEpsilon)) { return false; }
         // if (fabs(det) < kEpsilon) { return false; }
 
         double invDet = 1 / det;
@@ -71,7 +71,9 @@ class triangle : public hittable {
         double t = dot(v0v2, qvec) * invDet;
 
         // For multiple objects, we take the closest one
-        if (t < ray_t.min || ray_t.max < t) { return false; }
+        if (t < ray_t.min || ray_t.max < t) { 
+          return false; 
+        }
 
         // Hit Record
         rec.u = u;
@@ -81,7 +83,7 @@ class triangle : public hittable {
         rec.set_face_normal(r, normal);
         rec.mat = mat;
         rec.p = r.at(t);
- 
+
     return true;
     }
 

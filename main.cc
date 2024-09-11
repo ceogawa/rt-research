@@ -15,7 +15,7 @@
 #include "tiny_obj_loader.h"
 
 /* ORIGINAL SCENES FROM BOOK */
-
+  
 void finalscene(char* fname, float intensity) {
     hittable_list world;
 
@@ -231,7 +231,7 @@ void room(char* fname, float intensity){
 
 void cornell_box(char* fname, float intensity) {
     hittable_list_sphere world;
-    std::vector<vec3> cms;
+    // std::vector<vec3> cms;
 
     auto red   = make_shared<lambertian>(color(.65, .05, .05));
     auto blue = make_shared<lambertian>(color(.1, .1, .8));
@@ -272,7 +272,7 @@ void cornell_box(char* fname, float intensity) {
    
     // k num of clusters
     int k = 4;  
-    cms = world.layer(lookFrom, lookAt, k, 2); 
+    // cms = world.layer(lookFrom, lookAt, k, 2); 
 
     //  world = hittable_list(make_shared<bvh_node>(world));
   
@@ -336,7 +336,7 @@ void teapot(char* fname, float intensity) {
   
 void camp(char* fname, float intensity) {
     hittable_list world;
-    std::vector<vec3> cms;
+    // std::vector<vec3> cms;
     
     // colors
     auto difflight   = make_shared<diffuse_light>(color(4, 4, 4));
@@ -406,20 +406,20 @@ void camp(char* fname, float intensity) {
     point3 lookFrom = point3(26,3,-50);
     point3 lookAt   = point3(0,3,0);
 
-    cms = world.layer(lookFrom, lookAt, 3, 0);
+    // cms = world.layer(lookFrom, lookAt, 3, 0);
 
-    std::cout << "len: " << cms.size() << std::endl;
+    // std::cout << "len: " << cms.size() << std::endl;
 
     // world.clear();
     // world.add(make_shared<sphere>(point3(0,-1000,0), 1000, brown));
 
     // std::vector<std::shared_ptr<sphere>> extraLights;
     std::vector<std::shared_ptr<point>> extraLights;
-    for(vec3 cm : cms) {
-        // extraLights.push_back(make_shared<sphere>(cm, intensity, difflight));
-        std::cout << "light (" << cm[0] << ", " << cm[1] << ", " << cm[2] << ")" << std::endl;
-        extraLights.push_back(make_shared<point>(cm, intensity, difflight, lookFrom));
-    }
+    // for(vec3 cm : cms) {
+    //     // extraLights.push_back(make_shared<sphere>(cm, intensity, difflight));
+    //     std::cout << "light (" << cm[0] << ", " << cm[1] << ", " << cm[2] << ")" << std::endl;
+    //     extraLights.push_back(make_shared<point>(cm, intensity, difflight, lookFrom));
+    // }
     // for(std::shared_ptr<sphere> light : extraLights) {
     for(std::shared_ptr<point> light : extraLights) {
         world.add(light);
@@ -490,12 +490,12 @@ void simple_camp(char* fname, float intensity) {
     point3 lookFrom = point3(26,3,0);
     point3 lookAt   = point3(0,3,0);
 
-    cms = world.layer(lookFrom, lookAt, 4, 0);
+    // cms = world.layer(lookFrom, lookAt, 4, 0);
 
     std::vector<std::shared_ptr<point>> extraLights;
-    for(vec3 cm : cms) {
-        extraLights.push_back(make_shared<point>(cm, intensity, difflight, lookFrom));
-    }
+    // for(vec3 cm : cms) {
+    //     extraLights.push_back(make_shared<point>(cm, intensity, difflight, lookFrom));
+    // }
     for(std::shared_ptr<point> light : extraLights) {
         world.add(light);
     }
@@ -590,18 +590,18 @@ void beach(char* fname, float intensity) {
     point3 lookFrom = point3(26,3,0);
     point3 lookAt   = point3(0,3,0);
  
-    cms = world.layer(lookFrom, lookAt, 3, 0);
+    // cms = world.layer(lookFrom, lookAt, 3, 0);
  
     // world.clear();
     // world.add(make_shared<sphere>(point3(0,-1000,0), 1000, yellow));
-    std::cout << "len: " << cms.size() << std::endl;
+    // std::cout << "len: " << cms.size() << std::endl;
 
     // std::vector<std::shared_ptr<sphere>> extraLights;
     std::vector<std::shared_ptr<point>> extraLights;
-    for(vec3 cm : cms) {    
-        // extraLights.push_back(make_shared<sphere>(cm, intensity, difflight));
-        extraLights.push_back(make_shared<point>(cm, intensity, difflight, lookFrom));
-    }
+    // for(vec3 cm : cms) {    
+    //     // extraLights.push_back(make_shared<sphere>(cm, intensity, difflight));
+    //     extraLights.push_back(make_shared<point>(cm, intensity, difflight, lookFrom));
+    // }
     for(std::shared_ptr<point> light : extraLights) {
     // for(std::shared_ptr<sphere> light : extraLights) {
         world.add(light);
@@ -644,29 +644,36 @@ void table_scene(char* fname, float intensity){
     auto white       = make_shared<lambertian>(color(0.8, 0.8, 0.8));    
           
     // load meshes               
-    auto lamp = make_shared<mesh>("lamp2.obj", yellow, vec3(-19, 5.2, 1), 2.0, false);
+    // auto lamp = make_shared<mesh>("lamp2.obj", yellow, vec3(-19, 5.2, 1), 2.0, false);
     auto table = make_shared<mesh>("coffeetable4.obj", brown, vec3(15, 5, 0), 3.8, false);
+    auto sofa = make_shared<mesh>("couch_real5.obj", green, vec3(9,5,0), 3, false); 
+
+
+
+    // aabb tbox = table->bounding_box();
 
  
-    world.add(make_shared<sphere>(point3(0, 80, -50), 29, firelight));
-    // world.add(make_shared<quad>(point3(-6,0,-10), vec3(12,0,0), vec3(0,0,25), white));
-    // world.add(make_shared<quad>(point3(-6,0,16), vec3(12,0,0), vec3(0,12,0), white));
+ 
+    world.add(make_shared<sphere>(point3(0, 80, -50), 35, difflight));
+    // world.add(make_shared<quad>(point3(-30,0,40), vec3(50,0,0), vec3(0,0,-50), brown));
+    // world.add(make_shared<quad>(point3(-70,0,100), vec3(100,0,0), vec3(0,50,0), brown));
           
-    world.add(table);     
-    world.add(lamp);          
+    // world.add(table);     
+    // world.add(lamp);         
+    world.add(sofa); 
      
-    point3 lookFrom = point3(30,60,-165);  
+    point3 lookFrom = point3(20,60,-165);  
     point3 lookAt   = point3(0,5,0);
    
-    cms = world.layer(lookFrom, lookAt, 3, 0); 
+    // cms = world.layer(lookFrom, lookAt, 3, 0); 
   
-    std::cout << "len: " << cms.size() << std::endl;
+    std::cout << "len: " << cms.size() << std::endl;  
     
     std::vector<std::shared_ptr<point>> extraLights;
     for(vec3 cm : cms) {
         // extraLights.push_back(make_shared<sphere>(cm, intensity, difflight));
         // std::cout << "light (" << cm[0] << ", " << cm[1] << ", " << cm[2] << ")" << std::endl;
-        extraLights.push_back(make_shared<point>(cm, intensity, difflight, lookFrom)); 
+        extraLights.push_back(make_shared<point>(cm, intensity, firelight, lookFrom)); 
     }
     // for(std::shared_ptr<sphere> light : extraLights) {
     for(std::shared_ptr<point> light : extraLights) { 
@@ -675,16 +682,16 @@ void table_scene(char* fname, float intensity){
               
     world = hittable_list(make_shared<bvh_node>(world));
 
-    camera cam;
-
+    camera cam; 
+   
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 300; // 400
+    cam.image_width       = 200; // 400
     cam.samples_per_pixel = 100; // 100
     cam.max_depth         = 20;
     cam.background        = color(0,0,0); 
     // cam.background        = color(0.70, 0.80, 1.00);
 
-    cam.vfov     = 20; 
+    cam.vfov     = 20;     
     cam.lookfrom = lookFrom;   
     cam.lookat   = lookAt;
     cam.vup      = vec3(0,1,0);
@@ -732,16 +739,16 @@ void test_scene(char* fname, float intensity){
     point3 lookFrom = point3(10,24,-65); 
     point3 lookAt   = point3(0,5,0);
    
-    cms = world.layer(lookFrom, lookAt, 3, 0); 
+    // cms = world.layer(lookFrom, lookAt, 3, 0); 
   
     std::cout << "len: " << cms.size() << std::endl;
     
     std::vector<std::shared_ptr<point>> extraLights;
-    for(vec3 cm : cms) {
-        // extraLights.push_back(make_shared<sphere>(cm, intensity, difflight));
-        // std::cout << "light (" << cm[0] << ", " << cm[1] << ", " << cm[2] << ")" << std::endl;
-        extraLights.push_back(make_shared<point>(cm, intensity, difflight, lookFrom)); 
-    }
+    // for(vec3 cm : cms) {
+    //     // extraLights.push_back(make_shared<sphere>(cm, intensity, difflight));
+    //     // std::cout << "light (" << cm[0] << ", " << cm[1] << ", " << cm[2] << ")" << std::endl;
+    //     extraLights.push_back(make_shared<point>(cm, intensity, difflight, lookFrom)); 
+    // }
     // for(std::shared_ptr<sphere> light : extraLights) {
     for(std::shared_ptr<point> light : extraLights) { 
         world.add(light);
@@ -766,16 +773,21 @@ void test_scene(char* fname, float intensity){
     cam.defocus_angle = 0; 
 
     cam.render(world, fname);
-}
-
+}       
+            
 
 void cube(char* fname, float intensity){
     hittable_list world;
-    std::vector<vec3> cms;
+    // std::vector<vec3> cms;
+    std::vector<vector<vec3>> cms;
          
-    // colors 
+    // colors       
     auto difflight   = make_shared<diffuse_light>(color(4, 4, 4));
     auto firelight   = make_shared<diffuse_light>(color(15, 10, 8));
+    auto moonlight   = make_shared<diffuse_light>(color(2, 2, 20));
+    auto rimlight    = make_shared<diffuse_light>(color(7, 12, 20));
+    auto backlight   = make_shared<diffuse_light>(color(1, 5, 10));
+
     auto grey        = make_shared<lambertian>(color(0.2, 0.2, 0.4));
     auto brown       = make_shared<lambertian>(color(0.4, 0.2, 0.2));
     auto green       = make_shared<lambertian>(color(0.5, 1.0, 0.5));
@@ -785,52 +797,77 @@ void cube(char* fname, float intensity){
     auto white       = make_shared<lambertian>(color(0.8, 0.8, 0.8));    
           
     // load meshes                
-    // auto lamp = make_shared<mesh>("lamp2.obj", yellow, vec3(0, 5.2, 1), 1.0, false);
-    
-    auto cube = make_shared<mesh>("cube5.obj", green, vec3(0, 5, 0), 3.0, false);
+    // auto cube = make_shared<mesh>("polygon.obj", purple, vec3(0, 5.2, 1), 3.0, false);
+      
+    auto cube = make_shared<mesh>("lamp2.obj", purple, vec3(0, 5, 0), 0.8, false);
+    auto dummy = make_shared<mesh>("dummy2.obj", brown, vec3(0, 4, 0), 1.7, false);
   
  
-    world.add(make_shared<sphere>(point3(0, 70, -20), 40, firelight));
-    // world.add(make_shared<quad>(point3(-6,0,-10), vec3(12,0,0), vec3(0,0,25), white));
-    // world.add(make_shared<quad>(point3(-6,0,16), vec3(12,0,0), vec3(0,12,0), white));
-
+    world.add(make_shared<sphere>(point3(0, 70, -20), 10, firelight));
+    // world.add(make_shared<quad>(point3(-6,0,-10), vec3(12,0,0), vec3(0,0,27), brown));
+    // world.add(make_shared<quad>(point3(-6,0,16), vec3(12,0,0), vec3(0,12,0), brown));
+    
     // for(size_t i = 0; i < lamp->normals_origin.size(); i++){
     //     if(i%2){
     //         world.add(make_shared<sphere>(lamp->normals_origin[i], .2, yellow));
     //     }    
     // }    
-            
-    world.add(cube);          
-     
+              
+    // world.add(cube);                   
+    world.add(dummy);
     // point3 lookFrom = point3(0,24,-65); 
-    point3 lookFrom = point3(15,24,-65); 
+    //
+    point3 lookFrom = point3(10,24,-65); 
     point3 lookAt   = point3(0,5,0);
-    
-    cms = world.layer(lookFrom, lookAt, 3, 0); 
+      
+    for(size_t i = 0; i < cube->vertices.size(); i++){
+        // cout << "vert cube " << i << ": " << cube->vertices[i] << endl;
+    }   
   
-    std::cout << "len: " << cms.size() << std::endl;
+    for(size_t i = 0; i < cube->normals.size(); i++){
+        // dot > 0 away from camera towards pos z axis
+        // dot < 0 faces towards camera 
+             //  
+        double d = dot(cube->normals[i], unit_vector(lookAt - lookFrom));
+        if((d < 0.0)){
+            //  world.add(make_shared<sphere>((*cube->normals_origin)[i], .5,    purple)); 
+            // cout << "1" << endl;       
+        }
+    }       
+        
+    // cms = world.layer(lookAt, lookFrom, 3, 0, intensity); 
+    world.layer(lookAt, lookFrom, 3, 0, intensity);
+  
+    // std::cout << "contours: " << cms[0].size() << " backlights: " <<  cms[1].size() << std::endl;
           
-    std::vector<std::shared_ptr<point>> extraLights;
-    for(vec3 cm : cms) {
-        // extraLights.push_back(make_shared<sphere>(cm, intensity, difflight));
-        // std::cout << "light (" << cm[0] << ", " << cm[1] << ", " << cm[2] << ")" << std::endl;
-        extraLights.push_back(make_shared<point>(cm, intensity, difflight, lookFrom)); 
-    }
+    // std::vector<std::shared_ptr<point>> extraLights;
+    // for(size_t i = 0; i < cms.size(); i++){
+    //     for(size_t j = 0; j < cms[i].size(); j++){
+    //         if(i == 0){
+    //             extraLights.push_back(make_shared<point>(cms[i][j], intensity, rimlight, lookFrom));  
+    //         }
+    //         else{
+    //             extraLights.push_back(make_shared<point>(cms[i][j], 0.5, backlight, lookFrom));  
+    //         }
+    //     }       
+    // }
     // for(std::shared_ptr<sphere> light : extraLights) {
-    for(std::shared_ptr<point> light : extraLights) { 
-        world.add(light);
-    }      
-         
-    world = hittable_list(make_shared<bvh_node>(world));
+    for(size_t i = 0; i < world.extraLights.size(); i++){
+        // world.add(world.extraLights[i]);
+        world.add(make_shared<point>(world.extraLights[i]));
 
+    }
+  
+    world = hittable_list(make_shared<bvh_node>(world));
+  
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 200; // 400
-    cam.samples_per_pixel = 300; // 100
-    cam.max_depth         = 20;
+    cam.image_width       = 400; // 400  
+    cam.samples_per_pixel = 420; // 100
+    cam.max_depth         = 40; 
     cam.background        = color(0,0,0);
-    // cam.background        = color(0.70, 0.80, 1.00);
+    // cam.background        = color(0.70, 0.80, 1.00); 
 
     cam.vfov     = 20; 
     cam.lookfrom = lookFrom; 
@@ -842,37 +879,71 @@ void cube(char* fname, float intensity){
     cam.render(world, fname);
 }
 
-void indoor_scene(char* fname, float intensity) { 
+void indoor_scene(char* fname, double intensity) {  
     hittable_list world;
-    std::vector<vec3> cms;
+    std::vector<vector<vec3>> cms;
        
     // colors  
     auto difflight   = make_shared<diffuse_light>(color(4, 4, 4));
-    auto moonlight   = make_shared<diffuse_light>(color(2, 2, 4));
-    auto firelight   = make_shared<diffuse_light>(color(15, 10, 8));
+    auto moonlight   = make_shared<diffuse_light>(color(0.5, 1, 11));                
+    auto rimlight    = make_shared<diffuse_light>(color(7, 12, 20)); 
+    auto firelight   = make_shared<diffuse_light>(color(15, 10, 8)); 
+    auto floorboard  = make_shared<lambertian>(color(0.74, 0.72, 0.59));
     auto grey        = make_shared<lambertian>(color(0.2, 0.2, 0.4));
     auto brown       = make_shared<lambertian>(color(0.4, 0.2, 0.2));
-    auto green       = make_shared<lambertian>(color(0.5, 1.0, 0.5));
+    auto green       = make_shared<lambertian>(color(0.49, 0.69, 0.41)); 
     auto orange      = make_shared<lambertian>(color(0.7, 0.4, 0.3));
     auto purple      = make_shared<lambertian>(color(0.5, 0.3, 0.6));
     auto yellow      = make_shared<lambertian>(color(0.8, 0.6, 0.6));
     auto white       = make_shared<lambertian>(color(0.8, 0.8, 0.8));
+    auto blue        = make_shared<lambertian>(color(0.42, 0.8, 1.0));
+    auto sofaOrange = make_shared<lambertian>(color(1.0, 0.52, 0.15));
+    auto vaseBlueGreen = make_shared<lambertian>(color(0.57, 0.68, 0.58));
+
           
-    // load meshes                        
+    // load meshes                          
     auto table = make_shared<mesh>("coffeetable4.obj", brown, vec3(0, 2, -26), .9, false);
-    auto lamp = make_shared<mesh>("lamp2.obj", yellow, vec3(5, 4, -19), .3, false);
-    auto sofa = make_shared<mesh>("couch3.obj", green, vec3(0, 3, -2), 1.4, false);
-    auto vase = make_shared<mesh>("vase.obj", purple, vec3(12, 3, -5), 1.0, false);
+    auto lamp = make_shared<mesh>("lamp2.obj", white, vec3(-4.1, 5.42, -26), .2, false);
+    auto sofa = make_shared<mesh>("couch_real5.obj", green, vec3(0, 3, -2), 2, false); 
+    // auto sofa = make_shared<mesh>("lowpolycouch2.obj", green, vec3(0, 3, -2), 1.5, false); 
+    auto vase = make_shared<mesh>("vase.obj", blue, vec3(12.2, 2.62, -4.5), 1.0, false);
     auto cube = make_shared<mesh>("cube5.obj", purple, vec3(13, 3, -23), 1.0, false);
- 
+  
     // // for(size_t i = 0; i < cube->normals_origin.size(); i++){
         // world.add(make_shared<sphere>(cube->normals_origin[2], .3, firelight));
-        // world.add(make_shared<sphere>(cube->normals_origin[3], .3, firelight));
+        // world.add(make_shared<sphere>(cube->normals_origin[3], .3, firelight))      b;
 
-    // world.add(make_shared<sphere>(point3(0, 30, -10), 2.5, firelight));
+    // world.add(make_shared<sphere>(point3(0, 40, -10), 7, firelight)); 
 
-    // WINDOW
-    world.add(make_shared<quad>(point3(-14.9, 6, -11), vec3(0,0,5), vec3(0,7,0), moonlight));
+    // WINDOW 
+    world.add(make_shared<quad>(point3(-14.9, 6, -11), vec3(0,0,5), vec3(0,7,0), moonlight)); 
+    
+    // aabb tablebox = table->bounding_box(); 
+    // point3 max = tablebox.get_max(); 
+    // point3 min = tablebox.get_min();
+
+    // world.add(make_shared<sphere>(min, .3, moonlight));
+
+     //1 left wall   
+    // world.add(make_shared<quad>(point3(max[0], min[1], min[2]), vec3(0,max[1],0), vec3(0,0,max[2]), white));
+    //2 right wall
+    // world.add(make_shared<quad>(point3(0,0,0), vec3(0,555,0), vec3(0,0,555), white));
+    //4 floor
+    // world.add(make_shared<quad>(point3(0,0,0), vec3(555,0,0), vec3(0,0,555), white));
+    // //5 ceiling
+    // world.add(make_shared<quad>(point3(555,555,555), vec3(-555,0,0), vec3(0,0,-555), white));
+    // // back wall
+    // world.add(make_shared<quad>(point3(0,0,555), vec3(555,0,0), vec3(0,555,0), white));
+
+    // //right wall
+    // world.add(make_shared<quad>(min, vec3(0, 0, (max[2]-min[2])), vec3(0, max[1]-min[1], 0), white));
+    // //left wall
+    // world.add(make_shared<quad>(max, vec3(0, 0, -(max[2]-min[2])), vec3(0, -max[1], 0), white));
+
+    // world.add(make_shared<sphere>(max, .3, firelight));
+
+    // world.add(make_shared<quad>(point3(-14.9, 6, -11), vec3(0,0,5), vec3(0,7,0), moonlight));   
+    
 
     // for(size_t i = 0; i < lamp->normals_origin.size(); i++){
     //     if(i%2){
@@ -884,31 +955,43 @@ void indoor_scene(char* fname, float intensity) {
     world.add(lamp);              
     world.add(sofa);       
     world.add(vase);            
-    world.add(cube);         
-     
-    point3 lookFrom = point3(0,13,-70); 
-    point3 lookAt   = point3(0,3,0);
+    // world.add(cube);         
+    
+    // slightly off center "nobacklights.ppm"
+    // point3 lookFrom = point3(-4,13,-78); 
+    // point3 lookAt   = point3(-3,3,0);
+
+    point3 lookFrom = point3(0, 13, -68);
+    point3 lookAt = point3(0, 2, 0);
    
-    cms = world.layer(lookFrom, lookAt, 3, 0); 
+    // before
+    cout << "in func intensity: " << intensity << endl;     
+    world.layer(lookAt, lookFrom, 3, 0, intensity); 
+    // std::vector<point> lights = world.layer(lookFrom, lookAt, 3, 0, intensity); 
+
   
-    std::cout << "len: " << cms.size() << std::endl;
+    // std::cout << "len: " << cms.size() << std::endl;
     
     // world.clear();
-    world.add(make_shared<sphere>(point3(0,-1000,0), 1000, brown));
+    world.add(make_shared<sphere>(point3(0,-1000,0), 1000, floorboard));
     world.add(make_shared<quad>(point3(-30,0,7), vec3(60,0,0), vec3(0,20,0), white));
     world.add(make_shared<quad>(point3(-15,0,-50), vec3(0,0,60), vec3(0,20,0), white));
      
-    // std::vector<std::shared_ptr<sphere>> extraLights;
-    std::vector<std::shared_ptr<point>> extraLights;
-    for(vec3 cm : cms) {
-        // extraLights.push_back(make_shared<sphere>(cm, intensity, difflight));
-        // std::cout << "light (" << cm[0] << ", " << cm[1] << ", " << cm[2] << ")" << std::endl;
-        extraLights.push_back(make_shared<point>(cm, intensity, difflight, lookFrom)); 
+    // std::vector<std::shared_ptr<point>> extraLights;
+    // for(size_t i = 0; i < cms.size(); i++){
+    //     for(size_t j = 0; j < cms[i].size(); j++){
+    //         if(i % 2 == 0){
+    //             extraLights.push_back(make_shared<point>(cms[i][j], intensity, rimlight, lookFrom));  
+    //         }
+    //         else{
+    //             // extraLights.push_back(make_shared<point>(cms[i][j], 0.1, moonlight, lookFrom));  
+    //         }
+    //     }
+    // }
+    for(size_t i = 0; i < world.extraLights.size(); i++){
+        world.add(make_shared<point>(world.extraLights[i]));
     }
-    // for(std::shared_ptr<sphere> light : extraLights) {
-    for(std::shared_ptr<point> light : extraLights) {  
-        world.add(light); 
-    }         
+   
              
     world = hittable_list(make_shared<bvh_node>(world)); 
 
@@ -916,8 +999,8 @@ void indoor_scene(char* fname, float intensity) {
 
     cam.aspect_ratio      = 16.0 / 9.0;
     cam.image_width       = 200; // 400
-    cam.samples_per_pixel = 100; // 100
-    cam.max_depth         = 20;
+    cam.samples_per_pixel = 150; // 100 
+    cam.max_depth         = 20; 
     cam.background        = color(0,0,0);
     // cam.background        = color(0.70, 0.80, 1.00);
 
@@ -925,11 +1008,11 @@ void indoor_scene(char* fname, float intensity) {
     cam.lookfrom = lookFrom;   
     cam.lookat   = lookAt;      
     cam.vup      = vec3(0,1,0);
-
+  
     cam.defocus_angle = 0; 
 
     cam.render(world, fname);  
-}
+} 
 
 int main(int argc, char** argv) {
     float intensity; 
@@ -940,10 +1023,12 @@ int main(int argc, char** argv) {
     if ((intensity < 0) || (intensity > 1)) {
         std::cerr << "Intensity must be a floating point value between 0 and 1." << std::endl;
     }  
-     
+       
     srand(time(NULL));   
-         
-    switch (12) {
+
+    cout << "intensity mAIN: " << intensity << endl;
+              
+    switch (13) {  
         case 1:  finalscene(argv[1], intensity); break;
         case 2:  simple_light2(argv[1], intensity); break;
         case 3:  quads(argv[1], intensity); break;
@@ -956,60 +1041,6 @@ int main(int argc, char** argv) {
         case 10: indoor_scene(argv[1], intensity); break;
         case 11: test_scene(argv[1], intensity); break;
         case 12: table_scene(argv[1], intensity); break; 
-        case 13: cube(argv[1], intensity); break;
+        case 13: cube(argv[1], intensity); break; 
     }
 } 
-
-// void cornell_box(char* fname, float intensity) {
-//     hittable_list world;
-
-//     auto red   = make_shared<lambertian>(color(.65, .05, .05));
-//     auto blue = make_shared<lambertian>(color(.1, .1, .8));
-//     auto white = make_shared<lambertian>(color(.73, .73, .73));
-//     auto green = make_shared<lambertian>(color(.12, .45, .15));
-//     auto light = make_shared<diffuse_light>(color(15, 15, 15));
-
-
-//     //1 left wall
-//     world.add(make_shared<quad>(point3(555,0,0), vec3(0,555,0), vec3(0,0,555), white));
-//     //2 right wall
-//     world.add(make_shared<quad>(point3(0,0,0), vec3(0,555,0), vec3(0,0,555), white));
-//     //3 top light quad
-//     world.add(make_shared<quad>(point3(343, 554, 332), vec3(-130,0,0), vec3(0,0,-105), light));
-//     //4 floor
-//     world.add(make_shared<quad>(point3(0,0,0), vec3(555,0,0), vec3(0,0,555), white));
-//     //5 ceiling
-//     world.add(make_shared<quad>(point3(555,555,555), vec3(-555,0,0), vec3(0,0,-555), white));
-//     // back wall
-//     world.add(make_shared<quad>(point3(0,0,555), vec3(555,0,0), vec3(0,555,0), white));
-
-//     int radius = 10;
-//     int n = 500; 
-//     for(int i = 0; i < n; i ++){
-//         auto color = blue;
-//         if (i % 2){ color = red;}
-//         world.add(make_shared<sphere>(point3(random_double(-554 + radius, 555 - radius), 
-//                                             random_double(1 + radius, 555 - radius), 
-//                                             random_double(1 + radius, 555 - radius)), radius, color));
-//     }
-
-//     // world.add(qbox(point3(130, 0, 65), point3(295, 165, 230), white));
-//     // world.add(qbox(point3(265, 0, 295), point3(430, 330, 460), white));
-
-//     camera cam;
-
-//     cam.aspect_ratio      = 1.0;
-//     cam.image_width       = 200;
-//     cam.samples_per_pixel = 300;
-//     cam.max_depth         = 30; 
-//     cam.background        = color(0,0,0);
-
-//     cam.vfov     = 40;
-//     cam.lookfrom = point3(278, 278, -800);
-//     cam.lookat   = point3(278, 278, 0);
-//     cam.vup      = vec3(0,1,0);
-
-//     cam.defocus_angle = 0;
-
-//     cam.render(world, fname);
-// }

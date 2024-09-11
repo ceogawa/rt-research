@@ -24,6 +24,7 @@ class vec3 {
         double operator[](int i) const { return e[i]; }
         double& operator[](int i) { return e[i]; }
 
+
         vec3& operator+=(const vec3 &v) {
             e[0] += v.e[0];
             e[1] += v.e[1];
@@ -80,6 +81,12 @@ using point3 = vec3;   // 3D point
 
 // vec3 Utility Functions
 
+inline bool operator<(const vec3& v1, const vec3& v2) {
+    if (v1[0] != v2[0]) return v1[0] < v2[0];
+    if (v1[1] != v2[1]) return v1[1] < v2[1];
+    return v1[2] < v2[2];
+}
+
 inline std::ostream& operator<<(std::ostream &out, const vec3 &v) {
     return out << v.e[0] << ' ' << v.e[1] << ' ' << v.e[2];
 }
@@ -112,6 +119,12 @@ inline bool operator==(vec3 v, vec3 u) {
     return (v[0] == u[0] && v[1] == u[1] && v[1] == u[1]);
 } 
 
+
+inline bool sortClusters(point3 p1, point3 p2){ 
+    return (p1[2] > p2[2]); 
+} 
+  
+
 inline double dot(const vec3 &u, const vec3 &v) {
     return u.e[0] * v.e[0]
          + u.e[1] * v.e[1]
@@ -124,8 +137,16 @@ inline vec3 cross(const vec3 &u, const vec3 &v) {
                 u.e[0] * v.e[1] - u.e[1] * v.e[0]);
 }
 
-inline vec3 unit_vector(vec3 v) {
-    return v / v.length();
+// inline vec3 unit_vector(vec3 v) {
+//     return v / v.length();
+// }
+
+inline vec3 unit_vector(const vec3& v) {
+    double length = v.length();
+    if (length == 0) {
+        return vec3(0, 0, 0); 
+    }
+    return v / length;
 }
 
 inline vec3 distance(const vec3 &u, const vec3 &v) {
