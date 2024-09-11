@@ -800,6 +800,7 @@ void cube(char* fname, float intensity){
     // auto cube = make_shared<mesh>("polygon.obj", purple, vec3(0, 5.2, 1), 3.0, false);
       
     auto cube = make_shared<mesh>("lamp2.obj", purple, vec3(0, 5, 0), 0.8, false);
+    auto dummy = make_shared<mesh>("dummy2.obj", brown, vec3(0, 4, 0), 1.7, false);
   
  
     world.add(make_shared<sphere>(point3(0, 70, -20), 10, firelight));
@@ -812,8 +813,8 @@ void cube(char* fname, float intensity){
     //     }    
     // }    
               
-    world.add(cube);                   
-     
+    // world.add(cube);                   
+    world.add(dummy);
     // point3 lookFrom = point3(0,24,-65); 
     //
     point3 lookFrom = point3(10,24,-65); 
@@ -862,9 +863,9 @@ void cube(char* fname, float intensity){
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 200; // 400  
-    cam.samples_per_pixel = 100; // 100
-    cam.max_depth         = 20; 
+    cam.image_width       = 400; // 400  
+    cam.samples_per_pixel = 420; // 100
+    cam.max_depth         = 40; 
     cam.background        = color(0,0,0);
     // cam.background        = color(0.70, 0.80, 1.00); 
 
@@ -884,7 +885,7 @@ void indoor_scene(char* fname, double intensity) {
        
     // colors  
     auto difflight   = make_shared<diffuse_light>(color(4, 4, 4));
-    auto moonlight   = make_shared<diffuse_light>(color(0.5, 2, 18));
+    auto moonlight   = make_shared<diffuse_light>(color(0.5, 1, 11));                
     auto rimlight    = make_shared<diffuse_light>(color(7, 12, 20)); 
     auto firelight   = make_shared<diffuse_light>(color(15, 10, 8)); 
     auto floorboard  = make_shared<lambertian>(color(0.74, 0.72, 0.59));
@@ -896,12 +897,16 @@ void indoor_scene(char* fname, double intensity) {
     auto yellow      = make_shared<lambertian>(color(0.8, 0.6, 0.6));
     auto white       = make_shared<lambertian>(color(0.8, 0.8, 0.8));
     auto blue        = make_shared<lambertian>(color(0.42, 0.8, 1.0));
+    auto sofaOrange = make_shared<lambertian>(color(1.0, 0.52, 0.15));
+    auto vaseBlueGreen = make_shared<lambertian>(color(0.57, 0.68, 0.58));
+
           
     // load meshes                          
     auto table = make_shared<mesh>("coffeetable4.obj", brown, vec3(0, 2, -26), .9, false);
-    auto lamp = make_shared<mesh>("lamp2.obj", orange, vec3(-4.1, 5.42, -26), .2, false);
+    auto lamp = make_shared<mesh>("lamp2.obj", white, vec3(-4.1, 5.42, -26), .2, false);
     auto sofa = make_shared<mesh>("couch_real5.obj", green, vec3(0, 3, -2), 2, false); 
-    auto vase = make_shared<mesh>("vase.obj", blue, vec3(12, 2.7, -5), 1.0, false);
+    // auto sofa = make_shared<mesh>("lowpolycouch2.obj", green, vec3(0, 3, -2), 1.5, false); 
+    auto vase = make_shared<mesh>("vase.obj", blue, vec3(12.2, 2.62, -4.5), 1.0, false);
     auto cube = make_shared<mesh>("cube5.obj", purple, vec3(13, 3, -23), 1.0, false);
   
     // // for(size_t i = 0; i < cube->normals_origin.size(); i++){
@@ -911,7 +916,7 @@ void indoor_scene(char* fname, double intensity) {
     // world.add(make_shared<sphere>(point3(0, 40, -10), 7, firelight)); 
 
     // WINDOW 
-    world.add(make_shared<quad>(point3(-14.9, 6, -11), vec3(0,0,5), vec3(0,7,0), moonlight));
+    world.add(make_shared<quad>(point3(-14.9, 6, -11), vec3(0,0,5), vec3(0,7,0), moonlight)); 
     
     // aabb tablebox = table->bounding_box(); 
     // point3 max = tablebox.get_max(); 
@@ -993,8 +998,8 @@ void indoor_scene(char* fname, double intensity) {
     camera cam;
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 400; // 400
-    cam.samples_per_pixel = 400; // 100
+    cam.image_width       = 200; // 400
+    cam.samples_per_pixel = 150; // 100 
     cam.max_depth         = 20; 
     cam.background        = color(0,0,0);
     // cam.background        = color(0.70, 0.80, 1.00);
@@ -1007,7 +1012,7 @@ void indoor_scene(char* fname, double intensity) {
     cam.defocus_angle = 0; 
 
     cam.render(world, fname);  
-}
+} 
 
 int main(int argc, char** argv) {
     float intensity; 
@@ -1023,7 +1028,7 @@ int main(int argc, char** argv) {
 
     cout << "intensity mAIN: " << intensity << endl;
               
-    switch (10) {  
+    switch (13) {  
         case 1:  finalscene(argv[1], intensity); break;
         case 2:  simple_light2(argv[1], intensity); break;
         case 3:  quads(argv[1], intensity); break;

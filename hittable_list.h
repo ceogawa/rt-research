@@ -179,9 +179,12 @@ class hittable_list : public hittable {
                 sort(clusters[i].begin(), clusters[i].end(), sortClusters);
                 for(size_t k = 0; k < (int)num_lights; k++){
                     // want to select a point early on in the cluster list (farther back in the obj pts so backlights are not visible)
-                    int maxindx = (clusters[i].size()/8 < 5) ? 5 : clusters[i].size()/8;
+                    int maxindx = (clusters[i].size()/8 < 6) ? 6 : clusters[i].size()/8;
                     int indx = random_int(0, maxindx);
-                    cluster_l.push_back(clusters[i][indx]);
+                    // if the point in the back half of the cluster AND is in the back fifth of the bounding box, add a backlight
+                    // if(clusters[i][indx][2] >= currBbox.get_max()[2]-((float)currBbox.get_min()[2]/(float)6)){
+                        cluster_l.push_back(clusters[i][indx]);
+                    // }
                 }
                 
             }
@@ -198,8 +201,8 @@ class hittable_list : public hittable {
 
             // auto moonlight   = make_shared<diffuse_light>(color(4, 7, 15));
             auto backlight   = make_shared<diffuse_light>(color(4, 4, 4));
-            auto rimlight    = make_shared<diffuse_light>(color(4.1, 4.5, 5));
-            float backlight_intensity = 0.08;
+            auto rimlight    = make_shared<diffuse_light>(color(2, 3, 6));
+            float backlight_intensity = 0.11;
 
 
 
@@ -210,10 +213,11 @@ class hittable_list : public hittable {
                         double min = std::numeric_limits<double>::max();
                         bool check = false;
                         double d = abs(currBbox.pt_distance_plane(currBbox.ff, lights[i][j]));
+                        // d = the distance between the plane and the light;
                         // min = (d < min) ? d : min;
                         if (d < min) {
                             min = d;
-                            check = true;
+                            check = false;
                         }
 
                         d = abs(currBbox.pt_distance_plane(currBbox.lf, lights[i][j]));
@@ -234,35 +238,55 @@ class hittable_list : public hittable {
                         // min = (d < min) ? d : min;
                         if (d < min) {
                             min = d;
-                            check = true;
+                            check = false;
                         }
 
                         d = abs(currBbox.pt_distance_plane(currBbox.tf, lights[i][j]));
                         // min = (d < min) ? d : min;
                         if (d < min) {
                             min = d;
-                            check = false;
+                            check = true;
                         }
 
                         d = abs(currBbox.pt_distance_plane(currBbox.bottomf, lights[i][j]));
                         // min = (d < min) ? d : min;
                         if (d < min) {
                             min = d;
-                            check = false;
+                            check = true;
                         }
 
-                        cout << "min distance to plane: " << min << endl;
+                        // update min to be the distance to the nearest plane
+                        // cout << "min distance to plane: " << min << endl;
                         double reduce = 0.1;
-                        if(min != 0){
-                            rimlight_intensity = (double)rimlight_intensity/(double)(min+1);
-                        }
-                        if(check){
-                            rimlight_intensity *= reduce;
-                        }
-
-                        rimlight_intensity = (rimlight_intensity > 0.14) ? 0.14 : (rimlight_intensity < 0.04) ? 0.04 : rimlight_intensity;
+                        double enhance = 1.1;
+                        double eps = 0.8;
+                        // if(min >= 0.1){
+                            // if the distance to the nearest plane is larger, the light is more towards the center of the object 
+                            // so the intensity decreases
+                            // if(check){
+                                // if the nearest plane is the ff or backf, reduce the intensity (top bottom left right have higher intensity)
+                                // rimlight_intensity = ((double)rimlight_intensity/(double)(min + eps))*reduce;
+                            // }
+                            // else{
+                                // if(check){
+                                //     rimlight_intensity = ((double)rimlight_intensity/(double)(min + eps))*enhance;
+                                // }
+                                // else{
+                                    rimlight_intensity = ((double)rimlight_intensity/(double)(min + eps));
+                                // }
+                            // }
+                        // }
+                        // else{
+                        //     rimlight_intensity = 0.13;
+                        // }
                         
-                        cout << "intensity: " << rimlight_intensity << endl;
+                        // else{
+                        //     rimlight_intensity *=  enhance;
+                        // }
+
+                        rimlight_intensity = (rimlight_intensity > 0.13) ? 0.13 : (rimlight_intensity < 0.07) ? 0.07 : rimlight_intensity;
+                        
+                        // cout << "intensity: " << rimlight_intensity << endl;
                         extraLights.push_back(point(lights[i][j], rimlight_intensity, rimlight, lookFrom));  
                     }
                     else{

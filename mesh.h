@@ -180,7 +180,9 @@ class mesh : public hittable {
         // DBSCAN FROM GITHUB
 
         // auto clusters = dbscan(points, 9);
-        cls = dbscan(points, (float)normals.size()*.008);
+        int minpts = ((normals.size() * .008) >= 18.0) ? 18.0 : normals.size()*0.008;
+        cls = dbscan(points, minpts);
+        cout << "cls min pts: " << normals.size()*0.008 << endl;
 
         // cout << "after dbscan" << endl;
 

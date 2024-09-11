@@ -97,7 +97,7 @@ auto dbscan(const Adaptor& adapt, int min_pts)
     // new code for optimal epsilon selection using k nearest neighbor
     std::vector<float> knns;
 
-    int k = (min_pts < 2) ? 2 : min_pts;
+    int k = (min_pts < 4) ? 4 : min_pts;
 
     std::vector<float> k_distances(n_points);
 
@@ -123,9 +123,10 @@ auto dbscan(const Adaptor& adapt, int min_pts)
 
      // Find an optimal epsilon value
     std::sort(k_distances.begin(), k_distances.end());
-    float percentile = 0.7;
+    float percentile = 0.4;
     size_t idx = static_cast<size_t>(percentile * k_distances.size());
     eps = std::sqrt(k_distances[idx]);
+    eps = (eps > .9) ? 0.9 : eps;
 
     std::cout << "Optimal epsilon: " << eps << std::endl;
 
