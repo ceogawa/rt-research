@@ -803,7 +803,7 @@ void cube(char* fname, float intensity){
     auto dummy = make_shared<mesh>("dummy2.obj", brown, vec3(0, 4, 0), 1.7, false);
   
  
-    world.add(make_shared<sphere>(point3(0, 70, -20), 10, firelight));
+    world.add(make_shared<sphere>(point3(0, 70, -20), 20, firelight));
     // world.add(make_shared<quad>(point3(-6,0,-10), vec3(12,0,0), vec3(0,0,27), brown));
     // world.add(make_shared<quad>(point3(-6,0,16), vec3(12,0,0), vec3(0,12,0), brown));
     
@@ -995,14 +995,14 @@ void indoor_scene(char* fname, double intensity) {
              
     world = hittable_list(make_shared<bvh_node>(world)); 
 
-    camera cam;
+    camera cam; 
 
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 200; // 400
-    cam.samples_per_pixel = 150; // 100 
-    cam.max_depth         = 20; 
-    cam.background        = color(0,0,0);
-    // cam.background        = color(0.70, 0.80, 1.00);
+    cam.image_width       = 400; // 400
+    cam.samples_per_pixel = 540; // 100 
+    cam.max_depth         = 30; 
+    cam.background        = color(0,0,0); 
+    // cam.background        = color(0.70, 0.80, 1.00); 
 
     cam.vfov     = 20; 
     cam.lookfrom = lookFrom;   
@@ -1028,7 +1028,7 @@ int main(int argc, char** argv) {
 
     cout << "intensity mAIN: " << intensity << endl;
               
-    switch (13) {  
+    switch (10) {  
         case 1:  finalscene(argv[1], intensity); break;
         case 2:  simple_light2(argv[1], intensity); break;
         case 3:  quads(argv[1], intensity); break;

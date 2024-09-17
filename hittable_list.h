@@ -207,8 +207,6 @@ class hittable_list : public hittable {
             auto rimlight    = make_shared<diffuse_light>(color(2, 3, 6));
             float backlight_intensity = 0.11;
 
-
-
             for(size_t i = 0; i < lights.size(); i++){
                 for(size_t j = 0; j < lights[i].size(); j++){
                     float rimlight_intensity = intensity;
@@ -259,7 +257,7 @@ class hittable_list : public hittable {
                         extraLights.push_back(point(lights[i][j], rimlight_intensity, rimlight, lookFrom));  
                     }
                     else{
-                        extraLights.push_back(point(lights[i][j], backlight_intensity, backlight, lookFrom));  
+                        // extraLights.push_back(point(lights[i][j], backlight_intensity, backlight, lookFrom));  
                     }
                 }
             }
